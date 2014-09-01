@@ -6,6 +6,8 @@ define(function (require) {
   'use strict';
 
   var SimpleMathMLParser = require('simple_mml_parser');
+  var ExpressionView = require('expression_view');
+
 
   var accumTranslate = function (element) {
     var tx = 0;
@@ -105,7 +107,7 @@ define(function (require) {
 
         if (fill === 'transparent') {
           $(this).attr({
-            fill: 'rgba(255,255,0,0.5)'
+            fill: 'rgba(0,255,0,0.5)'
           });
         } else {
           $(this).attr({
@@ -113,6 +115,7 @@ define(function (require) {
           });
         }
       }).click(function () {
+        $(op).trigger('my-event');
         // next line modelXML
         var xml = $(originalXml).clone().get(0);  // TODO: update IDs
         var node = $(xml).find('#' + $(this).attr('for'));
@@ -120,7 +123,13 @@ define(function (require) {
         if (node.is('mo') && node.prev().is('mn') && node.next().is('mn')) {
           evalXmlNode(node);
           removeUnnecessaryRows(xml);
-          addMath(xml);
+
+          // TODO: extract closure into proper method
+          addMath(xml).then(function (svg, view, originalXml) {
+            addCircles(svg, originalXml, view.xml);
+            addNumberHighlights(svg);
+            correctBBox(svg);
+          });
         }
       }).appendTo(svg.firstElementChild);
     });
@@ -159,34 +168,33 @@ define(function (require) {
   }
 
   function addMath(originalXml) {
-    var xml = $(originalXml).clone().get(0);
+    var view = new ExpressionView(originalXml);
 
-    // TODO: make a copy of the xml so that it can be modified by our AST manipulation methods
-    // TODO: split this method up so that it can be used in variety of ways
-    fixNegativeNumbers(xml);
-    createFractions(xml);
-    formatDivison(xml);
-    removeUnnecessaryParentheses(xml);
-    removeUnnecessaryRows(xml);
+    view.fixNegativeNumbers();
+    view.createFractions();
+    view.formatDivision();
+    view.removeUnnecessaryParentheses();
+    view.removeUnnecessaryRows();
 
     var script = document.createElement('script');
-    $(script).attr('type', 'math/mml').text(xml.outerHTML).appendTo(document.body);
+    $(script).attr('type', 'math/mml').text(view.xml.outerHTML).appendTo(document.body);
 
-    var PreviewDone = function() {
-      var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
-
-      addCircles(svg, originalXml, xml);
-      addNumberHighlights(svg);
-      correctBBox(svg);
-    };
+    var deferred = $.Deferred();
 
     MathJax.Hub.Queue(
       ['Typeset', MathJax.Hub, script],
-      [PreviewDone]
+      function() {
+        var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
+        deferred.resolve(svg, view, originalXml);
+      }
     );
+
+    return deferred.promise();
   }
 
-
+  $('.op').on('my-event', function (e) {
+    console.log('my-event, e = %o', e);
+  });
 
   var parser = new SimpleMathMLParser();
   var xml1 = parser.parse('1 + 2/3 * 4/5 - 6 - 7');
@@ -194,7 +202,12 @@ define(function (require) {
   var xml3 = parser.parse('5 - 1 + 2 * (3 - 4)');
 
 
-  addMath(xml3);
+  addMath(xml3).then(function (svg, view, originalXml) {
+    addCircles(svg, originalXml, view.xml);
+    addNumberHighlights(svg);
+    correctBBox(svg);
+  });
+
   console.log(xml3);
 
 });
