@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            SVG: {
+                scale: 200
+            }
+        });
+  </script>
+  <script type="text/javascript" src="bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js"></script>
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    div#input {
+      border: solid 2px darkgray;
+      border-radius: 4px;
+      width: 300px;
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      font-family: sans-serif;
+      color: dimgray;
+      padding: 20px;
+      z-index: 100;
+      background-color: white;
+
+      display: none;
+    }
+
+    input[type=text] {
+      font-size: 22px;
+    }
+
+
+  </style>
+</head>
+<body>
+<div id="input">
+  <input id="inputMath" type="text"><br>
+  <button id="addExpr">Add Expression</button>
+  <button id="distribute">Distribute</button>
+  <button id="simplifyMultiplication">Simplify Multiplication</button>
+</div>
+</body>
+</html>
+<script src="js/list.js"></script>
+<script src="js/parser.js"></script>
+<script src="js/mml_parser.js"></script>
+<script src="js/simple_mml_parser.js"></script>
+<script src="js/mathml_helpers.js"></script>
+<script src="lib/jquery.2.1.1.min.js"></script>
+<script>
+
+
+
+
+var accumTranslate = function (element) {
+  var tx = ty = 0;
+
+  while (element.tagName !== 'svg') {
+    var transform = $(element).attr('transform');
+    if (transform) {
+      var matches = transform.match(/translate\(([^,]+),([^\)]+)\)/);
+      if (matches && matches.length === 3) {
+        tx += parseFloat(matches[1]);
+        ty += parseFloat(matches[2]);
+      }
+    }
+    element = element.parentElement;
+  }
+
+  return { tx: tx, ty: ty };
+};
+
+// add .forEach() to NodeList
+NodeList.prototype.forEach = function (callback, _this) {
+  for (var i = 0; i < this.length; i++) {
+    callback.call(_this, this.item(i));
+  }
+};
+
+
+var svgNS = 'http://www.w3.org/2000/svg';
+
+
+
+function correctBBox(svg) {
+  var viewBox = svg.getAttribute('viewBox').split(' ');
+  var bbox = svg.getBBox();
+  var ratio = bbox.height / parseFloat(viewBox[3]);
+
+  viewBox[3] = bbox.height;
+  viewBox[1] = bbox.y;
+  viewBox[0] = bbox.x;
+  viewBox[2] = bbox.width;
+  svg.setAttribute('viewBox', viewBox.join(' '));
+
+  var height = parseFloat(svg.style.height);
+  var unit = 'ex';
+
+  height = ratio * height;
+
+  svg.style.height = height + unit;
+  svg.style.width = '';
+}
+
+function evalXmlNode(node) {
+  var prev = parseFloat(node.prev().text());
+  var op = node.text();
+  var next = parseFloat(node.next().text());
+
+  var result;
+  switch (op) {
+    case '+':
+      result = prev + next;
+      break;
+    case '-':
+      result = prev - next;
+      break;
+    case '*':
+      result = prev * next;
+      break;
+    case '/':
+      result = prev / next;   // TODO: adopt exact math library
+      break;
+    default:
+      break;
+  }
+
+  node.prev().text(result);
+  node.next().remove();
+  node.remove();
+}
+
+
+function addCircles(svg, originalXml, xml) {
+  $(svg).find('.op').each(function () {
+    var op = this;
+
+    var translate = accumTranslate(op);
+    var bbox = op.getBBox();
+    var radius = 1.5 * Math.max(bbox.width, bbox.height) / 2;
+
+    var node = $(xml).find('#' + op.id);
+    if (node.text() === '\xD7') {
+      radius = Math.max(bbox.width, bbox.height);
+    }
+
+    var circle = document.createElementNS(svgNS, 'circle');
+    $(circle).attr({
+      cx: translate.tx + bbox.width / 2 + bbox.x,
+      cy: translate.ty + bbox.height / 2 + bbox.y,
+      r: radius,
+      fill: 'transparent',
+      for: op.id
+    }).hover(function () {
+      var fill = $(this).attr('fill');
+
+      if (fill === 'transparent') {
+        $(this).attr({
+          fill: 'rgba(255,255,0,0.5)'
+        });
+      } else {
+        $(this).attr({
+          fill: 'transparent'
+        });
+      }
+    }).click(function () {
+      // next line modelXML
+      var xml = $(originalXml).clone().get(0);  // TODO: update IDs
+      var node = $(xml).find('#' + $(this).attr('for'));
+
+      if (node.is('mo') && node.prev().is('mn') && node.next().is('mn')) {
+        evalXmlNode(node);
+        removeUnnecessaryRows(xml);
+        addMath(xml);
+      }
+    }).appendTo(svg.firstElementChild);
+  });
+}
+
+function addNumberHighlights(svg) {
+  $(svg).find('.num').each(function () {
+    var translate = accumTranslate(this);
+    var bbox = this.getBBox();
+
+    var rect = document.createElementNS(svgNS, 'rect');
+    var multipier = 29;
+    var padding = multipier * 5;
+
+    $(rect).attr({
+      x: translate.tx + bbox.x - padding,
+      y: translate.ty + bbox.y - padding,
+      width: bbox.width + 2*padding,
+      height: bbox.height + 2*padding,
+      fill: 'transparent',
+      for: this.id
+    }).hover(function () {
+      var fill = $(this).attr('fill');
+
+      if (fill === 'transparent') {
+        $(this).attr({
+          fill: 'rgba(255,0,255,0.5)'
+        });
+      } else {
+        $(this).attr({
+          fill: 'transparent'
+        });
+      }
+    }).appendTo(svg.firstElementChild);
+  });
+}
+
+function addMath(originalXml) {
+  var xml = $(originalXml).clone().get(0);
+
+  // TODO: make a copy of the xml so that it can be modified by our AST manipulation methods
+  // TODO: split this method up so that it can be used in variety of ways
+  fixNegativeNumbers(xml);
+  createFractions(xml);
+  formatDivison(xml);
+  removeUnnecessaryParentheses(xml);
+  removeUnnecessaryRows(xml);
+
+  var script = document.createElement('script');
+  $(script).attr('type', 'math/mml').text(xml.outerHTML).appendTo(document.body);
+
+  var PreviewDone = function() {
+    var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
+
+    addCircles(svg, originalXml, xml);
+    addNumberHighlights(svg);
+    correctBBox(svg);
+  };
+
+  MathJax.Hub.Queue(
+      ['Typeset', MathJax.Hub, script],
+      [PreviewDone]
+  );
+}
+
+
+
+parser = new SimpleMathMLParser();
+var xml1 = parser.parse('1 + 2/3 * 4/5 - 6 - 7');
+var xml2 = parser.parse('1 + 2 - 3 * 4 - 5 + 6');
+var xml3 = parser.parse('5 - 1 + 2 * (3 - 4)');
+
+
+addMath(xml3);
+console.log(xml3);
+
+</script>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+</body>
+</html>
+<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="js/list.js"></script>
+<script type="text/javascript" src="js/parser.js"></script>
+<script>
+var parser = new Parser();
+var expr = parser.parse('1+2x+x^2');
+
+console.log(expr.toArray());
+console.log(expr.toASCII());
+//    addMath(expr.toTeX());
+
+List.prototype.hasAddOps = function () {
+  var node = this.first;
+  while (node !== null) {
+    if (node.value === '+' || node.value === '-') {
+      return true;
+    }
+    node = node.next;
+  }
+  return false;
+};
+
+List.prototype.hasMulOps = function () {
+  var node = this.first;
+  while (node !== null) {
+    if (node.value === '*' || node.value === '/') {
+      return true;
+    }
+    node = node.next;
+  }
+  return false;
+};
+
+
+function multiply(a, b) {
+  return new List(a, '*', b);
+}
+
+function divide(a, b) {
+  return new List(a, '/', b);
+}
+
+var prod1 = multiply(3, expr);
+
+console.log(prod1.toArray());
+console.log(prod1.toASCII());
+//    addMath(prod1.toTeX());
+
+// TODO: a user should specify two adjacent terms, this takes the first two
+// TODO: add methods that check if an action is possible
+function distribute(prod) {
+  var left = prod.first;
+  var op = left.next;
+  var right = op.next;
+
+  if (left && op && right && (op.value === '*' || op.value === '/')) {
+    // TODO: add distribution from the right
+    if (right.value instanceof List && right.value.hasAddOps()) {
+      var result = new List();
+
+      var node = right.value.first;
+      while (node !== null) {
+        if (node.value !== '+' && node.value !== '-') { // TODO: add a way to query type, e.g. number, operator, variable, etc.
+          result.push(new List(left.value, op.value, node.value));
+        } else {
+          result.push(node.value);
+        }
+        node = node.next;
+      }
+
+      return result;
+    }
+  } else {
+    throw "can't distribute";
+  }
+}
+
+// TODO: create a clone method
+// question: which simplification steps should replace existing nodes vs. return a new expression?
+
+function stripMulByOne(list) {
+  var node = list.first;
+
+  while (node !== null) {
+    if (node.value === '*') {
+      if (node.prev.value === 1) {
+        node.prev = node.prev.prev;
+        node.prev.next = node.next;
+        // TODO: handle opposite order properly
+      } else if (node.next.value === 1) {
+        node.prev.next = node.next.next;
+        if (node.next.next !== null) {
+          node.next.next.prev = node.prev;
+        } else {
+          list.last = node.prev;
+        }
+        // TODO: need a helper function to remove n nodes
+      }
+    }
+    if (node.value instanceof List) {
+      stripMulByOne(node.value);
+    }
+    node = node.next;
+  }
+}
+
+// TODO: how to collapse lists which only have a single item
+// TODO: how to collapse nested lists with the same operation, e.g. (x + (y + z)) or (1 * (2 * x))
+
+var res1 = distribute(prod1);
+
+console.log(res1.toArray());
+console.log(res1.toASCII());
+
+
+function flattenSingleValueLists(list) {
+  var node = list.first;
+
+  while (node !== null) {
+    if (node.value instanceof List) {
+      if (node.value.length() === 1) {
+        // collapse the list
+        node.value = node.value.first.value;
+      }
+    }
+    node = node.next;
+  }
+}
+
+function replaceOpWithResult(list, node, value) {
+  node.value = value;
+  node.prev = node.prev.prev;
+  node.next = node.next.next;
+  if (node.prev === null) {
+    list.first = node;
+  }
+  if (node.next === null) {
+    list.last = node;
+  }
+}
+
+function simplifyMultiplication(list) {
+  var node = list.first;
+
+  while (node !== null) {
+    if (node.value === '*') {
+      if (!isNaN(node.prev.value) && !isNaN(node.next.value)) {
+        replaceOpWithResult(list, node, node.prev.value * node.next.value);
+      } else if (!isNaN(node.prev.value) && node.next.value instanceof List && !node.next.value.hasAddOps()) {
+        var value = node.prev.value;
+        var sublist = node.next.value;
+        sublist.prepend('*');   // replace operator node with result
+        sublist.prepend(value);
+        replaceOpWithResult(list, node, sublist);
+
+        simplifyMultiplication(sublist);
+      }
+      // check if we can simplify this multiplication
+    } else if (node.value instanceof List) {
+      simplifyMultiplication(node.value);
+    }
+
+    node = node.next;
+  }
+}
+
+simplifyMultiplication(res1);
+flattenSingleValueLists(res1);
+
+console.log(res1.toArray());
+console.log(res1.toASCII());
+
+
+expr = res1;
+
+$('#addExpr').click(function () {
+  var input = $('#inputMath').val();
+
+  var operator = input[0];
+  if (/[\+\-\/\*\^]/.test(operator)) {
+    console.log("I see you want to do an operation");
+    console.log("you want to use the '" + operator + "' operator");
+
+    var rest = input.substring(1);
+    var operand = parser.parse(rest);
+    if (operand.length() === 1) {
+      operand = operand.first.value;
+    }
+    if (operator === '*') {
+      expr = new List(operand, operator, expr);
+    } else {
+      expr = new List(expr, operator, operand);
+    }
+    console.log(expr.toASCII());
+  } else {
+    expr = parser.parse(input);
+    console.log(expr.toASCII());
+  }
+});
+
+$('#distribute').click(function () {
+  expr = distribute(expr);
+  console.log(expr.toASCII());
+});
+
+$('#simplifyMultiplication').click(function () {
+  simplifyMultiplication(expr);
+  console.log(expr.toASCII());
+});
+</script>
+

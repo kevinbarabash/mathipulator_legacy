@@ -1,0 +1,22 @@
+{
+  "name": "algebra",
+  "version": "0.0.1",
+  "authors": [
+    "Kevin Barabash <kevinb7@gmail.com>"
+  ],
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "MathJax": "~2.4.0",
+    "jquery": "~2.1.1"
+  }
+}
