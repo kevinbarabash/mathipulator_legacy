@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+}
+
+div#input {
+    border: solid 2px darkgray;
+    border-radius: 4px;
+    width: 300px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-family: sans-serif;
+    color: dimgray;
+    padding: 20px;
+    z-index: 100;
+    background-color: white;
+
+    display: none;
+}
+
+input[type=text] {
+    font-size: 22px;
+}
