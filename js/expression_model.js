@@ -68,6 +68,70 @@ define(function (require) {
     return deferred;
   };
 
+  ExpressionModel.prototype.distribute = function(term) {
+    var mrow = this.xml.firstElementChild;
+
+    var hasMulOps = function(mrow) {
+      var result = false;
+      $(mrow).children().each(function () {
+        if ($(this).is('mo')) {
+          if ($(this).text() === '*' || $(this).text() === '/') {
+            result = true;
+          }
+        }
+      });
+      return result;
+    };
+
+    // this is distribution
+    if (!hasMulOps(mrow)) {
+      $(mrow).children().each(function () {
+        if (!$(this).is('mo')) {
+          $(this).replaceWith('<mrow><mn>' + term + '</mn><mo>*</mo>' + this.outerHTML + '</mrow>');
+        }
+      });
+    }
+  };
+
+  ExpressionModel.prototype.multiply = function(term) {
+    var mrow = this.xml.firstElementChild;
+
+    // TODO: extract these out into a MathML Utils module
+    // TODO: maybe a jquery extension
+    var hasAddOps = function(mrow) {
+      var result = false;
+      $(mrow).children().each(function () {
+        if ($(this).is('mo')) {
+          if ($(this).text() === '+' || $(this).text() === '-') {
+            result = true;
+          }
+        }
+      });
+      return result;
+    };
+
+    var hasMulOps = function(mrow) {
+      var result = false;
+      $(mrow).children().each(function () {
+        if ($(this).is('mo')) {
+          if ($(this).text() === '*' || $(this).text() === '/') {
+            result = true;
+          }
+        }
+      });
+      return result;
+    };
+
+    if (hasAddOps(mrow)) {
+      $(mrow).wrap('<mrow></mrow>').before('<mn>3</mn><mo>*</mo>');
+    } else if (hasMulOps(mrow)) {
+      $(mrow).prepend('<mn>3</mn><mo>*</mo>');
+    } else {
+      // TODO: throw a more helpful error
+      throw "can't handle this case yet";
+    }
+  };
+
   ExpressionModel.prototype.removeUnnecessaryRows = function () {
 
     function removeUnnecessaryRows(elem) {

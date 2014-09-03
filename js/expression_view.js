@@ -126,11 +126,47 @@ define(function (require) {
     });
   }
 
-  ExpressionView.prototype.sanitize = function () {
+  ExpressionView.prototype.arithematicFormatter = function () {
     this.fixNegativeNumbers();
     this.createFractions();
     this.formatDivision();
     this.removeUnnecessaryParentheses();
+    this.removeUnnecessaryRows();
+  };
+
+  ExpressionView.prototype.algebraFormatter = function () {
+    this.fixNegativeNumbers();
+    this.createFractions();
+//    this.formatDivision();
+//    this.removeUnnecessaryParentheses();
+
+    var hasAddOps = function(mrow) {
+      var result = false;
+      $(mrow).children().each(function () {
+        if ($(this).is('mo')) {
+          if ($(this).text() === '+' || $(this).text() === '-') {
+            result = true;
+          }
+        }
+      });
+      return result;
+    };
+
+
+    $(this.xml).find('mo').filter(function () {
+      return $(this).text() === '*'
+    }).each(function () {
+      if (hasAddOps(this.nextElementSibling)) {
+        // TODO: create jquery methods to wrap in parentheses and to set parentheses stretchy attribute
+        $(this).next().prepend('<mo stretchy="false">(</mo>').append('<mo stretchy="false">)</mo>'); // wrap in parentheses
+        $(this).remove();
+      } else {
+        $(this).next().before('<mo stretchy="false">(</mo>').after('<mo stretchy="false">)</mo>'); // wrap in parentheses
+        $(this).remove();
+      }
+    });
+
+
     this.removeUnnecessaryRows();
   };
 
@@ -163,7 +199,6 @@ define(function (require) {
 
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, script], function () {
       var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
-      SVGUtils.correctBBox(svg);
       deferred.resolve(svg);
     });
 
