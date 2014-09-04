@@ -7,6 +7,8 @@ define(function (require) {
   var MathSymbols = require('math_symbols');
   var SVGUtils = require('svg_utils');
 
+  require('jquery_extensions');
+
   // TODO: add options parameter
   // TODO: create factory methods for specific sets of options
   // TODO: once options have been element, santize xml on creation
@@ -14,62 +16,38 @@ define(function (require) {
     this.xml = $(xml).clone().get(0);
   }
 
-  // private function
-  function fixNegativeNumbers(node) {
-    $(node).children().each(function () {
-      if (this.tagName === 'MN') {
-        var num = this.textContent;
-        if (num.indexOf('-') !== -1) {
-          num = -parseFloat(num);
-          $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mn>' + num + '</mn><mo stretchy="false">)</mo></mrow>');
-        }
-      }
-      fixNegativeNumbers(this);
-    });
-  }
-
   ExpressionView.prototype.fixNegativeNumbers = function() {
-    fixNegativeNumbers(this.xml);
-  };
-
-  // private function
-  function createFractions(elem) {
-    $(elem).children().each(function () {
-      if (this.tagName === 'MO') {
-        if ($(this).text() === '/') {
-          var frac = $('<mfrac>').append($(this).prev(), $(this).next());
-          $(this).replaceWith(frac);
-          stretchyFalse(frac);
-        }
+    $(this.xml).find('mn').each(function () {
+      var num = $(this).text();
+      if (num.indexOf('-') !== -1) {
+        num = -parseFloat(num);
+        $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mn>' + num + '</mn><mo stretchy="false">)</mo></mrow>');
       }
-      createFractions(this);
     });
-  }
+  };
 
   ExpressionView.prototype.createFractions = function () {
-    createFractions(this.xml);
+    $(this.xml).find('mo').each(function () {
+      if ($(this).text() === '/') {
+        var frac = $('<mfrac>').append($(this).prev(), $(this).next());
+        $(this).replaceWith(frac);
+        stretchyFalse(frac);
+      }
+    });
   };
 
-  // private function
-  function formatDivison(elem) {
-    $(elem).children().each(function () {
-      if (this.tagName === 'MO') {
-        if ($(this).text() === '/') {
-          $(this).text(MathSymbols.division);
-        }
-        if ($(this).text() === '*') {
-          $(this).text(MathSymbols.times);
-        }
-        if ($(this).text() === '-') {
-          $(this).text(MathSymbols.minus);
-        }
+  ExpressionView.prototype.formatArithmeticOperators = function () {
+    $(this.xml).find('mo').each(function () {
+      if ($(this).text() === '/') {
+        $(this).text(MathSymbols.division);
       }
-      formatDivison(this);
+      if ($(this).text() === '*') {
+        $(this).text(MathSymbols.times);
+      }
+      if ($(this).text() === '-') {
+        $(this).text(MathSymbols.minus);
+      }
     });
-  }
-
-  ExpressionView.prototype.formatDivision = function () {
-    formatDivison(this.xml);
   };
 
   // private function
@@ -126,10 +104,10 @@ define(function (require) {
     });
   }
 
-  ExpressionView.prototype.arithematicFormatter = function () {
+  ExpressionView.prototype.arithmeticFormatter = function () {
     this.fixNegativeNumbers();
     this.createFractions();
-    this.formatDivision();
+    this.formatArithmeticOperators();
     this.removeUnnecessaryParentheses();
     this.removeUnnecessaryRows();
   };
@@ -137,32 +115,16 @@ define(function (require) {
   ExpressionView.prototype.algebraFormatter = function () {
     this.fixNegativeNumbers();
     this.createFractions();
-//    this.formatDivision();
 //    this.removeUnnecessaryParentheses();
-
-    var hasAddOps = function(mrow) {
-      var result = false;
-      $(mrow).children().each(function () {
-        if ($(this).is('mo')) {
-          if ($(this).text() === '+' || $(this).text() === '-') {
-            result = true;
-          }
-        }
-      });
-      return result;
-    };
 
 
     $(this.xml).find('mo').filter(function () {
       return $(this).text() === '*'
     }).each(function () {
-      if (hasAddOps(this.nextElementSibling)) {
-        // TODO: create jquery methods to wrap in parentheses and to set parentheses stretchy attribute
-        $(this).next().prepend('<mo stretchy="false">(</mo>').append('<mo stretchy="false">)</mo>'); // wrap in parentheses
-        $(this).remove();
+      if ($(this.nextElementSibling).hasAddOps()) {
+        $(this).wrapInnerWithParentheses().remove();
       } else {
-        $(this).next().before('<mo stretchy="false">(</mo>').after('<mo stretchy="false">)</mo>'); // wrap in parentheses
-        $(this).remove();
+        $(this).wrapWithParentheses().remove();
       }
     });
 
@@ -178,16 +140,20 @@ define(function (require) {
       var node = $(view.xml).find('#' + op.id); // xml is actually mathML... precision of language
       var circle = SVGUtils.createCircleAroundOperator(op, node);
       $(circle).click(function () {
-        $(view).trigger('my-event', $(this).attr('for'));
+        $(view).trigger('operatorClick', $(this).attr('for'));
       }).appendTo(svg.firstElementChild);
     });
   };
 
   ExpressionView.prototype.addNumberHighlights = function (svg) {
+    var view = this;
+
     $(svg).find('.num').each(function () {
       var num = this;
       var rect = SVGUtils.createRectangleAroundNumber(num);
-      $(rect).appendTo(svg.firstElementChild);
+      $(rect).click(function () {
+        $(view).trigger('numberClick', $(this).attr('for'));
+      }).appendTo(svg.firstElementChild);
     });
   };
 

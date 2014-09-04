@@ -13,6 +13,7 @@ define(function (require) {
     var view = new ExpressionView(model.xml);
 
     view.algebraFormatter();
+//    view.arithmeticFormatter();
 
     view.render().then(function (svg) {
       view.addCircles(svg);
@@ -20,11 +21,20 @@ define(function (require) {
       SVGUtils.correctBBox(svg);
     });
 
-    $(view).on('my-event', function (e, id) {
+    $(view).on('operatorClick', function (e, id) {
       model.evaluateNode(id).then(function () {
-        model.removeUnnecessaryRows();
         addExpression(model.clone());
       });
+    });
+
+    $(view).on('numberClick', function (e, id) {
+      var clone = model.clone();
+
+      var node = $(clone.xml).find('#' + id).get(0);
+      $(node).removeAttr('id');
+      clone.distribute(node);
+
+      addExpression(clone);
     });
   }
 
@@ -32,7 +42,7 @@ define(function (require) {
 
 //  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
   model = ExpressionModel.fromASCII('x^2 + 2x + 1');
-//  model = ExpressionModel.fromASCII('1/(x-1) + 1/(x+1)');
+//  model = ExpressionModel.fromASCII('-1/(x-1) + 1/(x+1)');
   addExpression(model);
 
 
@@ -41,11 +51,18 @@ define(function (require) {
 
     var operator = input[0];
     if (/[\+\-\/\*\^]/.test(operator)) {
+      var expr = ExpressionModel.fromASCII(input.substring(1));
       var clone = model.clone();
-      clone.multiply(3);
-      addExpression(clone);
 
-      console.log(clone.xml);
+      if (operator === '*') {
+        clone.multiply(expr.xml.firstElementChild);
+      } else if (operator === '/') {
+        clone.divide(expr.xml.firstElementChild);
+      } else {
+        throw "we don't handle that operator yet, try again later";
+      }
+
+      addExpression(clone);
 
       model = clone; // replace of the next
       // TODO: have a list of models, one for each line/step
@@ -53,43 +70,15 @@ define(function (require) {
   });
 
   $('#distribute').click(function () {
-    var hasAddOps = function(mrow) {
-      var result = false;
-      $(mrow).children().each(function () {
-        if ($(this).is('mo')) {
-          if ($(this).text() === '+' || $(this).text() === '-') {
-            result = true;
-          }
-        }
-      });
-      return result;
-    };
-
     var clone = model.clone();
-    var term = '3';
 
-    // in the real case we'll be given a number node
-    // then we'll check if we can distribute that number
-    $(clone.xml).find('mn').filter(function () {
-      return $(this).text() === '3'
-    }).each(function () {
-      // distribute should be run on one node at a time
-      if ($(this).next().is('mo') && $(this).next().text() === '*' && $(this).next().next().is('mrow')) {
-        var mrow = $(this).next().next().get(0);
-        if (hasAddOps(mrow)) {
-          $(mrow).children().each(function () {
-            if (!$(this).is('mo')) {
-              $(this).replaceWith('<mrow><mn>' + term + '</mn><mo>*</mo>' + this.outerHTML + '</mrow>');
-            }
-          });
-        }
-        $(this).next().remove();
-        $(this).remove();
-      }
-    });
+    // in the real case the user will select a number
+    // and then we'll check if it can be distributed
+    var num = $(clone.xml).find('mn').first().get(0);
+    clone.distribute(num);
 
-    console.log(clone.xml);
     addExpression(clone);
+    model = clone; // replace of the next
   });
 
   $('#simplifyMultiplication').click(function () {

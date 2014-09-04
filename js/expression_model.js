@@ -6,6 +6,8 @@ define(function (require) {
   var Parser = require('simple_mml_parser');
   var parser = new Parser();
 
+  require('jquery_extensions');
+
   function ExpressionModel() {}
 
   ExpressionModel.fromASCII = function (ascii) {
@@ -69,88 +71,55 @@ define(function (require) {
   };
 
   ExpressionModel.prototype.distribute = function(term) {
-    var mrow = this.xml.firstElementChild;
+    // verify that we can do a distribution operation before doing it
+    // check if the term is followed by multiplication and an mrow
+    if ($(term).next().is('mo') && $(term).next().text() === '*' && $(term).next().next().is('mrow')) {
+      var mrow = $(term).next().next().get(0);
 
-    var hasMulOps = function(mrow) {
-      var result = false;
-      $(mrow).children().each(function () {
-        if ($(this).is('mo')) {
-          if ($(this).text() === '*' || $(this).text() === '/') {
-            result = true;
+      // check that the row has multiple terms
+      if ($(mrow).hasAddOps()) {
+
+        // actual distribute the term
+        $(mrow).children().each(function () {
+          if (!$(this).is('mo')) {
+            $(this).replaceWith('<mrow>' + term.outerHTML + '</mn><mo>*</mo>' + this.outerHTML + '</mrow>');
           }
-        }
-      });
-      return result;
-    };
+        });
 
-    // this is distribution
-    if (!hasMulOps(mrow)) {
-      $(mrow).children().each(function () {
-        if (!$(this).is('mo')) {
-          $(this).replaceWith('<mrow><mn>' + term + '</mn><mo>*</mo>' + this.outerHTML + '</mrow>');
-        }
-      });
+        // cleanup
+        $(term).next().remove();
+        $(term).remove();
+      }
+
+      return;
+      // TODO: figure out what to do when hasAddOp = false and hasMulOps = true
     }
   };
 
   ExpressionModel.prototype.multiply = function(term) {
     var mrow = this.xml.firstElementChild;
 
-    // TODO: extract these out into a MathML Utils module
-    // TODO: maybe a jquery extension
-    var hasAddOps = function(mrow) {
-      var result = false;
-      $(mrow).children().each(function () {
-        if ($(this).is('mo')) {
-          if ($(this).text() === '+' || $(this).text() === '-') {
-            result = true;
-          }
-        }
-      });
-      return result;
-    };
-
-    var hasMulOps = function(mrow) {
-      var result = false;
-      $(mrow).children().each(function () {
-        if ($(this).is('mo')) {
-          if ($(this).text() === '*' || $(this).text() === '/') {
-            result = true;
-          }
-        }
-      });
-      return result;
-    };
-
-    if (hasAddOps(mrow)) {
-      $(mrow).wrap('<mrow></mrow>').before('<mn>3</mn><mo>*</mo>');
-    } else if (hasMulOps(mrow)) {
-      $(mrow).prepend('<mn>3</mn><mo>*</mo>');
+    if ($(mrow).hasAddOps()) {
+      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo>*</mo>');
+    } else if ($(mrow).hasMulOps()) {
+      $(mrow).prepend(term.outerHTML + '<mo>*</mo>');
     } else {
       // TODO: throw a more helpful error
       throw "can't handle this case yet";
     }
   };
 
-  ExpressionModel.prototype.removeUnnecessaryRows = function () {
+  ExpressionModel.prototype.divide = function(term) {
+    var mrow = this.xml.firstElementChild;
 
-    function removeUnnecessaryRows(elem) {
-      $(elem).children().each(function () {
-        var children = $(this).children();
-
-        if ($(this).hasClass('num')) {
-          removeUnnecessaryRows(this);
-        } else if ($(this).is('mrow') && children.length === 1) {
-          $(this).replaceWith(children[0]);
-        } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
-          $(this).replaceWith(children);
-        } else {
-          removeUnnecessaryRows(this);
-        }
-      });
+    if ($(mrow).hasAddOps()) {
+      $(mrow).wrap('<mrow></mrow>').after('<mo>/</mo>' + term.outerHTML);
+    } else if ($(mrow).hasMulOps()) {
+      $(mrow).append('<mo>/</mo>' + term.outerHTMl);
+    } else {
+      // TODO: throw a more helpful error
+      throw "can't handle this case yet";
     }
-
-    removeUnnecessaryRows(this.xml);
   };
 
   return ExpressionModel;
