@@ -26,21 +26,11 @@ define(function (require) {
     return { tx: tx, ty: ty };
   }
 
-  function toggleFill(color) {
-    var fill = $(this).attr('fill');
-
-    if (fill === 'transparent') {
-      $(this).attr({
-        fill: color
-      });
-    } else {
-      $(this).attr({
-        fill: 'transparent'
-      });
-    }
-  }
-
   return {
+
+    createSVGElement: function (name){
+      return document.createElementNS(svgNS, name);
+    },
 
     createCircleAroundOperator: function (op, node) {
       var translate = accumTranslate(op);
@@ -58,7 +48,7 @@ define(function (require) {
         r: radius,
         fill: 'transparent',
         for: op.id
-      }).hover(toggleFill.bind(circle, 'rgba(255,255,0,0.5)'));
+      });
 
       return circle;
     },
@@ -78,7 +68,7 @@ define(function (require) {
         height: bbox.height + 2*padding,
         fill: 'transparent',
         for: num.id
-      }).hover(toggleFill.bind(rect, 'rgba(255,0,255,0.5)'));
+      });
 
       return rect;
     },

@@ -17,3 +17,19 @@ div#input {
 input[type=text] {
     font-size: 22px;
 }
+
+circle {
+    fill: transparent;
+}
+
+circle:hover {
+    fill: rgba(255,255,0,0.5);
+}
+
+g.selectionOverlay rect {
+    fill: transparent;
+}
+
+g.selectionOverlay rect:hover {
+    fill: rgba(255,0,255,0.5);
+}

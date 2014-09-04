@@ -128,11 +128,19 @@ define(function (require) {
       }
     });
 
-
     this.removeUnnecessaryRows();
   };
 
-  ExpressionView.prototype.addCircles = function (svg) {
+  ExpressionView.prototype.createSelectionOverlay = function (svg) {
+    var selectionGroup = SVGUtils.createSVGElement('g');
+    selectionGroup.setAttribute('class', 'selectionOverlay');
+    $(selectionGroup).appendTo(svg.firstElementChild);
+
+    this.addCircles(svg, selectionGroup);
+    this.addNumberHighlights(svg, selectionGroup);
+  };
+
+  ExpressionView.prototype.addCircles = function (svg, selectionGroup) {
     var view = this;
 
     $(svg).find('.op').each(function () {
@@ -141,11 +149,11 @@ define(function (require) {
       var circle = SVGUtils.createCircleAroundOperator(op, node);
       $(circle).click(function () {
         $(view).trigger('operatorClick', $(this).attr('for'));
-      }).appendTo(svg.firstElementChild);
+      }).appendTo(selectionGroup);
     });
   };
 
-  ExpressionView.prototype.addNumberHighlights = function (svg) {
+  ExpressionView.prototype.addNumberHighlights = function (svg, selectionGroup) {
     var view = this;
 
     $(svg).find('.num').each(function () {
@@ -153,7 +161,7 @@ define(function (require) {
       var rect = SVGUtils.createRectangleAroundNumber(num);
       $(rect).click(function () {
         $(view).trigger('numberClick', $(this).attr('for'));
-      }).appendTo(svg.firstElementChild);
+      }).appendTo(selectionGroup);
     });
   };
 

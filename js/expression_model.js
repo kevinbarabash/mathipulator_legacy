@@ -71,10 +71,12 @@ define(function (require) {
   };
 
   ExpressionModel.prototype.distribute = function(term) {
+    var mrow;
+
     // verify that we can do a distribution operation before doing it
     // check if the term is followed by multiplication and an mrow
     if ($(term).next().is('mo') && $(term).next().text() === '*' && $(term).next().next().is('mrow')) {
-      var mrow = $(term).next().next().get(0);
+      mrow = $(term).next().next().get(0);
 
       // check that the row has multiple terms
       if ($(mrow).hasAddOps()) {
@@ -90,9 +92,26 @@ define(function (require) {
         $(term).next().remove();
         $(term).remove();
       }
-
-      return;
       // TODO: figure out what to do when hasAddOp = false and hasMulOps = true
+    }
+
+    if ($(term).prev().is('mo') && $(term).prev().text() === '/' && $(term).prev().prev().is('mrow')) {
+      mrow = $(term).prev().prev().get(0);
+
+      // check that the row has multiple terms
+      if ($(mrow).hasAddOps()) {
+
+        // actual distribute the term
+        $(mrow).children().each(function () {
+          if (!$(this).is('mo')) {
+            $(this).replaceWith('<mrow>' + this.outerHTML + '</mn><mo>/</mo>' + term.outerHTML + '</mrow>');
+          }
+        });
+
+        // cleanup
+        $(term).prev().remove();
+        $(term).remove();
+      }
     }
   };
 

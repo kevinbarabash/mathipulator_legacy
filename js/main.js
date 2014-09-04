@@ -16,8 +16,7 @@ define(function (require) {
 //    view.arithmeticFormatter();
 
     view.render().then(function (svg) {
-      view.addCircles(svg);
-      view.addNumberHighlights(svg);
+      view.createSelectionOverlay(svg);
       SVGUtils.correctBBox(svg);
     });
 
