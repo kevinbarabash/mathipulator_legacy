@@ -117,15 +117,17 @@ define(function (require) {
     this.createFractions();
 //    this.removeUnnecessaryParentheses();
 
-
     $(this.xml).find('mo').filter(function () {
-      return $(this).text() === '*'
+      return $(this).text() === '*';
     }).each(function () {
-      if ($(this.nextElementSibling).hasAddOps()) {
-        $(this).wrapInnerWithParentheses().remove();
-      } else {
-        $(this).wrapWithParentheses().remove();
+      if ($(this).attr('display') !== 'none') {
+        if ($(this.nextElementSibling).hasAddOps()) {
+          $(this).wrapInnerWithParentheses();
+        } else {
+          $(this).wrapWithParentheses();
+        }
       }
+      $(this).remove();
     });
 
     this.removeUnnecessaryRows();

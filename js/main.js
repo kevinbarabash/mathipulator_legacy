@@ -9,8 +9,9 @@ define(function (require) {
   var ExpressionView = require('expression_view');
   var SVGUtils = require('svg_utils');
 
-  function addExpression(model) {
-    var view = new ExpressionView(model.xml);
+  function addExpression(expr) {
+    console.log(expr.xml);
+    var view = new ExpressionView(expr.xml);
 
     view.algebraFormatter();
 //    view.arithmeticFormatter();
@@ -21,26 +22,27 @@ define(function (require) {
     });
 
     $(view).on('operatorClick', function (e, id) {
-      model.evaluateNode(id).then(function () {
-        addExpression(model.clone());
+      expr.evaluateNode(id).then(function () {
+        addExpression(expr.clone());
       });
     });
 
     $(view).on('numberClick', function (e, id) {
-      var clone = model.clone();
+      var clone = expr.clone();
 
       var node = $(clone.xml).find('#' + id).get(0);
       $(node).removeAttr('id');
       clone.distribute(node);
 
       addExpression(clone);
+      model = clone;
     });
   }
 
   var model;
 
 //  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
-  model = ExpressionModel.fromASCII('x^2 + 2x + 1');
+  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
 //  model = ExpressionModel.fromASCII('-1/(x-1) + 1/(x+1)');
   addExpression(model);
 
@@ -81,7 +83,10 @@ define(function (require) {
   });
 
   $('#simplifyMultiplication').click(function () {
-//    simplifyMultiplication(expr);
-//    console.log(expr.toASCII());
+    var clone = model.clone();
+    clone.simplifyMultiplication();
+
+    addExpression(clone);
+    model = clone; // replace of the next
   });
 });

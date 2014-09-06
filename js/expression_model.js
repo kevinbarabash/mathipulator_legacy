@@ -70,7 +70,7 @@ define(function (require) {
     return deferred;
   };
 
-  ExpressionModel.prototype.distribute = function(term) {
+  ExpressionModel.prototype.distribute = function (term) {
     var mrow;
 
     // verify that we can do a distribution operation before doing it
@@ -113,9 +113,11 @@ define(function (require) {
         $(term).remove();
       }
     }
+
+    this.removeUnnecessaryRows();
   };
 
-  ExpressionModel.prototype.multiply = function(term) {
+  ExpressionModel.prototype.multiply = function (term) {
     var mrow = this.xml.firstElementChild;
 
     if ($(mrow).hasAddOps()) {
@@ -128,7 +130,7 @@ define(function (require) {
     }
   };
 
-  ExpressionModel.prototype.divide = function(term) {
+  ExpressionModel.prototype.divide = function (term) {
     var mrow = this.xml.firstElementChild;
 
     if ($(mrow).hasAddOps()) {
@@ -139,6 +141,54 @@ define(function (require) {
       // TODO: throw a more helpful error
       throw "can't handle this case yet";
     }
+  };
+
+  // TODO: simplify other operations, e.g. division
+  ExpressionModel.prototype.simplifyMultiplication = function () {
+    $(this.xml).find('mo').filter(function () {
+      return $(this).text() === '*'
+    }).each(function () {
+      var prev, next;
+
+      if ($(this).prev().is('mn')) {
+        prev = $(this).prev().number();
+
+        if ($(this).next().is('mrow') && $(this).next().hasMulOps()) {
+          var mrow = $(this).next().get(0);
+          if ($(mrow.firstElementChild).is('mn')) {
+            next = $(mrow.firstElementChild).number();
+            $(mrow.firstElementChild).text(prev * next);
+            $(this).prev().remove();
+            $(this).remove();
+          }
+        } else if ($(this).next().is('mn')) {
+          next = $(this).next().number();
+          $(this).next().text(prev * next);
+          $(this).prev().remove();
+          $(this).remove();
+        }
+      }
+    });
+  };
+
+  function removeUnnecessaryRows (elem) {
+    $(elem).children().each(function () {
+      var children = $(this).children();
+
+      if ($(this).hasClass('num')) {
+        removeUnnecessaryRows(this);
+      } else if ($(this).is('mrow') && children.length === 1) {
+        $(this).replaceWith(children[0]);
+      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
+        $(this).replaceWith(children);
+      } else {
+        removeUnnecessaryRows(this);
+      }
+    });
+  }
+
+  ExpressionModel.prototype.removeUnnecessaryRows = function () {
+    removeUnnecessaryRows(this.xml);
   };
 
   return ExpressionModel;

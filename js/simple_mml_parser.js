@@ -64,7 +64,12 @@ define(function (require) {
 
     while (token === '*' || token === '/' || token === '(' || isAlpha(token)) {
       if (token === '(') {
-        mrow.append($('<mo>').text('&InvisibleTimes;').attr('id', '_' + id));
+        mrow.append(
+          $('<mo>').text('*').attr({
+            id: '_' + id,
+            display: 'none'
+          })
+        );
         id++;
         mrow.append($('<mo>').text('(').attr('id', '_' + id));
         id++;
@@ -75,10 +80,16 @@ define(function (require) {
         }
         mrow.append($('<mo>').text(')'));
       } else if (isAlpha(token)) {  // TODO: figure out why we can't let factor() handle this
-        mrow.append($('<mo>').text('&InvisibleTimes;').attr('id', '_' + id));
+        mrow.append(
+          $('<mo>').text('*').attr({
+            id: '_' + id,
+            display: 'none'
+          })
+        );
         id++;
-        mrow.append($('<mi>').text(token).attr('id', '_' + id));
-        id++;
+        this.i--; // put the alpha back on so factor() can deal with it
+        // TODO: create a peek function to handle this more elegantly
+        mrow.append(this.factor());
         token = tokens[this.i++];
       } else {
         mrow.append($('<mo>').addClass('op').text(token).attr('id', '_' + id));

@@ -34,9 +34,13 @@ define(function () {
       return this;
     },
 
-    wrapInnerWithParentheses: function() {
+    wrapInnerWithParentheses: function () {
       this.next().prepend('<mo stretchy="false">(</mo>').append('<mo stretchy="false">)</mo>');
       return this;
+    },
+
+    number: function () {
+      return parseFloat(this.text());
     }
   });
 
