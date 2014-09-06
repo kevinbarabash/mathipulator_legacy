@@ -17,7 +17,7 @@ define(function () {
       return result;
     },
 
-    hasMulOps: function() {
+    hasMulOps: function () {
       var result = false;
       this.children().each(function () {
         if ($(this).is('mo')) {
@@ -27,6 +27,12 @@ define(function () {
         }
       });
       return result;
+    },
+
+    findOp: function (op) {
+      return this.find('mo').filter(function () {
+        return $(this).text() === op;
+      });
     },
 
     wrapWithParentheses: function () {

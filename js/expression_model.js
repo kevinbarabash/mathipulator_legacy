@@ -62,6 +62,8 @@ define(function (require) {
 
     if (node.is('mo') && node.prev().is('mn') && node.next().is('mn')) {
       evalXmlNode(node);
+      this.removeUnnecessaryRows();
+      this.removeUnnecessaryParentheses();
       deferred.resolve();
     } else {
       deferred.reject();
@@ -145,9 +147,7 @@ define(function (require) {
 
   // TODO: simplify other operations, e.g. division
   ExpressionModel.prototype.simplifyMultiplication = function () {
-    $(this.xml).find('mo').filter(function () {
-      return $(this).text() === '*'
-    }).each(function () {
+    $(this.xml).findOp('*').each(function () {
       var prev, next;
 
       if ($(this).prev().is('mn')) {
@@ -160,6 +160,7 @@ define(function (require) {
             $(mrow.firstElementChild).text(prev * next);
             $(this).prev().remove();
             $(this).remove();
+            $(mrow).unwrap();
           }
         } else if ($(this).next().is('mn')) {
           next = $(this).next().number();
@@ -171,24 +172,24 @@ define(function (require) {
     });
   };
 
-  function removeUnnecessaryRows (elem) {
-    $(elem).children().each(function () {
+  ExpressionModel.prototype.removeUnnecessaryRows = function () {
+    $(this.xml).find('mrow').each(function () {
       var children = $(this).children();
-
-      if ($(this).hasClass('num')) {
-        removeUnnecessaryRows(this);
-      } else if ($(this).is('mrow') && children.length === 1) {
+      if ($(this).is('mrow') && children.length === 1) {
         $(this).replaceWith(children[0]);
       } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
         $(this).replaceWith(children);
-      } else {
-        removeUnnecessaryRows(this);
       }
     });
-  }
+  };
 
-  ExpressionModel.prototype.removeUnnecessaryRows = function () {
-    removeUnnecessaryRows(this.xml);
+  ExpressionModel.prototype.removeUnnecessaryParentheses = function () {
+    $(this.xml).findOp('(').each(function () {
+      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
+        $(this).next().next().remove();
+        $(this).remove();
+      }
+    });
   };
 
   return ExpressionModel;

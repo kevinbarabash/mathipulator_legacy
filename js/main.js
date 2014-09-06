@@ -13,8 +13,8 @@ define(function (require) {
     console.log(expr.xml);
     var view = new ExpressionView(expr.xml);
 
-    view.algebraFormatter();
-//    view.arithmeticFormatter();
+//    view.algebraFormatter();
+    view.arithmeticFormatter();
 
     view.render().then(function (svg) {
       view.createSelectionOverlay(svg);
@@ -41,9 +41,10 @@ define(function (require) {
 
   var model;
 
-//  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
-  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
-//  model = ExpressionModel.fromASCII('-1/(x-1) + 1/(x+1)');
+  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+//  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
+  // TODO: determine when to set stretch=false and when not to
+//  model = ExpressionModel.fromASCII('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
   addExpression(model);
 
 

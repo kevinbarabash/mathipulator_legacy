@@ -50,46 +50,30 @@ define(function (require) {
     });
   };
 
-  // private function
   // TODO: add a separate function to remove parentheses from denominators
-  function removeUnnecessaryParentheses(elem) {
-    $(elem).children().each(function () {
-      var children = $(this).children();
-      if (children.length === 3) {
-        if (children[0].tagName === 'MO' && $(children[0]).text() === '(' &&
-          children[2].tagName === 'MO' && $(children[2]).text() === ')' &&
-          children[1].tagName === 'MROW' && $(children[1]).children().length === 1) {
-          $(children[0]).remove();
-          $(children[2]).remove();
-        }
-      }
-      removeUnnecessaryParentheses(this);
-    });
-  }
-
   ExpressionView.prototype.removeUnnecessaryParentheses = function () {
-    removeUnnecessaryParentheses(this.xml);
+    $(this.xml).findOp('(').each(function () {
+      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
+        $(this).next().next().remove();
+        $(this).remove();
+      } else if ($(this).parent().is('mrow') && $(this).parent().parent().is('mfrac')) {
+        var parent = this.parentElement;
+        $(parent.firstElementChild).remove();
+        $(parent.lastElementChild).remove();
+      }
+    });
   };
 
-  // private function
-  function removeUnnecessaryRows(elem) {
-    $(elem).children().each(function () {
+  ExpressionView.prototype.removeUnnecessaryRows = function () {
+    $(this.xml).find('mrow').each(function () {
       var children = $(this).children();
-
-      if ($(this).hasClass('num')) {
-        removeUnnecessaryRows(this);
-      } else if ($(this).is('mrow') && children.length === 1) {
-        $(this).replaceWith(children[0]);
-      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
-        $(this).replaceWith(children);
-      } else {
-        removeUnnecessaryRows(this);
+      if ($(this).is('mrow') && children.length === 1 && !$(children[0]).is('mfrac')) {
+        $(this).unwrap();
+      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')' && $(this).parent().is('mfrac')) {
+        $(this.firstElementChild).remove();
+        $(this.lastElementChild).remove();
       }
     });
-  }
-
-  ExpressionView.prototype.removeUnnecessaryRows = function () {
-    removeUnnecessaryRows(this.xml);
   };
 
   function stretchyFalse(elem) {
@@ -112,14 +96,13 @@ define(function (require) {
     this.removeUnnecessaryRows();
   };
 
+  // TODO: extract formatter objects along with all of these methods like .fixNegativeNumbers, etc.
   ExpressionView.prototype.algebraFormatter = function () {
     this.fixNegativeNumbers();
     this.createFractions();
-//    this.removeUnnecessaryParentheses();
+    // TODO: think about the ordering of these transformations
 
-    $(this.xml).find('mo').filter(function () {
-      return $(this).text() === '*';
-    }).each(function () {
+    $(this.xml).findOp('*').each(function () {
       if ($(this).attr('display') !== 'none') {
         if ($(this.nextElementSibling).hasAddOps()) {
           $(this).wrapInnerWithParentheses();
@@ -130,7 +113,7 @@ define(function (require) {
       $(this).remove();
     });
 
-    this.removeUnnecessaryRows();
+    this.removeUnnecessaryParentheses();
   };
 
   ExpressionView.prototype.createSelectionOverlay = function (svg) {

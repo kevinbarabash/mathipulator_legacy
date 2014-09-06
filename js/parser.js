@@ -123,6 +123,14 @@ define(function (require) {
       token = tokens[this.i++];
     }
 
+    // TODO: handle parentheses here
+    // e.g.
+    // check for '('
+    // call this.expression();
+    // check for ')'
+    // then check
+    // TODO: write test cases first including a failing test case for (x+1)^2 and 1/(x-1)^2
+
     if (isAlpha(token) || isNumber(token)) {
       if (tokens[this.i++] === '^') {
         if (sign) {
