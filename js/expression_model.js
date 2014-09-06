@@ -3,7 +3,7 @@
  */
 
 define(function (require) {
-  var Parser = require('simple_mml_parser');
+  var Parser = require('parser');
   var parser = new Parser();
 
   require('jquery_extensions');
