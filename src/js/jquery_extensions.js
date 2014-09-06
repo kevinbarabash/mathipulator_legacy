@@ -2,9 +2,11 @@
  * Created by kevin on 2014-09-03.
  */
 
-define(function () {
+define(function (require) {
 
-  jQuery.fn.extend({
+  var $ = require('jquery');
+
+  $.fn.extend({
     hasAddOps: function () {
       var result = false;
       this.children().each(function () {

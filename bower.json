@@ -19,5 +19,9 @@
     "MathJax": "~2.4.0",
     "jquery": "~2.1.1",
     "requirejs": "~2.1.14"
+  },
+  "devDependencies": {
+    "mocha": "~1.21.4",
+    "assert": "~0.1.0"
   }
 }

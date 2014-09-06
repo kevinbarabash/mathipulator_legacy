@@ -4,6 +4,8 @@
 
 define(function (require) {
 
+  var $ = require('jquery');
+
   function isAlpha(token) {
     return (token >= 'a' && token <= 'z');
   }

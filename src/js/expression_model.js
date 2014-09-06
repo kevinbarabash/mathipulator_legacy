@@ -5,6 +5,7 @@
 define(function (require) {
   var Parser = require('parser');
   var parser = new Parser();
+  var $ = require('jquery');
 
   require('jquery_extensions');
 

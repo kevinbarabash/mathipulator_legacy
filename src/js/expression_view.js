@@ -6,6 +6,7 @@ define(function (require) {
 
   var MathSymbols = require('math_symbols');
   var SVGUtils = require('svg_utils');
+  var $ = require('jquery');
 
   require('jquery_extensions');
 

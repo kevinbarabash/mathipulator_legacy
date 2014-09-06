@@ -8,6 +8,7 @@ define(function (require) {
   var ExpressionModel = require('expression_model');
   var ExpressionView = require('expression_view');
   var SVGUtils = require('svg_utils');
+  var $ = require('jquery');
 
   function addExpression(expr) {
     console.log(expr.xml);
