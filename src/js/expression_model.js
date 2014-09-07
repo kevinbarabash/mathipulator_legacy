@@ -162,11 +162,16 @@ define(function (require) {
     }
   };
 
-  // TODO: simplify other operations, e.g. division
+  ExpressionModel.prototype.simplify = function () {
+    this.simplifyMultiplication();
+    this.simplifyDivision();
+  };
+
   ExpressionModel.prototype.simplifyMultiplication = function () {
     $(this.xml).findOp('*').each(function () {
       var prev, next;
 
+      // TODO: handle multiplier being either before or after the '*'
       if ($(this).prev().is('mn')) {
         prev = $(this).prev().number();
 
@@ -183,6 +188,32 @@ define(function (require) {
           next = $(this).next().number();
           $(this).next().text(prev * next);
           $(this).prev().remove();
+          $(this).remove();
+        }
+      }
+    });
+  };
+
+  ExpressionModel.prototype.simplifyDivision = function () {
+    $(this.xml).findOp('/').each(function () {
+      var prev, next;
+
+      if ($(this).next().is('mn')) {
+        next = $(this).next().number(); // denominator
+
+        if ($(this).prev().is('mrow') && $(this).prev().hasMulOps()) {
+          var mrow = $(this).prev().get(0);
+          if ($(mrow.firstElementChild).is('mn')) {
+            prev = $(mrow.firstElementChild).number();
+            $(mrow.firstElementChild).text(prev / next);
+            $(this).next().remove();
+            $(this).remove();
+            $(mrow).unwrap();
+          }
+        } else if ($(this).prev().is('mn')) {
+          prev = $(this).prev().number();
+          $(this).prev().text(prev / next);
+          $(this).next().remove();
           $(this).remove();
         }
       }

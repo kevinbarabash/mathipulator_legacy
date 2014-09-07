@@ -110,9 +110,9 @@ define(function (require) {
     }
   });
 
-  $('#simplifyMultiplication').click(function () {
+  $('#simplify').click(function () {
     var clone = model.clone();
-    clone.simplifyMultiplication();
+    clone.simplify();
 
     addExpression(clone);
     model = clone; // replace of the next
