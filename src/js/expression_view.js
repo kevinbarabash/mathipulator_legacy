@@ -4,118 +4,21 @@
 
 define(function (require) {
 
-  var MathSymbols = require('math_symbols');
+  var Formatter = require('formatter');
   var SVGUtils = require('svg_utils');
   var $ = require('jquery');
 
   require('jquery_extensions');
 
-  // TODO: add options parameter
-  // TODO: create factory methods for specific sets of options
-  // TODO: once options have been element, santize xml on creation
-  function ExpressionView(model) {
+  function ExpressionView(model, options) {
     this.xml = $(model.xml).clone().get(0);
+
+    if (options && options.format === 'arithmetic') {
+      Formatter.formatArithmetic(this);
+    } else {
+      Formatter.formatAlgebra(this);
+    }
   }
-
-  ExpressionView.prototype.fixNegativeNumbers = function() {
-    $(this.xml).find('mn').each(function () {
-      var num = $(this).text();
-      if (num.indexOf('-') !== -1) {
-        num = -parseFloat(num);
-        $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mn>' + num + '</mn><mo stretchy="false">)</mo></mrow>');
-      }
-    });
-  };
-
-  ExpressionView.prototype.createFractions = function () {
-    $(this.xml).find('mo').each(function () {
-      if ($(this).text() === '/') {
-        var frac = $('<mfrac>').append($(this).prev(), $(this).next());
-        $(this).replaceWith(frac);
-        stretchyFalse(frac);
-      }
-    });
-  };
-
-  ExpressionView.prototype.formatArithmeticOperators = function () {
-    $(this.xml).find('mo').each(function () {
-      if ($(this).text() === '/') {
-        $(this).text(MathSymbols.division);
-      }
-      if ($(this).text() === '*') {
-        $(this).text(MathSymbols.times);
-      }
-      if ($(this).text() === '-') {
-        $(this).text(MathSymbols.minus);
-      }
-    });
-  };
-
-  // TODO: add a separate function to remove parentheses from denominators
-  ExpressionView.prototype.removeUnnecessaryParentheses = function () {
-    $(this.xml).findOp('(').each(function () {
-      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
-        $(this).next().next().remove();
-        $(this).remove();
-      } else if ($(this).parent().is('mrow') && $(this).parent().parent().is('mfrac')) {
-        var parent = this.parentElement;
-        $(parent.firstElementChild).remove();
-        $(parent.lastElementChild).remove();
-      }
-    });
-  };
-
-  ExpressionView.prototype.removeUnnecessaryRows = function () {
-    $(this.xml).find('mrow').each(function () {
-      var children = $(this).children();
-      if ($(this).is('mrow') && children.length === 1 && !$(children[0]).is('mfrac')) {
-        $(this).unwrap();
-      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')' && $(this).parent().is('mfrac')) {
-        $(this.firstElementChild).remove();
-        $(this.lastElementChild).remove();
-      }
-    });
-  };
-
-  function stretchyFalse(elem) {
-    $(elem).children().each(function () {
-      if (this.tagName === 'MO') {
-        var text = $(this).text();
-        if (text === '(' || text === ')') {
-          $(this).attr('stretchy', 'false');
-        }
-      }
-      stretchyFalse(this);
-    });
-  }
-
-  ExpressionView.prototype.arithmeticFormatter = function () {
-    this.fixNegativeNumbers();
-    this.createFractions();
-    this.formatArithmeticOperators();
-    this.removeUnnecessaryParentheses();
-    this.removeUnnecessaryRows();
-  };
-
-  // TODO: extract formatter objects along with all of these methods like .fixNegativeNumbers, etc.
-  ExpressionView.prototype.algebraFormatter = function () {
-    this.fixNegativeNumbers();
-    this.createFractions();
-    // TODO: think about the ordering of these transformations
-
-    $(this.xml).findOp('*').each(function () {
-      if ($(this).attr('display') !== 'none') {
-        if ($(this.nextElementSibling).hasAddOps()) {
-          $(this).wrapInnerWithParentheses();
-        } else {
-          $(this).wrapWithParentheses();
-        }
-      }
-      $(this).remove();
-    });
-
-    this.removeUnnecessaryParentheses();
-  };
 
   ExpressionView.prototype.createSelectionOverlay = function (svg) {
     var selectionGroup = SVGUtils.createSVGElement('g');
@@ -156,9 +59,15 @@ define(function (require) {
     $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo(document.body);
 
     var deferred = $.Deferred();
+    var view = this;
 
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, script], function () {
       var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
+
+      view.createSelectionOverlay(svg);
+      view.svg = svg;
+      SVGUtils.correctBBox(svg);
+
       deferred.resolve(svg);
     });
 

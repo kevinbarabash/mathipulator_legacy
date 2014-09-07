@@ -8,7 +8,6 @@ define(function (require) {
   var ExpressionModel = require('expression_model');
   var ExpressionView = require('expression_view');
   var Selection = require('selection');
-  var SVGUtils = require('svg_utils');
   var $ = require('jquery');
 
   var model = null;
@@ -27,16 +26,11 @@ define(function (require) {
 
   function addExpression(expr) {
     console.log(expr.xml);
-    var view = new ExpressionView(expr);
 
-    view.algebraFormatter();
-//    view.arithmeticFormatter();
+    var view;
 
-    view.render().then(function (svg) {
-      view.createSelectionOverlay(svg);
-      view.svg = svg;
-      SVGUtils.correctBBox(svg);
-    });
+    view = new ExpressionView(expr, { format: 'algebra' });
+    view.render();
 
     $(view).on('operatorClick', function (e, id) {
       expr.evaluateNode(id).then(function () {
@@ -76,7 +70,8 @@ define(function (require) {
 
 
   $('#addExpr').click(function () {
-    var input = $('#inputMath').val();
+    var mathInput$ = $('#inputMath');
+    var input = mathInput$.val();
 
     var operator = input[0];
     if (/[\+\-\/\*\^]/.test(operator)) {
@@ -97,7 +92,7 @@ define(function (require) {
       // TODO: have a list of models, one for each line/step
     }
 
-    $('#inputMath').val('');
+    mathInput$.val('');
   });
 
   $('#distribute').click(function () {
