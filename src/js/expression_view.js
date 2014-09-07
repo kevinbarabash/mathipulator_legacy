@@ -13,8 +13,8 @@ define(function (require) {
   // TODO: add options parameter
   // TODO: create factory methods for specific sets of options
   // TODO: once options have been element, santize xml on creation
-  function ExpressionView(xml) {
-    this.xml = $(xml).clone().get(0);
+  function ExpressionView(model) {
+    this.xml = $(model.xml).clone().get(0);
   }
 
   ExpressionView.prototype.fixNegativeNumbers = function() {

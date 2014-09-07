@@ -20,7 +20,13 @@
     }
   });
 
-  require(['test/test'], function () {
+  var specs = [
+    'test/parser.spec',
+    'test/expression_model.spec',
+    'test/expression_view.spec'
+  ];
+
+  require(specs, function () {
     mocha.checkLeaks();
     mocha.run();
   });

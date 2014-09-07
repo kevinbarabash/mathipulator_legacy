@@ -12,7 +12,7 @@ define(function (require) {
 
   function addExpression(expr) {
     console.log(expr.xml);
-    var view = new ExpressionView(expr.xml);
+    var view = new ExpressionView(expr);
 
 //    view.algebraFormatter();
     view.arithmeticFormatter();

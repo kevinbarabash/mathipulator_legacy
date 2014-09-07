@@ -139,7 +139,7 @@ define(function (require) {
     if ($(mrow).hasAddOps()) {
       $(mrow).wrap('<mrow></mrow>').after('<mo>/</mo>' + term.outerHTML);
     } else if ($(mrow).hasMulOps()) {
-      $(mrow).append('<mo>/</mo>' + term.outerHTMl);
+      $(mrow).append('<mo>/</mo>' + term.outerHTML);
     } else {
       // TODO: throw a more helpful error
       throw "can't handle this case yet";
