@@ -14,6 +14,7 @@
   "devDependencies": {
     "gulp": "^3.8.7",
     "gulp-mocha-phantomjs": "^0.5.0",
+    "gulp-sloc": "^1.0.4",
     "gulp-watch": "^1.0.2",
     "mocha-phantomjs": "^3.5.0",
     "phantomjs": "^1.9.7-15"
