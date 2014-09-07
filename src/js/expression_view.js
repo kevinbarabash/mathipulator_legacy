@@ -14,9 +14,9 @@ define(function (require) {
     this.xml = $(model.xml).clone().get(0);
 
     if (options && options.format === 'arithmetic') {
-      Formatter.formatArithmetic(this);
+      Formatter.formatArithmetic(this.xml);
     } else {
-      Formatter.formatAlgebra(this);
+      Formatter.formatAlgebra(this.xml);
     }
   }
 

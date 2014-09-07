@@ -8,26 +8,26 @@ define(function (require) {
 
   var Formatter = {};
 
-  Formatter.formatArithmetic = function (view) {
-    this.fixNegativeNumbers(view);
-    this.createFractions(view);
-    this.formatArithmeticOperators(view);
-    this.removeUnnecessaryParentheses(view);
-    this.removeUnnecessaryRows(view);
+  Formatter.formatArithmetic = function (xml) {
+    this.fixNegativeNumbers(xml);
+    this.createFractions(xml);
+    this.formatArithmeticOperators(xml);
+    this.removeUnnecessaryParentheses(xml);
+    this.removeUnnecessaryRows(xml);
   };
 
-  Formatter.formatAlgebra = function (view) {
+  Formatter.formatAlgebra = function (xml) {
     // TODO: think about the ordering of these transformations
 
-    this.fixNegativeNumbers(view);
-    this.createFractions(view);
-    this.formatAlgebraicMultiplication(view);
-    this.removeUnnecessaryParentheses(view);
+    this.fixNegativeNumbers(xml);
+    this.createFractions(xml);
+    this.formatAlgebraicMultiplication(xml);
+    this.removeUnnecessaryParentheses(xml);
   };
 
 
-  Formatter.fixNegativeNumbers = function(view) {
-    $(view.xml).find('mn').each(function () {
+  Formatter.fixNegativeNumbers = function(xml) {
+    $(xml).find('mn').each(function () {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
@@ -36,8 +36,8 @@ define(function (require) {
     });
   };
 
-  Formatter.createFractions = function (view) {
-    $(view.xml).find('mo').each(function () {
+  Formatter.createFractions = function (xml) {
+    $(xml).find('mo').each(function () {
       if ($(this).text() === '/') {
         var frac = $('<mfrac>').append($(this).prev(), $(this).next());
         $(this).replaceWith(frac);
@@ -47,8 +47,8 @@ define(function (require) {
     });
   };
 
-  Formatter.formatArithmeticOperators = function (view) {
-    $(view.xml).find('mo').each(function () {
+  Formatter.formatArithmeticOperators = function (xml) {
+    $(xml).find('mo').each(function () {
       if ($(this).text() === '/') {
         $(this).text(MathSymbols.division);
       }
@@ -61,8 +61,8 @@ define(function (require) {
     });
   };
 
-  Formatter.formatAlgebraicMultiplication = function (view) {
-    $(view.xml).findOp('*').each(function () {
+  Formatter.formatAlgebraicMultiplication = function (xml) {
+    $(xml).findOp('*').each(function () {
       if ($(this).attr('display') !== 'none') {
         if ($(this.nextElementSibling).hasAddOps()) {
           $(this).wrapInnerWithParentheses();
@@ -75,8 +75,8 @@ define(function (require) {
   };
 
   // TODO: add a separate function to remove parentheses from denominators
-  Formatter.removeUnnecessaryParentheses = function (view) {
-    $(view.xml).findOp('(').each(function () {
+  Formatter.removeUnnecessaryParentheses = function (xml) {
+    $(xml).findOp('(').each(function () {
       if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
         $(this).next().next().remove();
         $(this).remove();
@@ -88,8 +88,8 @@ define(function (require) {
     });
   };
 
-  Formatter.removeUnnecessaryRows = function (view) {
-    $(view.xml).find('mrow').each(function () {
+  Formatter.removeUnnecessaryRows = function (xml) {
+    $(xml).find('mrow').each(function () {
       var children = $(this).children();
       if ($(this).is('mrow') && children.length === 1 && !$(children[0]).is('mfrac')) {
         $(this).unwrap();

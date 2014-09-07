@@ -4,18 +4,22 @@
 
 define(function (require) {
 
-  var ExpressionModel = require('expression_model');
-  var ExpressionView = require('expression_view');
+  var Formatter = require('formatter');
+  var Parser = require('parser');
   var $ = require('jquery');
 
-  describe('ExpressionView', function () {
+  describe('Formatter', function () {
+    var parser;
+
+    beforeEach(function () {
+      parser = new Parser();
+    });
+
     describe('createFractions', function () {
       it('should create fractions for division of numbers', function () {
-        var model = ExpressionModel.fromASCII('12/-32');
-        var view = new ExpressionView(model);
+        var xml = parser.parse('12/-32');
 
-        view.createFractions();
-        var xml = view.xml;
+        Formatter.createFractions(xml);
         var mrow = xml.firstElementChild;
         var mfrac = mrow.firstElementChild;
 
@@ -33,11 +37,9 @@ define(function (require) {
       });
 
       it('should create fractions for division of variables numbers', function () {
-        var model = ExpressionModel.fromASCII('x/-y');
-        var view = new ExpressionView(model);
+        var xml = parser.parse('x/-y');
 
-        view.createFractions();
-        var xml = view.xml;
+        Formatter.createFractions(xml);
         var mrow = xml.firstElementChild;
         var mfrac = mrow.firstElementChild;
 
@@ -55,11 +57,9 @@ define(function (require) {
       });
 
       it('should create fractions for division of expressions', function () {
-        var model = ExpressionModel.fromASCII('(x+12)/(-y-32)');
-        var view = new ExpressionView(model);
+        var xml = parser.parse('(x+12)/(-y-32)');
 
-        view.createFractions();
-        var xml = view.xml;
+        Formatter.createFractions(xml);
         var mrow = xml.firstElementChild;
         var mfrac = mrow.firstElementChild;
 
