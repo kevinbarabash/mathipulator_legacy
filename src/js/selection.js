@@ -2,13 +2,21 @@
  * Created by kevin on 2014-09-06.
  */
 
-define(function () {
+define(function (require) {
+
+  var $ = require('jquery');
 
   function Selection () {
     // A Selection is valid for a single math model
     this.root = null;
     this.nodes = [];
   }
+
+  Object.defineProperty(Selection.prototype, 'id', {
+    get: function () {
+      return $(this.root).attr('id');
+    }
+  });
 
   Selection.prototype.isEmpty = function () {
     return this.root === null;

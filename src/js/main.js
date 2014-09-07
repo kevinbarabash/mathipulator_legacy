@@ -13,12 +13,17 @@ define(function (require) {
   var model = null;
   var selection = new Selection();
 
+  function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  }
+
   document.body.addEventListener('click', function (e) {
     if ($(e.target).parents('svg').length === 0) {
       if (!selection.isEmpty()) {
-        $('svg').find('rect').filter(function () {
-          return $(this).attr('for') === $(selection.root).attr('id');
-        }).get(0).removeAttribute('class');
+        $('svg').find('[for="' + selection.id + '"]').removeAttr('class');
         selection.clear();
       }
     }
@@ -28,44 +33,43 @@ define(function (require) {
     console.log(expr.xml);
 
     var view;
+    var options = { format: 'algebra' };
+    if (getParameterByName('format')) {
+      options.format = getParameterByName('format');
+    }
 
-    view = new ExpressionView(expr, { format: 'algebra' });
+    view = new ExpressionView(expr, options);
     view.render();
 
-    $(view).on('operatorClick', function (e, id) {
-      expr.evaluateNode(id).then(function () {
-        addExpression(expr.clone());
-      });
-    });
+    // TODO: prevent selection of items in old views
+    // TODO: come up with something better than 'for'
 
-    $(view).on('numberClick', function (e, id) {
+    // TODO: insert a separate object for the highlight and get rid of the hover
+    // TODO: populate the action list;
+
+    $(view).on('operatorClick numberClick', function (e, id) {
       if (!selection.isEmpty()) {
-        // toggle selection
-        // TODO: prevent selection of items in old views
-        $(view.svg).find('rect').filter(function () {
-          return $(this).attr('for') === $(selection.root).attr('id'); // TODO: come up with something better than 'for'
-        }).get(0).removeAttribute('class');
+        $(view.svg).find('[for="' + selection.id + '"]').removeAttr('class'); // can't use removeClass b/c SVG
       }
 
-      if (id !== $(selection.root).attr('id')) {
+      if (id !== selection.id) {
         selection.set(model.getNode(id));
-
-        $(view.svg).find('rect').filter(function () {
-          return $(this).attr('for') === id;
-        }).get(0).setAttribute('class', 'selected');
+        $(view.svg).find('[for="' + id + '"]').attr('class', 'selected');
       } else {
         selection.clear();
       }
-
-      // TODO: insert a separate object for the highlight and get rid of the hover
-      // TODO: populate the action list;
     });
   }
 
-//  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+
   model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
+  if (getParameterByName('format') === 'arithmetic') {
+    model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+  }
+
   // TODO: determine when to set stretch=false and when not to
 //  model = ExpressionModel.fromASCII('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
+
   addExpression(model);
 
 
@@ -116,5 +120,12 @@ define(function (require) {
 
     addExpression(clone);
     model = clone; // replace of the next
+  });
+
+  $('#evaluate').click(function () {
+    // could use a try catch block instead ?
+    model.evaluateNode(selection.id).then(function () {
+      addExpression(model.clone());
+    });
   });
 });
