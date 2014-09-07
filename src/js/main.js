@@ -10,15 +10,32 @@ define(function (require) {
   var SVGUtils = require('svg_utils');
   var $ = require('jquery');
 
+  var model = null;
+  var selection = null;
+
+  document.body.addEventListener('click', function (e) {
+    if ($(e.target).parents('svg').length === 0) {
+      // deselects
+      // TODO: create a selection object with methods: set, clear, grow, shrink
+      if (selection !== null) {
+        $('svg').find('rect').filter(function () {
+          return $(this).attr('for') === selection;
+        }).get(0).removeAttribute('class');
+        selection = null;
+      }
+    }
+  });
+
   function addExpression(expr) {
     console.log(expr.xml);
     var view = new ExpressionView(expr);
 
-//    view.algebraFormatter();
-    view.arithmeticFormatter();
+    view.algebraFormatter();
+//    view.arithmeticFormatter();
 
     view.render().then(function (svg) {
       view.createSelectionOverlay(svg);
+      view.svg = svg;
       SVGUtils.correctBBox(svg);
     });
 
@@ -29,21 +46,25 @@ define(function (require) {
     });
 
     $(view).on('numberClick', function (e, id) {
-      var clone = expr.clone();
+      if (selection !== null) {
+        $(view.svg).find('rect').filter(function () {
+          return $(this).attr('for') === selection;
+        }).get(0).removeAttribute('class');
+      }
 
-      var node = $(clone.xml).find('#' + id).get(0);
-      $(node).removeAttr('id');
-      clone.distribute(node);
+      selection = id;
 
-      addExpression(clone);
-      model = clone;
+      $(view.svg).find('rect').filter(function () {
+        return $(this).attr('for') === id;
+      }).get(0).setAttribute('class', 'selected');
+
+      // TODO: insert a separate object for the highlight and get rid of the hover
+      // TODO: populate the action list;
     });
   }
 
-  var model;
-
-  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
-//  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
+//  model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
   // TODO: determine when to set stretch=false and when not to
 //  model = ExpressionModel.fromASCII('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
   addExpression(model);
@@ -70,18 +91,23 @@ define(function (require) {
       model = clone; // replace of the next
       // TODO: have a list of models, one for each line/step
     }
+
+    $('#inputMath').val('');
   });
 
   $('#distribute').click(function () {
-    var clone = model.clone();
+    if (selection !== null) {
+      var clone = model.clone();
 
-    // in the real case the user will select a number
-    // and then we'll check if it can be distributed
-    var num = $(clone.xml).find('mn').first().get(0);
-    clone.distribute(num);
+      var node = $(clone.xml).find('#' + selection).get(0);
+      $(node).removeAttr('id');
+      clone.distribute(node);
 
-    addExpression(clone);
-    model = clone; // replace of the next
+      addExpression(clone);
+      model = clone;
+
+      selection = null;
+    }
   });
 
   $('#simplifyMultiplication').click(function () {
