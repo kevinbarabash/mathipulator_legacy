@@ -7,21 +7,20 @@ define(function (require) {
 
   var ExpressionModel = require('expression_model');
   var ExpressionView = require('expression_view');
+  var Selection = require('selection');
   var SVGUtils = require('svg_utils');
   var $ = require('jquery');
 
   var model = null;
-  var selection = null;
+  var selection = new Selection();
 
   document.body.addEventListener('click', function (e) {
     if ($(e.target).parents('svg').length === 0) {
-      // deselects
-      // TODO: create a selection object with methods: set, clear, grow, shrink
-      if (selection !== null) {
+      if (!selection.isEmpty()) {
         $('svg').find('rect').filter(function () {
-          return $(this).attr('for') === selection;
+          return $(this).attr('for') === $(selection.root).attr('id');
         }).get(0).removeAttribute('class');
-        selection = null;
+        selection.clear();
       }
     }
   });
@@ -46,17 +45,23 @@ define(function (require) {
     });
 
     $(view).on('numberClick', function (e, id) {
-      if (selection !== null) {
+      if (!selection.isEmpty()) {
+        // toggle selection
+        // TODO: prevent selection of items in old views
         $(view.svg).find('rect').filter(function () {
-          return $(this).attr('for') === selection;
+          return $(this).attr('for') === $(selection.root).attr('id'); // TODO: come up with something better than 'for'
         }).get(0).removeAttribute('class');
       }
 
-      selection = id;
+      if (id !== $(selection.root).attr('id')) {
+        selection.set(model.getNode(id));
 
-      $(view.svg).find('rect').filter(function () {
-        return $(this).attr('for') === id;
-      }).get(0).setAttribute('class', 'selected');
+        $(view.svg).find('rect').filter(function () {
+          return $(this).attr('for') === id;
+        }).get(0).setAttribute('class', 'selected');
+      } else {
+        selection.clear();
+      }
 
       // TODO: insert a separate object for the highlight and get rid of the hover
       // TODO: populate the action list;
@@ -96,17 +101,17 @@ define(function (require) {
   });
 
   $('#distribute').click(function () {
-    if (selection !== null) {
+    if (!selection.isEmpty()) {
       var clone = model.clone();
 
-      var node = $(clone.xml).find('#' + selection).get(0);
+      var node = $(clone.xml).find('#' + $(selection.root).attr('id')).get(0);
       $(node).removeAttr('id');
       clone.distribute(node);
 
       addExpression(clone);
       model = clone;
 
-      selection = null;
+      selection.clear();
     }
   });
 

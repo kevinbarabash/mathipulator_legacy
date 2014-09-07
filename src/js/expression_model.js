@@ -69,11 +69,11 @@ define(function (require) {
   }
 
   ExpressionModel.prototype.evaluateNode = function (id) {
-    var node = $(this.xml).find('#' + id);
+    var node = this.getNode(id);
 
     var deferred = $.Deferred();
 
-    if (node.is('mo') && node.prev().is('mn') && node.next().is('mn')) {
+    if ($(node).is('mo') && $(node).prev().is('mn') && $(node).next().is('mn')) {
       try {
         evalXmlNode(node);
         this.removeUnnecessaryRows();
@@ -87,6 +87,10 @@ define(function (require) {
     }
 
     return deferred;
+  };
+
+  ExpressionModel.prototype.getNode = function (id) {
+    return $(this.xml).find('#' + id).get(0);
   };
 
   ExpressionModel.prototype.distribute = function (term) {
