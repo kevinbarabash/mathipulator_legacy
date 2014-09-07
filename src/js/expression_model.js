@@ -35,15 +35,27 @@ define(function (require) {
     var result;
     switch (op) {
       case '+':
+        if ($(node).prev().prev().text() === '-') {
+          throw 'must respect order-of-operations';
+        }
         result = prev + next;
         break;
       case '-':
+        if ($(node).prev().prev().text() === '-') {
+          throw 'must respect order-of-operations';
+        }
         result = prev - next;
         break;
       case '*':
+        if ($(node).prev().prev().text() === '/') {
+          throw 'must respect order-of-operations';
+        }
         result = prev * next;
         break;
       case '/':
+        if ($(node).prev().prev().text() === '/') {
+          throw 'must respect order-of-operations';
+        }
         result = prev / next;   // TODO: adopt exact math library
         break;
       default:
@@ -62,10 +74,14 @@ define(function (require) {
     var deferred = $.Deferred();
 
     if (node.is('mo') && node.prev().is('mn') && node.next().is('mn')) {
-      evalXmlNode(node);
-      this.removeUnnecessaryRows();
-      this.removeUnnecessaryParentheses();
-      deferred.resolve();
+      try {
+        evalXmlNode(node);
+        this.removeUnnecessaryRows();
+        this.removeUnnecessaryParentheses();
+        deferred.resolve();
+      } catch(e) {
+        deferred.reject();
+      }
     } else {
       deferred.reject();
     }

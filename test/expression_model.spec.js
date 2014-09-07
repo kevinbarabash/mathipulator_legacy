@@ -68,8 +68,8 @@ define(function (require) {
           });
         });
 
-        // TODO: update method to respect order-of-operations
-        it.skip('should not evaluate subtraction when respecting order-of-operations', function () {
+        // TODO: should also test the case where 1 - 2 + 3 and the user tries to evaluate '+'
+        it('should not evaluate subtraction when respecting order-of-operations', function () {
           var secondSub = $(model.xml).findOp('-').get(1);
           var id = $(secondSub).attr('id');
 
@@ -136,7 +136,8 @@ define(function (require) {
           });
         });
 
-        it.skip('should not evaluate division when respecting order-of-operations', function () {
+        // TODO: should also test the case where 1 / 2 * 3 and the user tries to evaluate '*'
+        it('should not evaluate division when respecting order-of-operations', function () {
           var secondDiv = $(model.xml).findOp('/').get(1);
           var id = $(secondDiv).attr('id');
 
