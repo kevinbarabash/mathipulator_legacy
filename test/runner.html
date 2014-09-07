@@ -28,7 +28,11 @@
 
   require(specs, function () {
     mocha.checkLeaks();
-    mocha.run();
+    if (window.mochaPhantomJS) {
+      mochaPhantomJS.run();
+    } else {
+      mocha.run();
+    }
   });
 </script>
 </body>

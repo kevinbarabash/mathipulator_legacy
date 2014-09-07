@@ -136,7 +136,7 @@ define(function (require) {
           });
         });
 
-        // TODO: should also test the case where 1 / 2 * 3 and the user tries to evaluate '*'
+        // TODO: should also test the case where 1 / 2 * 3 and the user tries to evaluate '*h'
         it('should not evaluate division when respecting order-of-operations', function () {
           var secondDiv = $(model.xml).findOp('/').get(1);
           var id = $(secondDiv).attr('id');

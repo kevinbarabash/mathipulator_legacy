@@ -1,0 +1,21 @@
+{
+  "name": "algebra",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kevin Barabash",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-mocha-phantomjs": "^0.5.0",
+    "gulp-watch": "^1.0.2",
+    "mocha-phantomjs": "^3.5.0",
+    "phantomjs": "^1.9.7-15"
+  }
+}
