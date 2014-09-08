@@ -64,7 +64,7 @@ define(function (require) {
 
   model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
   if (getParameterByName('format') === 'arithmetic') {
-    model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+    model = ExpressionModel.fromASCII('5 + 1 + 2 * (3 - 4)');
   }
 
   // TODO: determine when to set stretch=false and when not to
@@ -101,31 +101,29 @@ define(function (require) {
 
   $('#distribute').click(function () {
     if (!selection.isEmpty()) {
-      var clone = model.clone();
-
-      var node = $(clone.xml).find('#' + $(selection.root).attr('id')).get(0);
-      $(node).removeAttr('id');
-      clone.distribute(node);
-
-      addExpression(clone);
-      model = clone;
+      model = model.distribute(selection.id);
+      addExpression(model);
 
       selection.clear();
     }
   });
 
   $('#simplify').click(function () {
-    var clone = model.clone();
-    clone.simplify();
-
-    addExpression(clone);
-    model = clone; // replace of the next
+    model = model.simplify();
+    addExpression(model);
   });
 
   $('#evaluate').click(function () {
-    // could use a try catch block instead ?
-    model.evaluateNode(selection.id).then(function () {
-      addExpression(model.clone());
-    });
+    try {
+      model = model.evaluateNode(selection.id);
+      addExpression(model);
+    } catch(e) {
+      console.log('error evaluating node: %o', e);
+    }
+  });
+
+  $('#commute').click(function () {
+    model = model.commute(selection.id);
+    addExpression(model);
   });
 });

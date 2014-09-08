@@ -69,31 +69,33 @@ define(function (require) {
   }
 
   ExpressionModel.prototype.evaluateNode = function (id) {
-    var node = this.getNode(id);
-
-    var deferred = $.Deferred();
+    var clone = this.clone();
+    var node = clone.getNode(id);
 
     if ($(node).is('mo') && $(node).prev().is('mn') && $(node).next().is('mn')) {
       try {
         evalXmlNode(node);
-        this.removeUnnecessaryRows();
-        this.removeUnnecessaryParentheses();
-        deferred.resolve();
+        clone.removeUnnecessaryRows();
+        clone.removeUnnecessaryParentheses();
       } catch(e) {
-        deferred.reject();
+        throw "can't evaluate this node"
       }
     } else {
-      deferred.reject();
+      throw "can't evaluate this node";
     }
 
-    return deferred;
+    return clone;
   };
 
   ExpressionModel.prototype.getNode = function (id) {
     return $(this.xml).find('#' + id).get(0);
   };
 
-  ExpressionModel.prototype.distribute = function (term) {
+  ExpressionModel.prototype.distribute = function (id) {
+
+    var clone = this.clone();
+    var term = clone.getNode(id);
+
     var mrow;
 
     // verify that we can do a distribution operation before doing it
@@ -137,7 +139,8 @@ define(function (require) {
       }
     }
 
-    this.removeUnnecessaryRows();
+    clone.removeUnnecessaryRows();
+    return clone;
   };
 
   ExpressionModel.prototype.multiply = function (term) {
@@ -167,12 +170,15 @@ define(function (require) {
   };
 
   ExpressionModel.prototype.simplify = function () {
-    this.simplifyMultiplication();
-    this.simplifyDivision();
+    var clone = this.clone();
+    this.simplifyMultiplication(clone.xml);
+    this.simplifyDivision(clone.xml);
+    return clone;
   };
 
-  ExpressionModel.prototype.simplifyMultiplication = function () {
-    $(this.xml).findOp('*').each(function () {
+  // TODO: move this method to a helper module similar to formatter.js, but for transforming mathml
+  ExpressionModel.prototype.simplifyMultiplication = function (xml) {
+    $(xml).findOp('*').each(function () {
       var prev, next;
 
       // TODO: handle multiplier being either before or after the '*'
@@ -198,8 +204,9 @@ define(function (require) {
     });
   };
 
-  ExpressionModel.prototype.simplifyDivision = function () {
-    $(this.xml).findOp('/').each(function () {
+  // TODO: move this method to a helper module similar to formatter.js, but for transforming mathml
+  ExpressionModel.prototype.simplifyDivision = function (xml) {
+    $(xml).findOp('/').each(function () {
       var prev, next;
 
       if ($(this).next().is('mn')) {
@@ -222,6 +229,49 @@ define(function (require) {
         }
       }
     });
+  };
+
+  ExpressionModel.prototype.commute = function (id) {
+    var clone = this.clone();
+    var node = clone.getNode(id);
+    // TODO: update clone's ids
+
+    if (clone.canCommuteAddition(node) || clone.canCommuteMultiplication(node)) {
+      var next$ = $(node).next();
+      var prev$ = $(node).prev();
+      next$.insertBefore(node);
+      prev$.insertAfter(node);
+    }
+
+    return clone;
+  };
+
+  ExpressionModel.prototype.canCommuteAddition = function (node) {
+    if ($(node).is('mo') && $(node).text() === '+') {
+      var prevOp = $(node).prev().prev().get(0);
+      if (prevOp) {
+        if ($(prevOp).is('mo') && $(prevOp).text() === '+') {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  ExpressionModel.prototype.canCommuteMultiplication = function (node) {
+    if ($(node).is('mo') && $(node).text() === '*') {
+      var prevOp = $(node).prev().prev().get(0);
+      if (prevOp) {
+        if ($(prevOp).is('mo') && $(prevOp).text() === '*') {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
   };
 
   ExpressionModel.prototype.removeUnnecessaryRows = function () {
