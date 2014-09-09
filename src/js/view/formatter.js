@@ -102,9 +102,15 @@ define(function (require) {
       var children = $(this).children();
       if ($(this).is('mrow') && children.length === 1 && !$(children[0]).is('mfrac')) {
         $(this).unwrap();
-      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')' && $(this).parent().is('mfrac')) {
-        $(this.firstElementChild).remove();
-        $(this.lastElementChild).remove();
+      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
+        if ($(this).parent().is('mfrac')) {
+          // removes parentheses
+          // TODO: move it to the parenthese function
+          $(this.firstElementChild).remove();
+          $(this.lastElementChild).remove();
+        } else {
+          $(this).replaceWith($(this).children());
+        }
       }
     });
   };

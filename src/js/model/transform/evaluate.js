@@ -7,44 +7,61 @@ define(function (require) {
   require('jquery_extensions');
 
   function evalXmlNode(node) {
-    var prev = parseFloat($(node).prev().text());
-    var op = $(node).text();
-    var next = parseFloat($(node).next().text());
+    var prev = $(node).prev();
+    var next = $(node).next();
 
-    var result;
+    var prevValue = parseFloat(prev.text());
+    var nextValue = parseFloat(next.text());
+
+    var op = $(node).text();
+
+    var resultValue;
     switch (op) {
       case '+':
-        if ($(node).prev().prev().text() === '-') {
+        if (prev.prev().isOp('-')) {
           throw 'must respect order-of-operations';
         }
-        result = prev + next;
+        resultValue = prevValue + nextValue;
         break;
       case '-':
-        if ($(node).prev().prev().text() === '-') {
+        if (prev.prev().isOp('-')) {
           throw 'must respect order-of-operations';
         }
-        result = prev - next;
+        resultValue = prevValue - nextValue;
         break;
       case '*':
-        if ($(node).prev().prev().text() === '/') {
+        if (prev.prev().isOp('/')) {
           throw 'must respect order-of-operations';
         }
-        result = prev * next;
+        resultValue = prevValue * nextValue;
         break;
       case '/':
-        if ($(node).prev().prev().text() === '/') {
+        if (prev.prev().isOp('/')) {
           throw 'must respect order-of-operations';
         }
-        result = prev / next;   // TODO: adopt exact math library
+        resultValue = prevValue / nextValue;   // TODO: adopt exact math library
         break;
       default:
         break;
     }
 
-    // TODO: mark result node with a specific class so that it can be highlighted in the view
-    $(node).prev().text(result).addClass('result');
-    $(node).next().remove();
+    next.remove();
     $(node).remove();
+
+    // TODO: mark result node with a specific class so that it can be highlighted in the view
+    var result = prev;
+    result.text(resultValue).addClass('result');
+
+    if (result.siblings().length === 0 && result.parent().is('mrow')) {
+      result.unwrap('mrow');
+    }
+    if (result.prev().isOp('(') && result.next().isOp(')')) {
+      result.prev().remove();
+      result.next().remove();
+    }
+    if (result.siblings().length === 0 && result.parent().is('mrow')) {
+      result.unwrap('mrow');
+    }
   }
 
   return function (node) {

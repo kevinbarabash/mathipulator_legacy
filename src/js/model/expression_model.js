@@ -13,6 +13,7 @@ define(function (require) {
   var distribute = require('model/transform/distribute');
   var evaluate = require('model/transform/evaluate');
   var simplify = require('model/transform/simplify');
+  var modify = require('model/transform/modify');
 
   function ExpressionModel() {}
 
@@ -41,61 +42,22 @@ define(function (require) {
   ExpressionModel.prototype.evaluate = function (id) {
     var clone = this.clone();
     evaluate(clone.getNode(id));
-    clone.removeUnnecessaryRows();
-    clone.removeUnnecessaryParentheses();
+    $(clone.xml).removeExtra('mrow');
     return clone;
   };
 
   ExpressionModel.prototype.distribute = function (id) {
     var clone = this.clone();
     distribute(clone.getNode(id));
-    clone.removeUnnecessaryRows();
+    $(clone.xml).removeExtra('mrow');
     return clone;
   };
 
-  ExpressionModel.prototype.modify = function (operator, expr) {
-    if (/[\+\-\/\*\^]/.test(operator)) {
-      if (operator === '*') {
-        return this.multiply(expr);
-      } else if (operator === '/') {
-        return this.divide(expr);
-      } else {
-        throw "we don't handle that operator yet, try again later";
-      }
-    }
-  };
-
-  ExpressionModel.prototype.multiply = function (term) {
+  ExpressionModel.prototype.modify = function (op, exprModel) {
     var clone = this.clone();
-    var mrow = clone.xml.firstElementChild;
-    term = term.xml.firstElementChild;
-
-    if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo>*</mo>');
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).prepend(term.outerHTML + '<mo>*</mo>');
-    } else {
-      // TODO: throw a more helpful error
-      throw "can't handle this case yet";
-    }
-
-    return clone;
-  };
-
-  ExpressionModel.prototype.divide = function (term) {
-    var clone = this.clone();
-    var mrow = clone.xml.firstElementChild;
-    term = term.xml.firstElementChild;
-
-    if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').after('<mo>/</mo>' + term.outerHTML);
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).append('<mo>/</mo>' + term.outerHTML);
-    } else {
-      // TODO: throw a more helpful error
-      throw "can't handle this case yet";
-    }
-
+    var root = clone.xml.firstElementChild;
+    var expr = exprModel.xml.firstElementChild;
+    modify(root, op, expr);
     return clone;
   };
 
@@ -157,25 +119,14 @@ define(function (require) {
     return clone;
   };
 
-  ExpressionModel.prototype.removeUnnecessaryRows = function () {
-    $(this.xml).find('mrow').each(function () {
-      var children = $(this).children();
-      if ($(this).is('mrow') && children.length === 1) {
-        $(this).replaceWith(children[0]);
-      } else if ($(this).is('mrow') && $(this.firstElementChild).text() === '(' && $(this.lastElementChild).text() === ')') {
-        $(this).replaceWith(children);
-      }
-    });
-  };
-
-  ExpressionModel.prototype.removeUnnecessaryParentheses = function () {
-    $(this.xml).findOp('(').each(function () {
-      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
-        $(this).next().next().remove();
-        $(this).remove();
-      }
-    });
-  };
+//  ExpressionModel.prototype.removeUnnecessaryParentheses = function () {
+//    $(this.xml).findOp('(').each(function () {
+//      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
+//        $(this).next().next().remove();
+//        $(this).remove();
+//      }
+//    });
+//  };
 
   return ExpressionModel;
 });

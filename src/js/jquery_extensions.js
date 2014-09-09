@@ -41,6 +41,15 @@ define(function (require) {
       return this.is('mo') && this.text() === op;
     },
 
+    removeExtra: function (tag) {
+      this.find(tag).each(function () {
+        var children = $(this).children();
+        if ($(this).is(tag) && children.length === 1) {
+          $(this).replaceWith(children[0]);
+        }
+      });
+    },
+
     wrapWithParentheses: function () {
       this.next().before('<mo stretchy="false">(</mo>').after('<mo stretchy="false">)</mo>'); // wrap in parentheses
       return this;
