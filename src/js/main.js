@@ -62,9 +62,9 @@ define(function (require) {
   }
 
 
-  model = ExpressionModel.fromASCII('3x^2 + 2x + 5');
+  model = ExpressionModel.fromASCII('3x^2 + -2x + 5');
   if (getParameterByName('format') === 'arithmetic') {
-    model = ExpressionModel.fromASCII('5 + 1 + 2 * (3 - 4)');
+    model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4) * (6/7)');
   }
 
   // TODO: determine when to set stretch=false and when not to
@@ -78,23 +78,11 @@ define(function (require) {
     var input = mathInput$.val();
 
     var operator = input[0];
-    if (/[\+\-\/\*\^]/.test(operator)) {
-      var expr = ExpressionModel.fromASCII(input.substring(1));
-      var clone = model.clone();
+    var expr = ExpressionModel.fromASCII(input.substring(1));
 
-      if (operator === '*') {
-        clone.multiply(expr.xml.firstElementChild);
-      } else if (operator === '/') {
-        clone.divide(expr.xml.firstElementChild);
-      } else {
-        throw "we don't handle that operator yet, try again later";
-      }
-
-      addExpression(clone);
-
-      model = clone; // replace of the next
-      // TODO: have a list of models, one for each line/step
-    }
+    model = model.modify(operator, expr);
+    addExpression(model);
+    // TODO: have a list of models, one for each line/step
 
     mathInput$.val('');
   });
@@ -126,4 +114,16 @@ define(function (require) {
     model = model.commute(selection.id);
     addExpression(model);
   });
+
+  $('#rewriteSubtraction').click(function () {
+    model = model.rewriteSubtraction(selection.id);
+    addExpression(model);
+  });
+
+  $('#rewriteDivision').click(function () {
+    model = model.rewriteDivision(selection.id);
+    addExpression(model);
+  });
+
+  // TODO: collect like terms
 });

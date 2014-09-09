@@ -34,6 +34,14 @@ define(function (require) {
         $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mn>' + num + '</mn><mo stretchy="false">)</mo></mrow>');
       }
     });
+
+    $(xml).find('mi').each(function () {
+      var id = $(this).text();
+      if (id.indexOf('-') !== -1) {
+        id = id.substring(id.indexOf('-') + 1);
+        $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mi>' + id + '</mi><mo stretchy="false">)</mo></mrow>');
+      }
+    });
   };
 
   Formatter.createFractions = function (xml) {

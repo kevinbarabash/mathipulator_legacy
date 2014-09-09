@@ -100,7 +100,7 @@ define(function (require) {
 
     // verify that we can do a distribution operation before doing it
     // check if the term is followed by multiplication and an mrow
-    if ($(term).next().is('mo') && $(term).next().text() === '*' && $(term).next().next().is('mrow')) {
+    if ($(term).next().isOp('*') && $(term).next().next().is('mrow')) {
       mrow = $(term).next().next().get(0);
 
       // check that the row has multiple terms
@@ -120,7 +120,7 @@ define(function (require) {
       // TODO: figure out what to do when hasAddOp = false and hasMulOps = true
     }
 
-    if ($(term).prev().is('mo') && $(term).prev().text() === '/' && $(term).prev().prev().is('mrow')) {
+    if ($(term).prev().isOp('/') && $(term).prev().prev().is('mrow')) {
       mrow = $(term).prev().prev().get(0);
 
       // check that the row has multiple terms
@@ -143,8 +143,22 @@ define(function (require) {
     return clone;
   };
 
+  ExpressionModel.prototype.modify = function (operator, expr) {
+    if (/[\+\-\/\*\^]/.test(operator)) {
+      if (operator === '*') {
+        return this.multiply(expr);
+      } else if (operator === '/') {
+        return this.divide(expr);
+      } else {
+        throw "we don't handle that operator yet, try again later";
+      }
+    }
+  };
+
   ExpressionModel.prototype.multiply = function (term) {
-    var mrow = this.xml.firstElementChild;
+    var clone = this.clone();
+    var mrow = clone.xml.firstElementChild;
+    term = term.xml.firstElementChild;
 
     if ($(mrow).hasAddOps()) {
       $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo>*</mo>');
@@ -154,10 +168,14 @@ define(function (require) {
       // TODO: throw a more helpful error
       throw "can't handle this case yet";
     }
+
+    return clone;
   };
 
   ExpressionModel.prototype.divide = function (term) {
-    var mrow = this.xml.firstElementChild;
+    var clone = this.clone();
+    var mrow = clone.xml.firstElementChild;
+    term = term.xml.firstElementChild;
 
     if ($(mrow).hasAddOps()) {
       $(mrow).wrap('<mrow></mrow>').after('<mo>/</mo>' + term.outerHTML);
@@ -167,6 +185,8 @@ define(function (require) {
       // TODO: throw a more helpful error
       throw "can't handle this case yet";
     }
+
+    return clone;
   };
 
   ExpressionModel.prototype.simplify = function () {
@@ -247,10 +267,10 @@ define(function (require) {
   };
 
   ExpressionModel.prototype.canCommuteAddition = function (node) {
-    if ($(node).is('mo') && $(node).text() === '+') {
+    if ($(node).isOp('+')) {
       var prevOp = $(node).prev().prev().get(0);
       if (prevOp) {
-        if ($(prevOp).is('mo') && $(prevOp).text() === '+') {
+        if ($(prevOp).isOp('+')) {
           return true;
         }
       } else {
@@ -261,10 +281,10 @@ define(function (require) {
   };
 
   ExpressionModel.prototype.canCommuteMultiplication = function (node) {
-    if ($(node).is('mo') && $(node).text() === '*') {
+    if ($(node).isOp('*')) {
       var prevOp = $(node).prev().prev().get(0);
       if (prevOp) {
-        if ($(prevOp).is('mo') && $(prevOp).text() === '*') {
+        if ($(prevOp).isOp('*')) {
           return true;
         }
       } else {
@@ -272,6 +292,51 @@ define(function (require) {
       }
     }
     return false;
+  };
+
+  ExpressionModel.prototype.rewriteSubtraction = function (id) {
+    var clone = this.clone();
+    var node = clone.getNode(id);
+
+    if ($(node).isOp('-')) {
+      var next = $(node).next();
+
+      if (next.is('mi') || next.is('mn')) {
+        next.text('-' + next.text());
+      } else if (next.is('msup')) {
+        var base = $(next.children()[0]);
+        if (base.is('mi') || base.is('mn')) {
+          base.text('-' + base.text());
+        }
+        // TODO: figure out how to handle the recursive case
+        // e.g. <msup><msup><mi>x</mi><mn>2</mn</msup><mn>2</mn></msup>
+        // TODO: create a function that returns the base node of any msup
+      } else if (next.is('mrow')) {
+        // TODO: figure out what to do for this case
+      } else {
+        throw "we don't handle rewriting subtraction in this situation, yet";
+      }
+
+      $(node).text('+');
+    }
+
+    return clone;
+  };
+
+  // TODO: fix this transform to play nice with commuting multiplication
+  ExpressionModel.prototype.rewriteDivision = function (id) {
+    var clone = this.clone();
+    var node = clone.getNode(id);
+
+    if ($(node).prev().isOp('/')) {
+      var opNode = $(node).prev();
+      if ($(node).is('mi') || $(node).is('mn')) {
+        $(node).replaceWith('<mn>1</mn><mo>/</mo>' + node.outerHTML);
+        opNode.text('*');
+      }
+    }
+
+    return clone;
   };
 
   ExpressionModel.prototype.removeUnnecessaryRows = function () {

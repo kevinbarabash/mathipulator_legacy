@@ -37,6 +37,10 @@ define(function (require) {
       });
     },
 
+    isOp: function (op) {
+      return this.is('mo') && this.text() === op;
+    },
+
     wrapWithParentheses: function () {
       this.next().before('<mo stretchy="false">(</mo>').after('<mo stretchy="false">)</mo>'); // wrap in parentheses
       return this;

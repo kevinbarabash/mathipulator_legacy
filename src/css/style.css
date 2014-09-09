@@ -10,17 +10,19 @@ body {
 div#input {
     border: solid 2px darkgray;
     border-radius: 4px;
-    width: 400px;
     left: 10px;
     top: 10px;
     font-family: sans-serif;
     color: dimgray;
     padding: 20px;
     background-color: white;
+    margin: 10px;
 }
 
 input[type=text] {
-    font-size: 22px;
+    font-size: 28px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 circle {
