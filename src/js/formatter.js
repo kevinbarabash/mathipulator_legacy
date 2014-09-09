@@ -26,12 +26,13 @@ define(function (require) {
   };
 
 
+  // TODO: figure out how to get this working with formatAlgebraicMultiplication
   Formatter.fixNegativeNumbers = function(xml) {
     $(xml).find('mn').each(function () {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
-        $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mn>' + num + '</mn><mo stretchy="false">)</mo></mrow>');
+        $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
       }
     });
 

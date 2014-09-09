@@ -64,7 +64,7 @@ define(function (require) {
 
   model = ExpressionModel.fromASCII('3x^2 + -2x + 5');
   if (getParameterByName('format') === 'arithmetic') {
-    model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4) * (6/7)');
+    model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
   }
 
   // TODO: determine when to set stretch=false and when not to
@@ -73,7 +73,7 @@ define(function (require) {
   addExpression(model);
 
 
-  $('#addExpr').click(function () {
+  $('#modExpr').click(function () {
     var mathInput$ = $('#inputMath');
     var input = mathInput$.val();
 
@@ -103,7 +103,7 @@ define(function (require) {
 
   $('#evaluate').click(function () {
     try {
-      model = model.evaluateNode(selection.id);
+      model = model.evaluate(selection.id);
       addExpression(model);
     } catch(e) {
       console.log('error evaluating node: %o', e);

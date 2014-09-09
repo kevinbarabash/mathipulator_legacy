@@ -9,6 +9,11 @@ define(function (require) {
 
   require('jquery_extensions');
 
+  var commute = require('transformations/commute');
+  var distribute = require('transformations/distribute');
+  var evaluate = require('transformations/evaluate');
+  var simplify = require('transformations/simplify');
+
   function ExpressionModel() {}
 
   ExpressionModel.fromASCII = function (ascii) {
@@ -23,122 +28,27 @@ define(function (require) {
     return model;
   };
 
+  // TODO: update the cloned ids
+  // TODO: create a map from old ids to new ids
   ExpressionModel.prototype.clone = function () {
     return ExpressionModel.fromXML(this.xml);
-  };
-
-  function evalXmlNode(node) {
-    var prev = parseFloat($(node).prev().text());
-    var op = $(node).text();
-    var next = parseFloat($(node).next().text());
-
-    var result;
-    switch (op) {
-      case '+':
-        if ($(node).prev().prev().text() === '-') {
-          throw 'must respect order-of-operations';
-        }
-        result = prev + next;
-        break;
-      case '-':
-        if ($(node).prev().prev().text() === '-') {
-          throw 'must respect order-of-operations';
-        }
-        result = prev - next;
-        break;
-      case '*':
-        if ($(node).prev().prev().text() === '/') {
-          throw 'must respect order-of-operations';
-        }
-        result = prev * next;
-        break;
-      case '/':
-        if ($(node).prev().prev().text() === '/') {
-          throw 'must respect order-of-operations';
-        }
-        result = prev / next;   // TODO: adopt exact math library
-        break;
-      default:
-        break;
-    }
-
-    // TODO: mark result node with a specific class so that it can be highlighted in the view
-    $(node).prev().text(result).addClass('result');
-    $(node).next().remove();
-    $(node).remove();
-  }
-
-  ExpressionModel.prototype.evaluateNode = function (id) {
-    var clone = this.clone();
-    var node = clone.getNode(id);
-
-    if ($(node).is('mo') && $(node).prev().is('mn') && $(node).next().is('mn')) {
-      try {
-        evalXmlNode(node);
-        clone.removeUnnecessaryRows();
-        clone.removeUnnecessaryParentheses();
-      } catch(e) {
-        throw "can't evaluate this node"
-      }
-    } else {
-      throw "can't evaluate this node";
-    }
-
-    return clone;
   };
 
   ExpressionModel.prototype.getNode = function (id) {
     return $(this.xml).find('#' + id).get(0);
   };
 
-  ExpressionModel.prototype.distribute = function (id) {
-
+  ExpressionModel.prototype.evaluate = function (id) {
     var clone = this.clone();
-    var term = clone.getNode(id);
+    evaluate(clone.getNode(id));
+    clone.removeUnnecessaryRows();
+    clone.removeUnnecessaryParentheses();
+    return clone;
+  };
 
-    var mrow;
-
-    // verify that we can do a distribution operation before doing it
-    // check if the term is followed by multiplication and an mrow
-    if ($(term).next().isOp('*') && $(term).next().next().is('mrow')) {
-      mrow = $(term).next().next().get(0);
-
-      // check that the row has multiple terms
-      if ($(mrow).hasAddOps()) {
-
-        // actual distribute the term
-        $(mrow).children().each(function () {
-          if (!$(this).is('mo')) {
-            $(this).replaceWith('<mrow>' + term.outerHTML + '</mn><mo>*</mo>' + this.outerHTML + '</mrow>');
-          }
-        });
-
-        // cleanup
-        $(term).next().remove();
-        $(term).remove();
-      }
-      // TODO: figure out what to do when hasAddOp = false and hasMulOps = true
-    }
-
-    if ($(term).prev().isOp('/') && $(term).prev().prev().is('mrow')) {
-      mrow = $(term).prev().prev().get(0);
-
-      // check that the row has multiple terms
-      if ($(mrow).hasAddOps()) {
-
-        // actual distribute the term
-        $(mrow).children().each(function () {
-          if (!$(this).is('mo')) {
-            $(this).replaceWith('<mrow>' + this.outerHTML + '</mn><mo>/</mo>' + term.outerHTML + '</mrow>');
-          }
-        });
-
-        // cleanup
-        $(term).prev().remove();
-        $(term).remove();
-      }
-    }
-
+  ExpressionModel.prototype.distribute = function (id) {
+    var clone = this.clone();
+    distribute(clone.getNode(id));
     clone.removeUnnecessaryRows();
     return clone;
   };
@@ -191,108 +101,16 @@ define(function (require) {
 
   ExpressionModel.prototype.simplify = function () {
     var clone = this.clone();
-    this.simplifyMultiplication(clone.xml);
-    this.simplifyDivision(clone.xml);
+    simplify(clone.xml);
     return clone;
-  };
-
-  // TODO: move this method to a helper module similar to formatter.js, but for transforming mathml
-  ExpressionModel.prototype.simplifyMultiplication = function (xml) {
-    $(xml).findOp('*').each(function () {
-      var prev, next;
-
-      // TODO: handle multiplier being either before or after the '*'
-      if ($(this).prev().is('mn')) {
-        prev = $(this).prev().number();
-
-        if ($(this).next().is('mrow') && $(this).next().hasMulOps()) {
-          var mrow = $(this).next().get(0);
-          if ($(mrow.firstElementChild).is('mn')) {
-            next = $(mrow.firstElementChild).number();
-            $(mrow.firstElementChild).text(prev * next);
-            $(this).prev().remove();
-            $(this).remove();
-            $(mrow).unwrap();
-          }
-        } else if ($(this).next().is('mn')) {
-          next = $(this).next().number();
-          $(this).next().text(prev * next);
-          $(this).prev().remove();
-          $(this).remove();
-        }
-      }
-    });
-  };
-
-  // TODO: move this method to a helper module similar to formatter.js, but for transforming mathml
-  ExpressionModel.prototype.simplifyDivision = function (xml) {
-    $(xml).findOp('/').each(function () {
-      var prev, next;
-
-      if ($(this).next().is('mn')) {
-        next = $(this).next().number(); // denominator
-
-        if ($(this).prev().is('mrow') && $(this).prev().hasMulOps()) {
-          var mrow = $(this).prev().get(0);
-          if ($(mrow.firstElementChild).is('mn')) {
-            prev = $(mrow.firstElementChild).number();
-            $(mrow.firstElementChild).text(prev / next);
-            $(this).next().remove();
-            $(this).remove();
-            $(mrow).unwrap();
-          }
-        } else if ($(this).prev().is('mn')) {
-          prev = $(this).prev().number();
-          $(this).prev().text(prev / next);
-          $(this).next().remove();
-          $(this).remove();
-        }
-      }
-    });
   };
 
   ExpressionModel.prototype.commute = function (id) {
     var clone = this.clone();
-    var node = clone.getNode(id);
-    // TODO: update clone's ids
-
-    if (clone.canCommuteAddition(node) || clone.canCommuteMultiplication(node)) {
-      var next$ = $(node).next();
-      var prev$ = $(node).prev();
-      next$.insertBefore(node);
-      prev$.insertAfter(node);
-    }
-
+    commute(clone.getNode(id));
     return clone;
   };
 
-  ExpressionModel.prototype.canCommuteAddition = function (node) {
-    if ($(node).isOp('+')) {
-      var prevOp = $(node).prev().prev().get(0);
-      if (prevOp) {
-        if ($(prevOp).isOp('+')) {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  ExpressionModel.prototype.canCommuteMultiplication = function (node) {
-    if ($(node).isOp('*')) {
-      var prevOp = $(node).prev().prev().get(0);
-      if (prevOp) {
-        if ($(prevOp).isOp('*')) {
-          return true;
-        }
-      } else {
-        return true;
-      }
-    }
-    return false;
-  };
 
   ExpressionModel.prototype.rewriteSubtraction = function (id) {
     var clone = this.clone();
