@@ -16,7 +16,7 @@ define(function (require) {
       });
     });
 
-    describe('evaluateNode', function () {
+    describe('evaluate', function () {
       var model;
 
       describe('addition/subtraction: 1 + 2 - 3 - 4', function () {
@@ -26,7 +26,7 @@ define(function (require) {
 
         it('should evaluate addition', function () {
           var id = $(model.xml).findOp('+').attr('id');
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -46,7 +46,7 @@ define(function (require) {
 
         it('should evaluate subtraction', function () {
           var id = $(model.xml).findOp('-').attr('id');
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -75,7 +75,7 @@ define(function (require) {
           assert($(mrow).is('mrow'));
           assert.equal($(mrow).children().length, 7, 'the are 7 tokens in the expression');
 
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -90,7 +90,7 @@ define(function (require) {
 
         it('should evaluate multiplication', function () {
           var id = $(model.xml).findOp('*').attr('id');
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -110,7 +110,7 @@ define(function (require) {
 
         it('should evaluate division', function () {
           var id = $(model.xml).findOp('/').attr('id');
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -139,7 +139,7 @@ define(function (require) {
           assert($(mrow).is('mrow'));
           assert.equal($(mrow).children().length, 7, 'the are 7 tokens in the expression');
 
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -156,7 +156,7 @@ define(function (require) {
           var firstAddition = $(model.xml).findOp('+').get(0);
           var id = $(firstAddition).attr('id');
 
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
@@ -178,7 +178,7 @@ define(function (require) {
           var secondAddition = $(model.xml).findOp('+').get(1);
           var id = $(secondAddition).attr('id');
 
-          var result = model.evaluateNode(id);
+          var result = model.evaluate(id);
           var mrow = result.xml.firstElementChild;
 
           assert($(mrow).is('mrow'));
