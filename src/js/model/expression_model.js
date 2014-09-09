@@ -3,16 +3,16 @@
  */
 
 define(function (require) {
-  var Parser = require('parser');
+  var Parser = require('model/parser');
   var parser = new Parser();
   var $ = require('jquery');
 
   require('jquery_extensions');
 
-  var commute = require('transformations/commute');
-  var distribute = require('transformations/distribute');
-  var evaluate = require('transformations/evaluate');
-  var simplify = require('transformations/simplify');
+  var commute = require('model/transform/commute');
+  var distribute = require('model/transform/distribute');
+  var evaluate = require('model/transform/evaluate');
+  var simplify = require('model/transform/simplify');
 
   function ExpressionModel() {}
 

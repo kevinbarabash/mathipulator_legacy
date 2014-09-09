@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-  var MathSymbols = require('math_symbols');
+  var MathSymbols = require('view/math_symbols');
 
   var Formatter = {};
 

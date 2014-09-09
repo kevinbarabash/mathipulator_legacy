@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-  var ExpressionModel = require('expression_model');
+  var ExpressionModel = require('model/expression_model');
   var $ = require('jquery');
 
   require('jquery_extensions');

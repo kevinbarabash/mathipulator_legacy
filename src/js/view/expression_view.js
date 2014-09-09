@@ -4,8 +4,8 @@
 
 define(function (require) {
 
-  var Formatter = require('formatter');
-  var SVGUtils = require('svg_utils');
+  var Formatter = require('view/formatter');
+  var SVGUtils = require('view/svg_utils');
   var $ = require('jquery');
 
   require('jquery_extensions');

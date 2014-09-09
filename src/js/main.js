@@ -5,8 +5,8 @@
 define(function (require) {
   'use strict';
 
-  var ExpressionModel = require('expression_model');
-  var ExpressionView = require('expression_view');
+  var ExpressionModel = require('model/expression_model');
+  var ExpressionView = require('view/expression_view');
   var Selection = require('selection');
   var $ = require('jquery');
 
