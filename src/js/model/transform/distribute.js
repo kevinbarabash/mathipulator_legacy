@@ -39,26 +39,37 @@ define(function (require) {
     }
   }
 
-  // xml expression, node id
-  return function (node) {
-    if ($(node).is('mo')) {
-      return;
+  return {
+    name: 'distribute',
+    canTransform: function (node) {
+      if ($(node).is('mo')) {
+        return false;
+      }
+
+      var next = $(node).next();
+      var prev = $(node).prev();
+
+      return next.isOp('*') && next.next().is('mrow') ||
+        prev.isOp('*') && prev.prev().is('mrow') ||
+        prev.isOp('/') && prev.prev().is('mrow');
+    },
+    transform: function (node) {
+      if (this.canTransform(node)) {
+        var next = $(node).next();
+        var prev = $(node).prev();
+
+        if (next.isOp('*') && next.next().is('mrow')) {
+          distributeForwards('*', node);
+        }
+
+        if (prev.isOp('*') && prev.prev().is('mrow')) {
+          distributeBackwards('*', node);
+        }
+
+        if (prev.isOp('/') && prev.prev().is('mrow')) {
+          distributeBackwards('/', node);
+        }
+      }
     }
-
-    var expr = node;
-
-    if ($(expr).next().isOp('*') && $(expr).next().next().is('mrow')) {
-      distributeForwards('*', expr);
-    }
-
-    if ($(expr).prev().isOp('*') && $(expr).prev().prev().is('mrow')) {
-      distributeBackwards('*', expr);
-    }
-
-    if ($(expr).prev().isOp('/') && $(expr).prev().prev().is('mrow')) {
-      distributeBackwards('/', expr);
-    }
-
-    // TODO: figure out what to do when hasAddOp = false and hasMulOps = true
   };
 });

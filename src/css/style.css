@@ -17,6 +17,7 @@ div#input {
     padding: 20px;
     background-color: white;
     margin: 10px;
+    height: 110px;
 }
 
 input[type=text] {

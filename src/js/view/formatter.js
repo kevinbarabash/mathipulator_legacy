@@ -22,7 +22,7 @@ define(function (require) {
     this.fixNegativeNumbers(xml);
     this.createFractions(xml);
     this.formatAlgebraicMultiplication(xml);
-    this.removeUnnecessaryParentheses(xml);
+//    this.removeUnnecessaryParentheses(xml);
   };
 
 
@@ -86,10 +86,7 @@ define(function (require) {
   // TODO: add a separate function to remove parentheses from denominators
   Formatter.removeUnnecessaryParentheses = function (xml) {
     $(xml).findOp('(').each(function () {
-      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
-        $(this).next().next().remove();
-        $(this).remove();
-      } else if ($(this).parent().is('mrow') && $(this).parent().parent().is('mfrac')) {
+      if ($(this).parent().is('mrow') && $(this).parent().parent().is('mfrac')) {
         var parent = this.parentElement;
         $(parent.firstElementChild).remove();
         $(parent.lastElementChild).remove();

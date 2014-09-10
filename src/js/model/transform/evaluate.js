@@ -6,7 +6,7 @@ define(function (require) {
   var $ = require('jquery');
   require('jquery_extensions');
 
-  function evalXmlNode(node) {
+  function evaluate(node) {
     var prev = $(node).prev();
     var next = $(node).next();
 
@@ -18,27 +18,15 @@ define(function (require) {
     var resultValue;
     switch (op) {
       case '+':
-        if (prev.prev().isOp('-')) {
-          throw 'must respect order-of-operations';
-        }
         resultValue = prevValue + nextValue;
         break;
       case '-':
-        if (prev.prev().isOp('-')) {
-          throw 'must respect order-of-operations';
-        }
         resultValue = prevValue - nextValue;
         break;
       case '*':
-        if (prev.prev().isOp('/')) {
-          throw 'must respect order-of-operations';
-        }
         resultValue = prevValue * nextValue;
         break;
       case '/':
-        if (prev.prev().isOp('/')) {
-          throw 'must respect order-of-operations';
-        }
         resultValue = prevValue / nextValue;   // TODO: adopt exact math library
         break;
       default:
@@ -46,12 +34,15 @@ define(function (require) {
     }
 
     next.remove();
-    $(node).remove();
+    prev.remove();
 
-    // TODO: mark result node with a specific class so that it can be highlighted in the view
-    var result = prev;
-    result.text(resultValue).addClass('result');
+    var result = $('<mn></mn>').text(resultValue);
+    $(node).replaceWith(result);
 
+    return result;
+  }
+
+  function cleanup(result) {
     if (result.siblings().length === 0 && result.parent().is('mrow')) {
       result.unwrap('mrow');
     }
@@ -64,15 +55,32 @@ define(function (require) {
     }
   }
 
-  return function (node) {
-    if ($(node).is('mo') && $(node).prev().is('mn') && $(node).next().is('mn')) {
-      try {
-        evalXmlNode(node);
-      } catch(e) {
-        throw "can't evaluate this node"
+  return {
+    name: 'evaluate',
+
+    canTransform: function (node) {
+      var prev = $(node).prev();
+      var next = $(node).next();
+
+      if ($(node).is('mo') && prev.is('mn') && next.is('mn')) {
+        var op = $(node).text();
+
+        if (op === '+' || op === '-') {
+          return !prev.prev().isOp('-');
+        } else if (op === '*' || op === '/') {
+          return !prev.prev().isOp('/');
+        }
       }
-    } else {
-      throw "can't evaluate this node";
+
+      // TODO: add error handling
+      return false;
+    },
+
+    transform: function (node) {
+      if (this.canTransform(node)) {
+        var result = evaluate(node);
+        cleanup(result);
+      }
     }
   }
 });

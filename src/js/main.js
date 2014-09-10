@@ -10,6 +10,14 @@ define(function (require) {
   var Selection = require('selection');
   var $ = require('jquery');
 
+  var Commute = require('model/transform/commute');
+  var Evaluate = require('model/transform/evaluate');
+  var Distribute = require('model/transform/distribute');
+  var RewriteSubtraction = require('model/transform/rewrite_subtraction');
+  var RewriteDivision = require('model/transform/rewrite_division');
+
+  var transforms = [Commute, Evaluate, Distribute, RewriteSubtraction, RewriteDivision];
+
   var model = null;
   var selection = new Selection();
 
@@ -28,6 +36,8 @@ define(function (require) {
       }
     }
   });
+
+  $('#context_menu button').hide();
 
   function addExpression(expr) {
     console.log(expr.xml);
@@ -53,8 +63,17 @@ define(function (require) {
       }
 
       if (id !== selection.id) {
-        selection.set(model.getNode(id));
+        var node = model.getNode(id);
+        selection.set(node);
         $(view.svg).find('[for="' + id + '"]').attr('class', 'selected');
+
+        $('#context_menu button').hide();
+
+        transforms.filter(function (transform) {
+          return transform.canTransform(node);
+        }).forEach(function (transform) {
+          $('#context_menu #' + transform.name).show();
+        });
       } else {
         selection.clear();
       }
@@ -62,7 +81,8 @@ define(function (require) {
   }
 
 
-  model = ExpressionModel.fromASCII('3x^2 + -2x + 5');
+//  model = ExpressionModel.fromASCII('3x^2 + -2x + -5/4'); // TODO: fix formatting issues
+  model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
   if (getParameterByName('format') === 'arithmetic') {
     model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
   }
@@ -87,43 +107,26 @@ define(function (require) {
     mathInput$.val('');
   });
 
-  $('#distribute').click(function () {
-    if (!selection.isEmpty()) {
-      model = model.distribute(selection.id);
-      addExpression(model);
-
-      selection.clear();
-    }
-  });
-
   $('#simplify').click(function () {
     model = model.simplify();
     addExpression(model);
   });
 
-  $('#evaluate').click(function () {
-    try {
-      model = model.evaluate(selection.id);
-      addExpression(model);
-    } catch(e) {
-      console.log('error evaluating node: %o', e);
-    }
+  // context specific actions
+  transforms.forEach(function (Transform) {
+    $('#' + Transform.name).click(function () {
+      applyTransform(Transform);
+    });
   });
 
-  $('#commute').click(function () {
-    model = model.commute(selection.id);
+  function applyTransform(Transform) {
+    var clone = model.clone();
+    Transform.transform(clone.getNode(selection.id));
+    $(clone.xml).removeExtra('mrow');  // TODO: move this into the distribute transform's cleanup
+    model = clone;
     addExpression(model);
-  });
-
-  $('#rewriteSubtraction').click(function () {
-    model = model.rewriteSubtraction(selection.id);
-    addExpression(model);
-  });
-
-  $('#rewriteDivision').click(function () {
-    model = model.rewriteDivision(selection.id);
-    addExpression(model);
-  });
+    $('#context_menu button').hide();
+  }
 
   // TODO: collect like terms
 });
