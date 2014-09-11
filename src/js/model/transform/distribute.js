@@ -5,6 +5,8 @@
 define(function (require) {
 
   var $ = require('jquery');
+  var uuid = require('uuid');
+
   require('jquery_extensions');
 
   function distributeForwards (op, expr) {
@@ -13,13 +15,16 @@ define(function (require) {
     if (mrow.hasAddOps()) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
-          $(this).replaceWith('<mrow>' + expr.outerHTML + '</mn><mo>' + op + '</mo>' + this.outerHTML + '</mrow>');
+          var id = uuid();
+          $(this).replaceWith('<mrow>' + expr.outerHTML + '</mn><mo class="op" id="' + id + '">' + op + '</mo>' + this.outerHTML + '</mrow>');
         }
       });
 
       // cleanup
       $(expr).next().remove();
       $(expr).remove();
+
+      $(mrow).removeAttr('parens');
     }
   }
 
@@ -29,13 +34,16 @@ define(function (require) {
     if (mrow.hasAddOps()) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
-          $(this).replaceWith('<mrow>' + this.outerHTML + '</mn><mo>' + op + '</mo>' + expr.outerHTML + '</mrow>');
+          var id = uuid();
+          $(this).replaceWith('<mrow>' + this.outerHTML + '</mn><mo class="op" id="' + id + '">' + op + '</mo>' + expr.outerHTML + '</mrow>');
         }
       });
 
       // cleanup
       $(expr).prev().remove();
       $(expr).remove();
+
+      $(mrow).removeAttr('parens');
     }
   }
 

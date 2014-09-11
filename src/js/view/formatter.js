@@ -11,9 +11,25 @@ define(function (require) {
   Formatter.formatArithmetic = function (xml) {
     this.fixNegativeNumbers(xml);
     this.createFractions(xml);
-    this.formatArithmeticOperators(xml);
     this.removeUnnecessaryParentheses(xml);
     this.removeUnnecessaryRows(xml);
+
+    $(xml).find('[parens="true"]').each(function () {
+      $(this).before('<mo>(</mo>');
+      $(this).after('<mo>)</mo>');
+    });
+
+    $(xml).findOp('*').each(function () {
+      var next = $(this).next();
+      if (next.is('mrow') && next.hasAddOps()) {
+        next.before('<mo>(</mo>');
+        next.after('<mo>)</mo>');
+      }
+    });
+
+    this.formatArithmeticOperators(xml);
+
+    console.log(xml);
   };
 
   Formatter.formatAlgebra = function (xml) {

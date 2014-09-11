@@ -177,13 +177,15 @@ define(function (require) {
         return result;
       }
     } else if (token === '(') {
-      var mrow = $('<mrow>').attr('id', '_' + id);
+      var mrow = this.expression();
+      $(mrow).attr({
+        id: '_' + id,
+        parens: 'true'  // use the 'parens' attribute to indicate that a mrow should have parenthesis around it
+      });
       id++;
-      mrow.append($('<mo>').text('('));
-      mrow.append(this.expression());
+
       token = tokens[this.i++];
       if (token === ')') {
-        mrow.append($('<mo>').text(')'));
         return mrow;
       } else {
         throw "expected ')'";

@@ -5,16 +5,20 @@
 define(function (require) {
 
   var $ = require('jquery');
+  var uuid = require('uuid');
+
   require('jquery_extensions');
 
   // TODO: need to give these guys IDs
   // TODO: switch to UUID
 
   function add (mrow, term) {
+    var id = uuid();
+
     if ($(mrow).hasAddOps()) {
-      $(mrow).prepend(term.outerHTML + '<mo class="op">+</mo>');
+      $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">+</mo>');
     } else if ($(mrow).hasMulOps()) {
-      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op">+</mo>');
+      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">+</mo>');
     } else {
       console.log(mrow);
       throw "we can't add to a power, root, or function yet";
@@ -22,10 +26,12 @@ define(function (require) {
   }
 
   function subtract (mrow, term) {
+    var id = uuid();
+
     if ($(mrow).hasAddOps()) {
-      $(mrow).append('<mo class="op">-</mo>' + term.outerHTML);
+      $(mrow).append('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
     } else if ($(mrow).hasMulOps()) {
-      $(mrow).wrap('<mrow></mrow>').after('<mo class="op">-</mo>' + term.outerHTML);
+      $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
     } else {
       console.log(mrow);
       throw "can't subtract a power, root, or function yet";
@@ -33,10 +39,12 @@ define(function (require) {
   }
 
   function multiply (mrow, term) {
+    var id = uuid();
+
     if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo>*</mo>');
+      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
     } else if ($(mrow).hasMulOps()) {
-      $(mrow).prepend(term.outerHTML + '<mo>*</mo>');
+      $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
     } else {
       console.log(mrow);
       throw "can't multiple a power, root, or function yet";
@@ -44,10 +52,12 @@ define(function (require) {
   }
 
   function divide (mrow, term) {
+    var id = uuid();
+
     if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').after('<mo>/</mo>' + term.outerHTML);
+      $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
     } else if ($(mrow).hasMulOps()) {
-      $(mrow).append('<mo>/</mo>' + term.outerHTML);
+      $(mrow).append('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
     } else {
       console.log(mrow);
       throw "we can't divide a power, root, or function yet";

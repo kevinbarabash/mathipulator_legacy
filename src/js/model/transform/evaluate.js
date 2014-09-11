@@ -4,6 +4,8 @@
 
 define(function (require) {
   var $ = require('jquery');
+  var uuid = require('uuid');
+
   require('jquery_extensions');
 
   function evaluate(node) {
@@ -36,7 +38,10 @@ define(function (require) {
     next.remove();
     prev.remove();
 
-    var result = $('<mn></mn>').text(resultValue);
+    var result = $('<mn></mn>').text(resultValue).attr({
+      'class': 'num',
+      id: uuid()
+    });
     $(node).replaceWith(result);
 
     return result;
