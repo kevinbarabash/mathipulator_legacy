@@ -20,7 +20,7 @@ define(function (require) {
 
   function SimpleMathMLParser () {}
 
-// TODO: switch from 'match' to 'exec' so that an invalid input raises an error
+  // TODO: switch from 'match' to 'exec' so that an invalid input raises an error
   SimpleMathMLParser.prototype.parse = function (input) {
     this.i = 0;
     this.tokens = input.match(/([a-z])|([\(\)\+\-\/\*\^])|(\d*\.\d+|\d+\.\d*|\d+)/g);
@@ -29,20 +29,27 @@ define(function (require) {
     var math = $('<math>').attr('xmlns', namespace).attr('display', 'block');
     math.append(this.expression());
 
+    $(math).find('mrow,msup,mfrac,mn,mi,mo').each(function () {
+      $(this).attr('id', '_' + id);
+      id++;
+    });
+
+    // this is really a view concern
+    $(math).find('mn').addClass('num');
+    $(math).find('mo').addClass('op');
+
     return math.get(0);
   };
 
   SimpleMathMLParser.prototype.expression = function() {
     var tokens = this.tokens;
-    var mrow = $('<mrow>').attr('id', '_' + id);
-    id++;
+    var mrow = $('<mrow>');
 
     mrow.append(this.term(tokens));
 
     var token = tokens[this.i++];
     while (token === '+' || token === '-') {
-      mrow.append($('<mo>').addClass('op').text(token).attr('id', '_' + id));
-      id++;
+      mrow.append($('<mo>').text(token));
       mrow.append(this.term());
       token = tokens[this.i++];
     }
@@ -57,8 +64,7 @@ define(function (require) {
 
   SimpleMathMLParser.prototype.term = function() {
     var tokens = this.tokens;
-    var mrow = $('<mrow>').attr('id', '_' + id);
-    id++;
+    var mrow = $('<mrow>');
 
     mrow.append(this.factor(tokens));
 
@@ -67,15 +73,8 @@ define(function (require) {
     while (token === '*' || token === '/' || token === '(' || isAlpha(token)) {
       if (token === '(') {
 
-        mrow.append(
-          $('<mo>').text('*').attr({
-            id: '_' + id,
-            display: 'none'
-          })
-        );
+        mrow.append($('<mo>').text('*').attr('display', 'none'));
 
-        id++;
-        id++;
         var expr = this.expression();
         token = tokens[this.i++];
         if (token !== ')') {
@@ -85,20 +84,13 @@ define(function (require) {
         mrow.append(expr);
 
       } else if (isAlpha(token)) {  // TODO: figure out why we can't let factor() handle this
-        mrow.append(
-          $('<mo>').text('*').attr({
-            id: '_' + id,
-            display: 'none'
-          })
-        );
-        id++;
+        mrow.append($('<mo>').text('*').attr('display', 'none'));
         this.i--; // put the alpha back on so factor() can deal with it
         // TODO: create a peek function to handle this more elegantly
         mrow.append(this.factor());
         token = tokens[this.i++];
       } else {
-        mrow.append($('<mo>').addClass('op').text(token).attr('id', '_' + id));
-        id++;
+        mrow.append($('<mo>').text(token));
         mrow.append(this.factor());
         token = tokens[this.i++];
       }
@@ -141,14 +133,11 @@ define(function (require) {
           // handle unary op case
           throw "we don't handle unary operators in this case yet";
         } else {
-          var msup = $('<msup>').attr('id', '_' + id);
-          id++;
+          var msup = $('<msup>');
           if (isAlpha(token)) {
-            msup.append($('<mi>').text(token).attr('id', '_' + id));
-            id++;
+            msup.append($('<mi>').text(token));
           } else if (isNumber(token)) {
-            msup.append($('<mn>').addClass('num').text(token).attr('id', '_' + id));
-            id++;
+            msup.append($('<mn>').text(token));
           }
           token = tokens[this.i++];
           if (token === '(') {
@@ -159,11 +148,9 @@ define(function (require) {
             }
           } else {
             if (isAlpha(token)) {
-              msup.append($('<mi>').text(token).attr('id', '_' + id));
-              id++;
+              msup.append($('<mi>').text(token));
             } else if (isNumber(token)) {
-              msup.append($('<mn>').addClass('num').text(token).attr('id', '_' + id));
-              id++;
+              msup.append($('<mn>').text(token));
             }
           }
           return msup;
@@ -172,20 +159,15 @@ define(function (require) {
         this.i--;
         var result = '';
         if (isAlpha(token)) {
-          result = $('<mi>').text(sign + token).attr('id', '_' + id);
+          result = $('<mi>').text(sign + token);
         } else if (isNumber(token)) {
-          result = $('<mn>').addClass('num').text(sign + token).attr('id', '_' + id);
+          result = $('<mn>').text(sign + token);
         }
-        id++;
         return result;
       }
     } else if (token === '(') {
       var mrow = this.expression();
-      $(mrow).attr({
-        id: '_' + id,
-        parens: 'true'  // use the 'parens' attribute to indicate that a mrow should have parenthesis around it
-      });
-      id++;
+      $(mrow).attr('parens', 'true');  // use the 'parens' attribute to indicate that a mrow should have parenthesis around it
 
       token = tokens[this.i++];
       if (token === ')') {
