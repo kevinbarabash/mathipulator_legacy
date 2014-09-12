@@ -16,6 +16,7 @@ define(function (require) {
 
   var namespace = 'http://www.w3.org/1998/Math/MathML';
   var id = 0;
+  // TODO: assign IDs to things at the end, it'll clean the code up quite a bit
 
   function SimpleMathMLParser () {}
 
@@ -66,21 +67,24 @@ define(function (require) {
 
     while (token === '*' || token === '/' || token === '(' || isAlpha(token)) {
       if (token === '(') {
+
         mrow.append(
           $('<mo>').text('*').attr({
             id: '_' + id,
             display: 'none'
           })
         );
+
         id++;
-        mrow.append($('<mo>').text('(').attr('id', '_' + id));
         id++;
-        mrow.append(this.expression());
+        var expr = this.expression();
         token = tokens[this.i++];
         if (token !== ')') {
           throw "expected ')'";
         }
-        mrow.append($('<mo>').text(')'));
+        expr.attr('parens', 'true');
+        mrow.append(expr);
+
       } else if (isAlpha(token)) {  // TODO: figure out why we can't let factor() handle this
         mrow.append(
           $('<mo>').text('*').attr({

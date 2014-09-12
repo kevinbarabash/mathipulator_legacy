@@ -57,14 +57,14 @@ define(function (require) {
 
         $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('display');
 
-        var expectedXml = '<mrow><mn>2</mn><mo>*</mo><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow></mrow>';
+        var expectedXml = '<mrow><mn>2</mn><mo>*</mo><mrow parens="true"><mi>x</mi><mo>+</mo><mn>1</mn></mrow></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
 
       it('should parse adjacent parentheses as multiplication: (x+1)(x-1)', function () {
         var xml = parser.parse('(x+1)(x-1)');
 
-        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
+        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('display').removeAttr('parens');
 
         var expectedXml = '<mrow><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>*</mo><mrow><mi>x</mi><mo>-</mo><mn>1</mn></mrow></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
