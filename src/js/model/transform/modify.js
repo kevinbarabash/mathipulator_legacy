@@ -20,7 +20,6 @@ define(function (require) {
     } else if ($(mrow).hasMulOps()) {
       $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">+</mo>');
     } else {
-      console.log(mrow);
       throw "we can't add to a power, root, or function yet";
     }
   }
@@ -33,7 +32,6 @@ define(function (require) {
     } else if ($(mrow).hasMulOps()) {
       $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
     } else {
-      console.log(mrow);
       throw "can't subtract a power, root, or function yet";
     }
   }
@@ -46,7 +44,6 @@ define(function (require) {
     } else if ($(mrow).hasMulOps()) {
       $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
     } else {
-      console.log(mrow);
       throw "can't multiple a power, root, or function yet";
     }
   }
@@ -59,7 +56,6 @@ define(function (require) {
     } else if ($(mrow).hasMulOps()) {
       $(mrow).append('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
     } else {
-      console.log(mrow);
       throw "we can't divide a power, root, or function yet";
     }
   }
@@ -85,7 +81,7 @@ define(function (require) {
           break;
         default:
           throw "we don't handle that operator yet, try again later";
-          break;
+//          break;
       }
     }
   };

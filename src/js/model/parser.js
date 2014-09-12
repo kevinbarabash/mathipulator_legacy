@@ -59,7 +59,6 @@ define(function (require) {
     var tokens = this.tokens;
     var mrow = $('<mrow>').attr('id', '_' + id);
     id++;
-    var mo, mi;
 
     mrow.append(this.factor(tokens));
 
@@ -121,7 +120,6 @@ define(function (require) {
     var tokens = this.tokens;
     var token = tokens[this.i++];
     var sign = '';
-    var mi, mn, mo;
 
     // TODO: think about multiple unary minuses
     if (token === '+' || token === '-') {
@@ -141,6 +139,7 @@ define(function (require) {
       if (tokens[this.i++] === '^') {
         if (sign) {
           // handle unary op case
+          throw "we don't handle unary operators in this case yet";
         } else {
           var msup = $('<msup>').attr('id', '_' + id);
           id++;

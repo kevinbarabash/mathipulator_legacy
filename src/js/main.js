@@ -40,9 +40,6 @@ define(function (require) {
   $('#context_menu button').hide();
 
   function addExpression(expr) {
-    console.log(expr.xml);
-    debugger;
-
     var view;
     var options = { format: 'algebra' };
     if (getParameterByName('format')) {
@@ -113,13 +110,6 @@ define(function (require) {
     addExpression(model);
   });
 
-  // context specific actions
-  transforms.forEach(function (Transform) {
-    $('#' + Transform.name).click(function () {
-      applyTransform(Transform);
-    });
-  });
-
   function applyTransform(Transform) {
     var clone = model.clone();
     Transform.transform(clone.getNode(selection.id));
@@ -128,6 +118,13 @@ define(function (require) {
     addExpression(model);
     $('#context_menu button').hide();
   }
+
+  // context specific actions
+  transforms.forEach(function (Transform) {
+    $('#' + Transform.name).click(function () {
+      applyTransform(Transform);
+    });
+  });
 
   // TODO: collect like terms
 });

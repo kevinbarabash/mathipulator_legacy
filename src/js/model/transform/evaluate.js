@@ -87,5 +87,5 @@ define(function (require) {
         cleanup(result);
       }
     }
-  }
+  };
 });

@@ -66,8 +66,8 @@ define(function (require) {
       $(rect).attr({
         x: translate.tx + bbox.x - padding,
         y: translate.ty + bbox.y - padding,
-        width: bbox.width + 2*padding,
-        height: bbox.height + 2*padding,
+        width: bbox.width + 2 * padding,
+        height: bbox.height + 2 * padding,
         fill: 'transparent',
         for: num.id
       });

@@ -5,6 +5,9 @@
 define(function (require) {
 
   var MathSymbols = require('view/math_symbols');
+  var $ = require('jquery');
+
+  require('jquery_extensions');
 
   var Formatter = {};
 
@@ -28,8 +31,6 @@ define(function (require) {
     });
 
     this.formatArithmeticOperators(xml);
-
-    console.log(xml);
   };
 
   Formatter.formatAlgebra = function (xml) {
