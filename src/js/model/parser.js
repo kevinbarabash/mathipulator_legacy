@@ -29,7 +29,7 @@ define(function (require) {
     var math = $('<math>').attr('xmlns', namespace).attr('display', 'block');
     math.append(this.expression());
 
-    $(math).find('mrow,msup,mfrac,mn,mi,mo').each(function () {
+    $(math).find('mrow,msup,mn,mi,mo').each(function () {
       $(this).attr('id', '_' + id);
       id++;
     });
@@ -55,7 +55,6 @@ define(function (require) {
     }
     this.i--;
 
-//    if (mrow.children().length === 1 && mrow.children().first().is('mrow')) {
     if (mrow.children().length === 1) {
       return mrow.children().first();
     }
@@ -137,37 +136,18 @@ define(function (require) {
     }
 
     if (tokens[this.i++] === '^') {
-      token = tokens[this.i++];
-      sign = '';
-
-      if (token === '+' || token === '-') {
-        sign = token;
-        token = tokens[this.i++];
-      }
-
-
-      if (isAlpha(token)) {
-        exp = $('<mi>').text(sign + token);
-      } else if (isNumber(token)) {
-        exp = $('<mn>').text(sign + token);
-      } else if (token === '(') {
-        exp = this.expression();  // TODO: figure out what to do with unary minus
-        $(exp).attr('parens', 'true');
-        token = tokens[this.i++];
-        if (token !== ')') {
-          throw "expected ')'";
-        }
-      }
-
+      exp = this.factor();
       return $('<msup>').append(base).append(exp);
-
     } else {
       this.i--;
 
       var factor = base;
 
       if ($(factor).is('mrow')) {
-        // prepend with <mo>-</mo> ?  // TODO: figure out what to do with unary minus
+        if (sign !== '') {
+          // prepend with <mo>-</mo> ?  // TODO: figure out what to do with unary minus
+          throw "we don't handle unary minus yet";
+        }
       } else {
         var text = $(factor).text();
         $(factor).text(sign + text);

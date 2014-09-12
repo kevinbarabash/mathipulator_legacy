@@ -69,6 +69,16 @@ define(function (require) {
         var expectedXml = '<mrow><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>*</mo><mrow><mi>x</mi><mo>-</mo><mn>1</mn></mrow></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
+
+      // TODO: fix the code to handle this case then re-enable test
+      it.skip('should parse unary minus: -(x+1)', function () {
+        var xml = parser.parse('-(x+1)');
+
+        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('display').removeAttr('parens');
+
+        var expectedXml = '<mrow></mrow>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
     });
 
     describe('Powers', function () {
@@ -105,6 +115,33 @@ define(function (require) {
         $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
 
         var expectedXml = '<mrow><msup><mi>x</mi><mn>-3</mn></msup><mo>+</mo><msup><mn>2</mn><mn>-4</mn></msup></mrow>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should parse powers of powers with numbers: x^2^2', function () {
+        var xml = parser.parse('x^2^2');
+
+        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
+
+        var expectedXml = '<msup><mi>x</mi><msup><mn>2</mn><mn>2</mn></msup></msup>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should parse powers of powers with expressions: (x+1)^(x+1)^(x+1)', function () {
+        var xml = parser.parse('(x+1)^(x+1)^(x+1)');
+
+        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
+
+        var expectedXml = '<msup><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><msup><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow></msup></msup>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should parse fractional exponents: 440^(2/12)', function () {
+        var xml = parser.parse('440^(2/12)');
+
+        $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
+
+        var expectedXml = '<msup><mn>440</mn><mrow><mn>2</mn><mo>/</mo><mn>12</mn></mrow></msup>';  // doesn't use mfrac
         assert.equal(xml.innerHTML, expectedXml);
       });
 
