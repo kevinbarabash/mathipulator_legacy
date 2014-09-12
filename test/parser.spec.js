@@ -15,6 +15,45 @@ define(function (require) {
       parser = new Parser();
     });
 
+    describe('Numbers', function () {
+      it('should create a single mn a positive number: 12 -> <mn>12</mn>', function () {
+        var xml = parser.parse('12');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mn>12</mn>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should create a single mn a negative number: -12 -> <mn>-12</mn>', function () {
+        var xml = parser.parse('-12');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mn>-12</mn>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should create a single mn a decimal number: -1.23 -> <mn>-1.23</mn>', function () {
+        var xml = parser.parse('-1.23');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mn>-1.23</mn>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+    });
+
+    describe('Variables', function () {
+      it('should create a single mi a positive variable: x -> <mi>x</mi>', function () {
+        var xml = parser.parse('x');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mi>x</mi>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should create a single mi a negative variable: -x -> <mi>-x</mi>', function () {
+        var xml = parser.parse('-x');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mi>-x</mi>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+    });
+
     describe('Expressions', function () {
       it('should parse simple expressions with +, - , *, /', function () {
         var xml = parser.parse('1 + 2 - 3 * 4 / 5');
@@ -82,6 +121,13 @@ define(function (require) {
     });
 
     describe('Powers', function () {
+      it('should parse a single power as an msup: x^2 -> <msup><mi>x</mi><mn>2</mn></msup>', function () {
+        var xml = parser.parse('x^2');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<msup><mi>x</mi><mn>2</mn></msup>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
       it('should parse powers with numeric exponents: x^3 + 2^4', function () {
         var xml = parser.parse('x^3+2^4');
 
@@ -155,6 +201,12 @@ define(function (require) {
         assert.equal(xml.innerHTML, expectedXml);
       });
     });
-  });
 
+    describe('Parentheses', function () {
+      it.skip('needs some test cases to be written', function () {
+        
+      });
+    });
+
+  });
 });

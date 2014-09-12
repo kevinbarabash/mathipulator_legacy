@@ -8,12 +8,17 @@ var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var sloc = require('gulp-sloc');
 var eslint = require('gulp-eslint');
 
-gulp.task('default', function () {
+gulp.task('watch', function () {
   watch(['src/**/*.js', 'test/**/*.js'], function() {
     return gulp
       .src('test/runner.html')
       .pipe(mochaPhantomJS({reporter: 'dot'}));
   });
+});
+
+gulp.task('test', function () {
+  gulp.src('test/runner.html')
+    .pipe(mochaPhantomJS({reporter: 'dot'}));
 });
 
 gulp.task('sloc', function () {
