@@ -41,6 +41,7 @@ define(function (require) {
 
   function addExpression(expr) {
     console.log(expr.xml);
+    debugger;
 
     var view;
     var options = { format: 'algebra' };

@@ -16,7 +16,7 @@ define(function (require) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
           var id = uuid();
-          $(this).replaceWith('<mrow>' + expr.outerHTML + '</mn><mo class="op" id="' + id + '">' + op + '</mo>' + this.outerHTML + '</mrow>');
+          $(this).replaceWith('<mrow>' + expr.outerHTML + '<mo class="op" id="' + id + '">' + op + '</mo>' + this.outerHTML + '</mrow>');
         }
       });
 
@@ -35,7 +35,7 @@ define(function (require) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
           var id = uuid();
-          $(this).replaceWith('<mrow>' + this.outerHTML + '</mn><mo class="op" id="' + id + '">' + op + '</mo>' + expr.outerHTML + '</mrow>');
+          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">' + op + '</mo>' + expr.outerHTML + '</mrow>');
         }
       });
 
