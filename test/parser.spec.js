@@ -95,28 +95,26 @@ define(function (require) {
 
         $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
 
-        var expectedXml = '<mrow><msup><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></msup></mrow>';
+        var expectedXml = '<msup><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></msup>';
         assert.equal(xml.innerHTML, expectedXml);
       });
 
-      // TODO: update parser to handle case where the negative exponent isn't wrapped
       it('should parse expression with negative exponents', function () {
-//        var xml = parser.parse('x^(-3)+2^-4');
-        var xml = parser.parse('x^(-3)');
+        var xml = parser.parse('x^(-3)+2^-4');
 
         $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
 
-        var expectedXml = '<mrow><msup><mi>x</mi><mn>-3</mn></msup></mrow>';
+        var expectedXml = '<mrow><msup><mi>x</mi><mn>-3</mn></msup><mo>+</mo><msup><mn>2</mn><mn>-4</mn></msup></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
 
-      // TODO: this should pass after we fix the negative exponent problem first
+      // TODO: this should work after we figure out what to do with unary minuses infront of expression in parentheses
       it.skip('should parse an expression for the 2D Gaussian', function () {
         var xml = parser.parse('e^(-(x^2+y^2))');
 
         $(xml).find('*').removeAttr('class').removeAttr('id').removeAttr('parens');
 
-        var expectedXml = '<mrow><msup><mi>e</mi><mrow><mo>-</mo><mrow></mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup></mrow></msup></mrow>'
+        var expectedXml = '<msup><mi>e</mi><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup></mrow></msup>'
         assert.equal(xml.innerHTML, expectedXml);
       });
     });

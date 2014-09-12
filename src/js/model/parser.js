@@ -55,6 +55,7 @@ define(function (require) {
     }
     this.i--;
 
+//    if (mrow.children().length === 1 && mrow.children().first().is('mrow')) {
     if (mrow.children().length === 1) {
       return mrow.children().first();
     }
@@ -119,64 +120,60 @@ define(function (require) {
       token = tokens[this.i++];
     }
 
-    // TODO: handle parentheses here
-    // e.g.
-    // check for '('
-    // call this.expression();
-    // check for ')'
-    // then check
-    // TODO: write test cases first including a failing test case for (x+1)^2 and 1/(x-1)^2
 
-    if (isAlpha(token) || isNumber(token)) {
-      if (tokens[this.i++] === '^') {
-        if (sign) {
-          // handle unary op case
-          throw "we don't handle unary operators in this case yet";
-        } else {
-          var msup = $('<msup>');
-          if (isAlpha(token)) {
-            msup.append($('<mi>').text(token));
-          } else if (isNumber(token)) {
-            msup.append($('<mn>').text(token));
-          }
-          token = tokens[this.i++];
-          if (token === '(') {
-            msup.append(this.expression());
-            token = tokens[this.i++];
-            if (token !== ')') {
-              throw "expected ')'";
-            }
-          } else {
-            if (isAlpha(token)) {
-              msup.append($('<mi>').text(token));
-            } else if (isNumber(token)) {
-              msup.append($('<mn>').text(token));
-            }
-          }
-          return msup;
-        }
-      } else {
-        this.i--;
-        var result = '';
-        if (isAlpha(token)) {
-          result = $('<mi>').text(sign + token);
-        } else if (isNumber(token)) {
-          result = $('<mn>').text(sign + token);
-        }
-        return result;
-      }
+    var base, exp;
+
+    if (isAlpha(token)) {
+      base = $('<mi>').text(token);
+    } else if (isNumber(token)) {
+      base = $('<mn>').text(token);
     } else if (token === '(') {
-      var mrow = this.expression();
-      $(mrow).attr('parens', 'true');  // use the 'parens' attribute to indicate that a mrow should have parenthesis around it
-
+      base = this.expression();
+      $(base).attr('parens', 'true');
       token = tokens[this.i++];
-      if (token === ')') {
-        return mrow;
-      } else {
+      if (token !== ')') {
         throw "expected ')'";
       }
+    }
+
+    if (tokens[this.i++] === '^') {
+      token = tokens[this.i++];
+      sign = '';
+
+      if (token === '+' || token === '-') {
+        sign = token;
+        token = tokens[this.i++];
+      }
+
+
+      if (isAlpha(token)) {
+        exp = $('<mi>').text(sign + token);
+      } else if (isNumber(token)) {
+        exp = $('<mn>').text(sign + token);
+      } else if (token === '(') {
+        exp = this.expression();  // TODO: figure out what to do with unary minus
+        $(exp).attr('parens', 'true');
+        token = tokens[this.i++];
+        if (token !== ')') {
+          throw "expected ')'";
+        }
+      }
+
+      return $('<msup>').append(base).append(exp);
+
     } else {
-      throw "unexpected input";
+      this.i--;
+
+      var factor = base;
+
+      if ($(factor).is('mrow')) {
+        // prepend with <mo>-</mo> ?  // TODO: figure out what to do with unary minus
+      } else {
+        var text = $(factor).text();
+        $(factor).text(sign + text);
+      }
+
+      return factor;
     }
   };
 
