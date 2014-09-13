@@ -145,8 +145,7 @@ define(function (require) {
 
       if ($(factor).is('mrow')) {
         if (sign !== '') {
-          // prepend with <mo>-</mo> ?  // TODO: figure out what to do with unary minus
-          throw 'we don\'t handle unary minus yet';
+          $(factor).attr('unary', 'minus'); // TODO: need to update evaluate.js to understand this
         }
       } else {
         var text = $(factor).text();

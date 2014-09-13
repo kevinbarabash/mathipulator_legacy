@@ -79,10 +79,19 @@ define(function (require) {
     });
   }
 
+  // TODO: allow people to type in an expression (or select from a list)
 
 //  model = ExpressionModel.fromASCII('3x^2 + -2x + -5/4'); // TODO: fix formatting issues
 //  model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
-  model = ExpressionModel.fromASCII('(x+1)*4*(x-1)');
+//  model = ExpressionModel.fromASCII('(x+1)*4*(x-1)');
+
+  // TODO: to do manual visual testing... have a page that just renders a series of expressions
+  model = ExpressionModel.fromASCII('e^(-(x^2+y^2))');
+//  model = ExpressionModel.fromASCII('(x+1)*4*(x-1)');  // TODO: define where valid positions of unary minuses 4*-(x-1)?
+
+  // TODO: should be able to distribute a unary minus... or rewrite it as multiplication by -1
+
+//  console.log(model.xml);
   // TODO: need to fix <msup> where the first element is a <mrow>
 //  model = ExpressionModel.fromASCII('(x+1)^2');
   if (getParameterByName('format') === 'arithmetic') {

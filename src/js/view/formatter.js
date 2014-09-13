@@ -38,8 +38,14 @@ define(function (require) {
 
     this.fixNegativeNumbers(xml);
     this.createFractions(xml);
+
+
     this.formatAlgebraicMultiplication(xml);
 
+    $(xml).find('[unary="minus"]').each(function () {
+      // TODO: check if my parent is a <msup>
+      $(this).prepend('<mo>-</mo>');
+    });
 //    this.removeUnnecessaryParentheses(xml);
   };
 
@@ -100,8 +106,13 @@ define(function (require) {
 
     // turns parens="true" into parentheses
     $(xml).find('[parens="true"]').each(function () {
-      $(this).before('<mo>(</mo>');
-      $(this).after('<mo>)</mo>');
+      if ($(this).is('mrow')) {
+        $(this).prepend('<mo>(</mo>');
+        $(this).append('<mo>)</mo>');
+      } else {
+        $(this).before('<mo>(</mo>');
+        $(this).after('<mo>)</mo>');
+      }
     });
   };
 
