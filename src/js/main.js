@@ -79,6 +79,7 @@ define(function (require) {
     });
   }
 
+
   // TODO: allow people to type in an expression (or select from a list)
 
 //  model = ExpressionModel.fromASCII('3x^2 + -2x + -5/4'); // TODO: fix formatting issues
