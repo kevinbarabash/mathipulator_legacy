@@ -4,7 +4,11 @@
     "amd": true
   },
   "rules": {
-    "quotes": 0,
-    "new-cap": 0
+    "quotes": [2, "single"],
+    "new-cap": 0,
+    "complexity": [1, 10],
+    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+    "semi": [2, "always"],
+    "camelcase": 2
   }
 }

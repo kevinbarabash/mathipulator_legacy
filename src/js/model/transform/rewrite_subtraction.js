@@ -30,9 +30,9 @@ define(function (require) {
           // TODO: create a function that returns the base node of any msup
         } else if (next.is('mrow')) {
           // TODO: figure out what to do for this case
-          throw "we don't handle rewriting subtraction in this situation, yet";
+          throw 'we don\'t handle rewriting subtraction in this situation, yet';
         } else {
-          throw "we don't handle rewriting subtraction in this situation, yet";
+          throw 'we don\'t handle rewriting subtraction in this situation, yet';
         }
 
         $(node).text('+');

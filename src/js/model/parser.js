@@ -78,7 +78,7 @@ define(function (require) {
         var expr = this.expression();
         token = tokens[this.i++];
         if (token !== ')') {
-          throw "expected ')'";
+          throw 'expected )';
         }
         expr.attr('parens', 'true');
         mrow.append(expr);
@@ -131,7 +131,7 @@ define(function (require) {
       $(base).attr('parens', 'true');
       token = tokens[this.i++];
       if (token !== ')') {
-        throw "expected ')'";
+        throw 'expected )';
       }
     }
 
@@ -146,7 +146,7 @@ define(function (require) {
       if ($(factor).is('mrow')) {
         if (sign !== '') {
           // prepend with <mo>-</mo> ?  // TODO: figure out what to do with unary minus
-          throw "we don't handle unary minus yet";
+          throw 'we don\'t handle unary minus yet';
         }
       } else {
         var text = $(factor).text();
