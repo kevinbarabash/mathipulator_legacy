@@ -10,14 +10,7 @@ define(function (require) {
   var Selection = require('selection');
   var $ = require('jquery');
 
-  var Commute = require('model/transform/commute');
-  var Evaluate = require('model/transform/evaluate');
-  var DistributeForwards = require('model/transform/distribute_forwards');
-  var DistributeBackwards = require('model/transform/distribute_backwards');
-  var RewriteSubtraction = require('model/transform/rewrite_subtraction');
-  var RewriteDivision = require('model/transform/rewrite_division');
-
-  var transforms = [Commute, Evaluate, DistributeForwards, DistributeBackwards, RewriteSubtraction, RewriteDivision];
+  var transforms = require('model/transform_list');
 
   var model = null;
   var selection = new Selection();
