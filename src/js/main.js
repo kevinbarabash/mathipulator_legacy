@@ -12,11 +12,12 @@ define(function (require) {
 
   var Commute = require('model/transform/commute');
   var Evaluate = require('model/transform/evaluate');
-  var Distribute = require('model/transform/distribute');
+  var DistributeForwards = require('model/transform/distribute_forwards');
+  var DistributeBackwards = require('model/transform/distribute_backwards');
   var RewriteSubtraction = require('model/transform/rewrite_subtraction');
   var RewriteDivision = require('model/transform/rewrite_division');
 
-  var transforms = [Commute, Evaluate, Distribute, RewriteSubtraction, RewriteDivision];
+  var transforms = [Commute, Evaluate, DistributeForwards, DistributeBackwards, RewriteSubtraction, RewriteDivision];
 
   var model = null;
   var selection = new Selection();
@@ -80,7 +81,10 @@ define(function (require) {
 
 
 //  model = ExpressionModel.fromASCII('3x^2 + -2x + -5/4'); // TODO: fix formatting issues
-  model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
+//  model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
+  model = ExpressionModel.fromASCII('(x+1)*4*(x-1)');
+  // TODO: need to fix <msup> where the first element is a <mrow>
+//  model = ExpressionModel.fromASCII('(x+1)^2');
   if (getParameterByName('format') === 'arithmetic') {
     model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
   }
@@ -89,7 +93,7 @@ define(function (require) {
 //  model = ExpressionModel.fromASCII('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
 
   addExpression(model);
-
+  console.log(model.xml);
 
   $('#modExpr').click(function () {
     var mathInput$ = $('#inputMath');

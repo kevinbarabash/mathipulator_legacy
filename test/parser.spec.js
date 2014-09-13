@@ -203,8 +203,18 @@ define(function (require) {
     });
 
     describe('Parentheses', function () {
-      it.skip('needs some test cases to be written', function () {
-        
+      it('should add parens="true" attribute if there are parentheses', function () {
+        var xml = parser.parse('(x+1)');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mrow parens="true"><mi>x</mi><mo>+</mo><mn>1</mn></mrow>';
+        assert.equal(xml.innerHTML, expectedXml);
+      });
+
+      it('should not add parens="true" for sub-expression: 1 + 2 * 3', function () {
+        var xml = parser.parse('1+2*3');
+        $(xml).find('*').removeAttr('class').removeAttr('id');
+        var expectedXml = '<mrow><mn>1</mn><mo>+</mo><mrow><mn>2</mn><mo>*</mo><mn>3</mn></mrow></mrow>';
+        assert.equal(xml.innerHTML, expectedXml);
       });
     });
 

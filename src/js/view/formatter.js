@@ -39,6 +39,7 @@ define(function (require) {
     this.fixNegativeNumbers(xml);
     this.createFractions(xml);
     this.formatAlgebraicMultiplication(xml);
+
 //    this.removeUnnecessaryParentheses(xml);
   };
 
@@ -88,15 +89,19 @@ define(function (require) {
   };
 
   Formatter.formatAlgebraicMultiplication = function (xml) {
+    // add parens="true" if neccessary
     $(xml).findOp('*').each(function () {
-      if ($(this).attr('display') !== 'none') {
-        if ($(this.nextElementSibling).hasAddOps()) {
-          $(this).wrapInnerWithParentheses();
-        } else {
-          $(this).wrapWithParentheses();
-        }
+      $(this).next().attr('parens', 'true');
+      if ($(this).prev().is('mrow')) {
+        $(this).prev().attr('parens', 'true');
       }
       $(this).remove();
+    });
+
+    // turns parens="true" into parentheses
+    $(xml).find('[parens="true"]').each(function () {
+      $(this).before('<mo>(</mo>');
+      $(this).after('<mo>)</mo>');
     });
   };
 
