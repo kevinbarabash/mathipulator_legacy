@@ -3,6 +3,7 @@
  */
 
 define(function (require) {
+  /*global MathJax */
 
   var Formatter = require('view/formatter');
   var SVGUtils = require('view/svg_utils');

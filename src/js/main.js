@@ -93,7 +93,6 @@ define(function (require) {
 //  model = ExpressionModel.fromASCII('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
 
   addExpression(model);
-  console.log(model.xml);
 
   $('#modExpr').click(function () {
     var mathInput$ = $('#inputMath');

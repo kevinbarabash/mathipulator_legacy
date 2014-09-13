@@ -28,17 +28,6 @@ gulp.task('sloc', function () {
 
 gulp.task('lint', function () {
   gulp.src(['src/**/*.js'])
-    .pipe(eslint({
-      globals: {
-        'define':false,
-        'document':false,
-        'MathJax':false,  // TODO: figure out how to make these globals file specific
-        'location':false
-      },
-      rules: {
-        'quotes':0,
-        'new-cap':0 // TODO: figure out how to turn off rules for particular files
-      }
-    }))
+    .pipe(eslint())
     .pipe(eslint.format());
 });

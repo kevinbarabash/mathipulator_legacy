@@ -1,0 +1,10 @@
+{
+  "env": {
+    "browser": true,
+    "amd": true
+  },
+  "rules": {
+    "quotes": 0,
+    "new-cap": 0
+  }
+}
