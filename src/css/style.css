@@ -26,6 +26,14 @@ input[type=text] {
     box-sizing: border-box;
 }
 
+.button-row {
+    line-height: 30px;
+}
+
+#context_menu button {
+    display: none;
+}
+
 circle {
     fill: transparent;
 }
