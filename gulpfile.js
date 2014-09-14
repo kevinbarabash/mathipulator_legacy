@@ -26,6 +26,11 @@ gulp.task('sloc', function () {
     .pipe(sloc());
 });
 
+gulp.task('sloc-test', function () {
+  gulp.src(['test/**/*.js'])
+    .pipe(sloc());
+});
+
 gulp.task('lint', function () {
   gulp.src(['src/**/*.js'])
     .pipe(eslint())

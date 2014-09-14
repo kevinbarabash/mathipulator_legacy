@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "amd": true
+    "amd": true,
+    "jasmine": true
   },
   "rules": {
     "quotes": [2, "single"],
@@ -10,5 +11,8 @@
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "semi": [2, "always"],
     "camelcase": 2
+  },
+  "globals": {
+    "assert": true
   }
 }

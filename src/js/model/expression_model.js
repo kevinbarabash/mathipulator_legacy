@@ -17,6 +17,7 @@ define(function (require) {
   ExpressionModel.fromASCII = function (ascii) {
     var model = new ExpressionModel();
     model.xml = parser.parse(ascii);
+    model.addIds();
     return model;
   };
 
@@ -26,14 +27,25 @@ define(function (require) {
     return model;
   };
 
-  // TODO: update the cloned ids
   // TODO: create a map from old ids to new ids
   ExpressionModel.prototype.clone = function () {
-    return ExpressionModel.fromXML(this.xml);
+    var clone = ExpressionModel.fromXML(this.xml);
+    // TODO: this will update the IDs in the clone without creating a map
+//    clone.addIds();
+    return clone;
   };
 
   ExpressionModel.prototype.getNode = function (id) {
     return $(this.xml).find('#' + id).get(0);
+  };
+
+  var id = 0;
+
+  ExpressionModel.prototype.addIds = function () {
+    $(this.xml).find('mrow,msup,mn,mi,mo').each(function () {
+      $(this).attr('id', '_' + id);
+      id++;
+    });
   };
 
   // non-context specific transforms

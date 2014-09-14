@@ -14,6 +14,10 @@ define(function (require) {
   function ExpressionView(model, options) {
     this.xml = $(model.xml).clone().get(0);
 
+    $(this.xml).find('mn').addClass('num');
+    $(this.xml).find('mo').addClass('op');
+    $(this.xml).attr('display', 'block');
+
     if (options && options.format === 'arithmetic') {
       Formatter.formatArithmetic(this.xml);
     } else {

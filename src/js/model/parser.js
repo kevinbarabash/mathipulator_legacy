@@ -15,28 +15,17 @@ define(function (require) {
   }
 
   var namespace = 'http://www.w3.org/1998/Math/MathML';
-  var id = 0;
-  // TODO: assign IDs to things at the end, it'll clean the code up quite a bit
+  var tokenRegex = /([a-z])|([\(\)\+\-\/\*\^])|(\d*\.\d+|\d+\.\d*|\d+)/g;
 
   function SimpleMathMLParser () {}
 
   // TODO: switch from 'match' to 'exec' so that an invalid input raises an error
   SimpleMathMLParser.prototype.parse = function (input) {
     this.i = 0;
-    this.tokens = input.match(/([a-z])|([\(\)\+\-\/\*\^])|(\d*\.\d+|\d+\.\d*|\d+)/g);
+    this.tokens = input.match(tokenRegex);
 
-    // if you don't use display="block" then all parentheses need stretchy="false"
-    var math = $('<math>').attr('xmlns', namespace).attr('display', 'block');
+    var math = $('<math>').attr('xmlns', namespace);
     math.append(this.expression());
-
-    $(math).find('mrow,msup,mn,mi,mo').each(function () {
-      $(this).attr('id', '_' + id);
-      id++;
-    });
-
-    // this is really a view concern
-    $(math).find('mn').addClass('num');
-    $(math).find('mo').addClass('op');
 
     return math.get(0);
   };

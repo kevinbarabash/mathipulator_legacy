@@ -21,8 +21,6 @@ define(function (require) {
       var node = $(xml).findOp('+').get(0);
       Commute.transform(node);
 
-      $(xml).find('*').removeAttr('class').removeAttr('id');
-
       var expecteXml = '<mrow><mi>b</mi><mo>+</mo><mi>a</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
     });
@@ -31,8 +29,6 @@ define(function (require) {
       var xml = parser.parse('a + b - c');
       var node = $(xml).findOp('+').get(0);
       Commute.transform(node);
-
-      $(xml).find('*').removeAttr('class').removeAttr('id');
 
       var expecteXml = '<mrow><mi>b</mi><mo>+</mo><mi>a</mi><mo>-</mo><mi>c</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
@@ -64,8 +60,6 @@ define(function (require) {
       node = $(xml).findOp('+').get(0);
       Commute.transform(node);       // b + c + a -> c + b + a
 
-      $(xml).find('*').removeAttr('class').removeAttr('id');
-
       var expecteXml = '<mrow><mi>c</mi><mo>+</mo><mi>b</mi><mo>+</mo><mi>a</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
     });
@@ -75,8 +69,6 @@ define(function (require) {
       var node = $(xml).findOp('*').get(0);
       Commute.transform(node);
 
-      $(xml).find('*').removeAttr('class').removeAttr('id');
-
       var expecteXml = '<mrow><mi>b</mi><mo>*</mo><mi>a</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
     });
@@ -85,8 +77,6 @@ define(function (require) {
       var xml = parser.parse('a * b / c');
       var node = $(xml).findOp('*').get(0);
       Commute.transform(node);
-
-      $(xml).find('*').removeAttr('class').removeAttr('id');
 
       var expecteXml = '<mrow><mi>b</mi><mo>*</mo><mi>a</mi><mo>/</mo><mi>c</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
@@ -116,8 +106,6 @@ define(function (require) {
       Commute.transform(node);       // b * a * c -> b * c * a
       node = $(xml).findOp('*').get(0);
       Commute.transform(node);       // b * c * a -> c * b * a
-
-      $(xml).find('*').removeAttr('class').removeAttr('id');
 
       var expecteXml = '<mrow><mi>c</mi><mo>*</mo><mi>b</mi><mo>*</mo><mi>a</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
