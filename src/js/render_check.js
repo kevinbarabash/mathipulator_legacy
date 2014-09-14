@@ -24,6 +24,7 @@ define(function (require) {
   expressions.push('(x+1)^2');
   expressions.push('1/(x-(2+1/x)) + 1/(x^2+1/x) + (x+1)^2');
   expressions.push('1/2+-3/4-(5/6)+(-7/8)');
+  expressions.push('x^2^2');
   expressions.push('(x+1)^(-2)');
   expressions.push('(-2)^(x+1)');         // TODO: fix mssing parentheses
   expressions.push('(x+1)^(x+1)');
