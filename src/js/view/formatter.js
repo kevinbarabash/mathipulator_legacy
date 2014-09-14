@@ -36,9 +36,8 @@ define(function (require) {
   Formatter.formatAlgebra = function (xml) {
     // TODO: think about the ordering of these transformations
 
-    this.fixNegativeNumbers(xml);
     this.createFractions(xml);
-
+    this.fixNegativeNumbers(xml);
 
     this.formatAlgebraicMultiplication(xml);
 
@@ -46,7 +45,7 @@ define(function (require) {
       // TODO: check if my parent is a <msup>
       $(this).prepend('<mo>-</mo>');
     });
-//    this.removeUnnecessaryParentheses(xml);
+    this.removeUnnecessaryParentheses(xml);
   };
 
 
@@ -56,7 +55,11 @@ define(function (require) {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
-        $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
+        if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
+          $(this).replaceWith('<mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow>');
+        } else {
+          $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
+        }
       }
     });
 
@@ -97,7 +100,9 @@ define(function (require) {
   Formatter.formatAlgebraicMultiplication = function (xml) {
     // add parens="true" if neccessary
     $(xml).findOp('*').each(function () {
-      $(this).next().attr('parens', 'true');
+      if ($(this).next().is('mn') || $(this).next().is('mrow')) {
+        $(this).next().attr('parens', 'true');
+      }
       if ($(this).prev().is('mrow')) {
         $(this).prev().attr('parens', 'true');
       }
