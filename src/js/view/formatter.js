@@ -49,16 +49,20 @@ define(function (require) {
   };
 
 
-  // TODO: figure out how to get this working with formatAlgebraicMultiplication
   Formatter.fixNegativeNumbers = function(xml) {
     $(xml).find('mn').each(function () {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
+        var variant = '';
+        if ($(this).attr('mathvariant')) {
+          variant = 'mathvariant="' + $(this).attr('mathvariant') + '"';
+        }
+        var mrow = '<mrow class="' + $(this).attr('class') + '"><mo ' + variant + '>-</mo><mn ' + variant + '>' + num + '</mn></mrow>';
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
-          $(this).replaceWith('<mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow>');
+          $(this).replaceWith(mrow);
         } else {
-          $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
+          $(this).replaceWith('<mo stretchy="false">(</mo>' + mrow + '<mo stretchy="false">)</mo>');
         }
       }
     });

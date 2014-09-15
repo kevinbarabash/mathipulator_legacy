@@ -35,8 +35,7 @@ input[type=text] {
 }
 
 .result {
-    fill: rgb(0,0,255);
-    stroke: rgb(0,0,255);
+    fill: blue;
 }
 
 circle {

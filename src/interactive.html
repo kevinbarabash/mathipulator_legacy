@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <title>Interactive Math</title>
   <link rel="stylesheet" href="css/style.css"/>
-  <script type="text/x-mathjax-config">MathJax.Hub.Config({ SVG: { scale: 400 } });</script>
+  <script type="text/x-mathjax-config">MathJax.Hub.Config({
+    SVG: {
+      scale: 300,
+      font: "TeX",  // possible values: TeX, STIX-Web, Asana-Math, Neo-Euler, Gyre-Pagella, Gyre-Termes, Latin-Modern
+      blacker: 0    // stroke-width = 0
+    }
+  });</script>
   <script src="../bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js"></script>
   <script src="../bower_components/requirejs/require.js"></script>
   <script src="js/config.js"></script>

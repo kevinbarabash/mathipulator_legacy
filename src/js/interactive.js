@@ -108,6 +108,9 @@ define(function (require) {
     Transform.transform(clone.getNode(selection.id));
     $(clone.xml).removeExtra('mrow');  // TODO: move this into the distribute transform's cleanup
     model = clone;
+
+    // use mathvariant="bold" to highlight results in addition to colour
+//    $(model.xml).find('.result').attr('mathvariant', 'bold');
     addExpression(model);
 
     hideContextMenu();

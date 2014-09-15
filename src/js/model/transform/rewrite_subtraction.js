@@ -17,6 +17,7 @@ define(function (require) {
     transform: function (node) {
       if (this.canTransform(node)) {
         var next = $(node).next();
+        next.addClass('result');
 
         if (next.is('mi') || next.is('mn')) {
           next.text('-' + next.text());
