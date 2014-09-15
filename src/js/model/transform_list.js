@@ -10,6 +10,7 @@ define(function (require) {
     require('model/transform/distribute_forwards'),
     require('model/transform/distribute_backwards'),
     require('model/transform/rewrite_subtraction'),
-    require('model/transform/rewrite_division')
+    require('model/transform/rewrite_division'),
+    require('model/transform/write_as_subtraction')
   ];
 });

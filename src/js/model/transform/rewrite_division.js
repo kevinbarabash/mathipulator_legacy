@@ -17,6 +17,7 @@ define(function (require) {
     transform: function (node) {
       if (this.canTransform(node)) {
         var opNode = $(node).prev();
+        // TODO: need to give this <mn>1</mn> an id
         $(node).replaceWith('<mn>1</mn><mo>/</mo>' + node.outerHTML);
         opNode.text('*');
       }
