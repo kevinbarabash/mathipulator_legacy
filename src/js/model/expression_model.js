@@ -24,25 +24,30 @@ define(function (require) {
   ExpressionModel.fromXML = function (xml) {
     var model = new ExpressionModel();
     model.xml = $(xml).clone().get(0);
+    model.addIds();
     return model;
   };
 
-  // TODO: create a map from old ids to new ids
   ExpressionModel.prototype.clone = function () {
-    var clone = ExpressionModel.fromXML(this.xml);
-    // TODO: this will update the IDs in the clone without creating a map
-//    clone.addIds();
-    return clone;
+    return ExpressionModel.fromXML(this.xml);
   };
 
   ExpressionModel.prototype.getNode = function (id) {
+    if (this.map[id]) {
+      id = this.map[id];
+    }
     return $(this.xml).find('#' + id).get(0);
   };
 
   var id = 0;
 
   ExpressionModel.prototype.addIds = function () {
+    var map = this.map = {};
+
     $(this.xml).find('mrow,msup,mn,mi,mo').each(function () {
+      if ($(this).attr('id')) {
+        map[$(this).attr('id')] = '_' + id;
+      }
       $(this).attr('id', '_' + id);
       id++;
     });
