@@ -14,6 +14,7 @@ define(function (require) {
       return $(node).isOp('-');
     },
 
+    // TODO: return a record describe the inputs/outputs which can be used to color them later
     transform: function (node) {
       if (this.canTransform(node)) {
         var next = $(node).next();

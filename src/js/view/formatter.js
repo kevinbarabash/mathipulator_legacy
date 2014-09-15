@@ -37,28 +37,37 @@ define(function (require) {
     // TODO: think about the ordering of these transformations
 
     this.createFractions(xml);
-    this.fixNegativeNumbers(xml);
 
+    $(xml).find('mfrac').each(function () {
+      $(this).children().last().removeAttr('parens');
+    });
+
+    this.fixNegativeNumbers(xml);
     this.formatAlgebraicMultiplication(xml);
 
     $(xml).find('[unary="minus"]').each(function () {
       // TODO: check if my parent is a <msup>
       $(this).prepend('<mo>-</mo>');
     });
-    this.removeUnnecessaryParentheses(xml);
+//    this.removeUnnecessaryParentheses(xml);
   };
 
 
   Formatter.fixNegativeNumbers = function(xml) {
+    var color = '';
+    if ($(this).attr('mathcolor')) {
+      color = 'mathcolor="' + $(this).attr('mathcolor') + '"';
+    }
+    var variant = '';
+    if ($(this).attr('mathvariant')) {
+      variant = 'mathvariant="' + $(this).attr('mathvariant') + '"';
+    }
+
     $(xml).find('mn').each(function () {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
-        var variant = '';
-        if ($(this).attr('mathvariant')) {
-          variant = 'mathvariant="' + $(this).attr('mathvariant') + '"';
-        }
-        var mrow = '<mrow class="' + $(this).attr('class') + '"><mo ' + variant + '>-</mo><mn ' + variant + '>' + num + '</mn></mrow>';
+        var mrow = '<mrow class="' + $(this).attr('class') + '" ' + color + '><mo ' + variant + '>-</mo><mn ' + variant + '>' + num + '</mn></mrow>';
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
           $(this).replaceWith(mrow);
         } else {
@@ -68,10 +77,16 @@ define(function (require) {
     });
 
     $(xml).find('mi').each(function () {
-      var id = $(this).text();
-      if (id.indexOf('-') !== -1) {
-        id = id.substring(id.indexOf('-') + 1);
-        $(this).replaceWith('<mrow class="num"><mo stretchy="false">(</mo><mo>-</mo><mi>' + id + '</mi><mo stretchy="false">)</mo></mrow>');
+      var identifier = $(this).text();
+      if (identifier.indexOf('-') !== -1) {
+        identifier = identifier.substring(identifier.indexOf('-') + 1);
+        var mrow = '<mrow class="' + $(this).attr('class') + '" ' + color + '><mo ' + variant + '>-</mo><mi ' + variant + '>' + identifier + '</mi></mrow>';
+
+        if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
+          $(this).replaceWith(mrow);
+        } else {
+          $(this).replaceWith('<mo stretchy="false">(</mo>' + mrow + '<mo stretchy="false">)</mo>');
+        }
       }
     });
   };
@@ -83,6 +98,13 @@ define(function (require) {
         $(this).replaceWith(frac);
         $(frac).findOp('(').attr('stretchy', false);
         $(frac).findOp(')').attr('stretchy', false);
+      }
+    });
+    // TODO: clean this up a bit
+    $(xml).find('mrow mfrac').each(function () {
+      // remove unnecessary mrows
+      if ($(this).siblings().length === 0 && $(this).parent().attr('parens') !== 'true') {
+        $(this).unwrap();
       }
     });
   };
@@ -107,7 +129,7 @@ define(function (require) {
       if ($(this).next().is('mn') || $(this).next().is('mrow')) {
         $(this).next().attr('parens', 'true');
       }
-      if ($(this).prev().is('mrow')) {
+      if ($(this).prev().is('mrow') || $(this).prev().is('mn') && $(this).next().is('mn')) {
         $(this).prev().attr('parens', 'true');
       }
       $(this).remove();
@@ -115,12 +137,16 @@ define(function (require) {
 
     // turns parens="true" into parentheses
     $(xml).find('[parens="true"]').each(function () {
-      if ($(this).is('mrow')) {
+      if ($(this).is('mrow') && ($(this).parent().is('msup') || $(this).parent().is('mfrac'))) {
         $(this).prepend('<mo>(</mo>');
         $(this).append('<mo>)</mo>');
       } else {
         $(this).before('<mo>(</mo>');
         $(this).after('<mo>)</mo>');
+      }
+      $(this).removeAttr('parens');
+      if ($(this).children().length === 1 && $(this).children().first().is('mfrac')) {
+        $(this).children().first().unwrap();
       }
     });
   };

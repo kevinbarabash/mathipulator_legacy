@@ -40,6 +40,7 @@ define(function (require) {
 
     var result = $('<mn></mn>').text(resultValue).attr({
       'class': 'num result',
+//      'mathcolor': 'blue',  // TODO: don't set the color here
       id: uuid()
     });
     $(node).replaceWith(result);
@@ -81,6 +82,7 @@ define(function (require) {
       return false;
     },
 
+    // TODO: return a record describe the inputs/outputs which can be used to color them later
     transform: function (node) {
       if (this.canTransform(node)) {
         var result = evaluate(node);
