@@ -34,6 +34,11 @@ input[type=text] {
     display: none;
 }
 
+.result {
+    fill: rgb(0,0,255);
+    stroke: rgb(0,0,255);
+}
+
 circle {
     fill: transparent;
 }

@@ -56,9 +56,9 @@ define(function (require) {
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
-          $(this).replaceWith('<mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow>');
+          $(this).replaceWith('<mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow>');
         } else {
-          $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="num"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
+          $(this).replaceWith('<mo stretchy="false">(</mo><mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow><mo stretchy="false">)</mo>');
         }
       }
     });

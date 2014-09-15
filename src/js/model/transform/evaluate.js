@@ -39,7 +39,7 @@ define(function (require) {
     prev.remove();
 
     var result = $('<mn></mn>').text(resultValue).attr({
-      'class': 'num',
+      'class': 'num result',
       id: uuid()
     });
     $(node).replaceWith(result);

@@ -69,14 +69,5 @@ define(function (require) {
     return clone;
   };
 
-//  ExpressionModel.prototype.removeUnnecessaryParentheses = function () {
-//    $(this.xml).findOp('(').each(function () {
-//      if ($(this).next().next().text() === ')' && !$(this).next().is('mrow')) {
-//        $(this).next().next().remove();
-//        $(this).remove();
-//      }
-//    });
-//  };
-
   return ExpressionModel;
 });
