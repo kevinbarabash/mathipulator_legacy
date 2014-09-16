@@ -13,6 +13,7 @@ define(function (require) {
   var transforms = require('model/transform_list');
 
   var model = null;
+  var views = [];
   var selection = new Selection();
 
   function getParameterByName(name) {
@@ -22,19 +23,20 @@ define(function (require) {
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 
+  function hideContextMenu() {
+    var contextMenu = $('#context_menu');
+    contextMenu.find('button').hide();
+  }
+
   document.body.addEventListener('click', function (e) {
     if ($(e.target).parents('svg').length === 0) {
       if (!selection.isEmpty()) {
         $('svg').find('[for="' + selection.id + '"]').removeAttr('class');
         selection.clear();
+        hideContextMenu();
       }
     }
   });
-
-  function hideContextMenu() {
-    var contextMenu = $('#context_menu');
-    contextMenu.find('button').hide();
-  }
 
   function addExpression(expr) {
     var view;
@@ -45,6 +47,16 @@ define(function (require) {
 
     view = new ExpressionView(expr, options);
     view.render();
+
+    if (views.length > 1) {
+      var secondLastView = views[views.length - 2];
+      $(secondLastView.svg).parent().parent().animate({ opacity: 0.0 });
+    }
+    if (views.length > 0) {
+      var lastView = views[views.length - 1];
+      $(lastView.svg).parent().parent().animate({ opacity: 0.3 });
+    }
+    views.push(view);
 
     // TODO: prevent selection of items in old views
     // TODO: come up with something better than 'for'
@@ -71,6 +83,7 @@ define(function (require) {
         });
       } else {
         selection.clear();
+        hideContextMenu();
       }
     });
   }
