@@ -44,7 +44,7 @@ define(function (require) {
 
   expressions = [];
   expressions.push('5 - 1 + 2 * (3 - 4)');
-  expressions.push('1/2');  // TODO: how to distiguish division operator from fractions
+  expressions.push('1/2');  // make TODO: how to distiguish division operator from fractions
 
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);

@@ -40,7 +40,6 @@ define(function (require) {
 
     var result = $('<mn></mn>').text(resultValue).attr({
       'class': 'num result',
-//      'mathcolor': 'blue',  // TODO: don't set the color here
       id: uuid()
     });
     $(node).replaceWith(result);

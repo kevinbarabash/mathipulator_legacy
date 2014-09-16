@@ -26,7 +26,6 @@ define(function (require) {
     model.xml = $(xml).clone().get(0);
     model.addIds();
     $(model.xml).find('.result').removeClass('result');
-    $(model.xml).find('[mathvariant]').removeAttr('mathvariant');
     return model;
   };
 

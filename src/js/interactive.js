@@ -103,16 +103,19 @@ define(function (require) {
     addExpression(model);
   });
 
+  $('#toggle_results').click(function () {
+    $('.result').each(function () {
+      this.classList.toggle('blue');
+    });
+  });
+
   function applyTransform(Transform) {
     var clone = model.clone();
     Transform.transform(clone.getNode(selection.id));
     $(clone.xml).removeExtra('mrow');  // TODO: move this into the distribute transform's cleanup
     model = clone;
 
-    // use mathvariant="bold" to highlight results in addition to colour
-//    $(model.xml).find('.result').attr('mathvariant', 'bold');
     addExpression(model);
-
     hideContextMenu();
   }
 

@@ -54,20 +54,11 @@ define(function (require) {
 
 
   Formatter.fixNegativeNumbers = function(xml) {
-    var color = '';
-    if ($(this).attr('mathcolor')) {
-      color = 'mathcolor="' + $(this).attr('mathcolor') + '"';
-    }
-    var variant = '';
-    if ($(this).attr('mathvariant')) {
-      variant = 'mathvariant="' + $(this).attr('mathvariant') + '"';
-    }
-
     $(xml).find('mn').each(function () {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
-        var mrow = '<mrow class="' + $(this).attr('class') + '" ' + color + '><mo ' + variant + '>-</mo><mn ' + variant + '>' + num + '</mn></mrow>';
+        var mrow = '<mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow>';
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
           $(this).replaceWith(mrow);
         } else {
@@ -80,7 +71,7 @@ define(function (require) {
       var identifier = $(this).text();
       if (identifier.indexOf('-') !== -1) {
         identifier = identifier.substring(identifier.indexOf('-') + 1);
-        var mrow = '<mrow class="' + $(this).attr('class') + '" ' + color + '><mo ' + variant + '>-</mo><mi ' + variant + '>' + identifier + '</mi></mrow>';
+        var mrow = '<mrow class="' + $(this).attr('class') + '"><mo>-</mo><mi>' + identifier + '</mi></mrow>';
 
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
           $(this).replaceWith(mrow);
