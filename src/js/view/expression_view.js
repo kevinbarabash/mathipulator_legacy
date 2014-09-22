@@ -59,7 +59,7 @@ define(function (require) {
     });
   };
 
-  ExpressionView.prototype.render = function () {
+  ExpressionView.prototype.render = function (animate) {
     var script = document.createElement('script');
     $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo(document.body);
 
@@ -72,7 +72,9 @@ define(function (require) {
       view.createSelectionOverlay(svg);
       view.svg = svg;
       SVGUtils.correctBBox(svg);
-      $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
+      if (animate) {
+        $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
+      }
 
       deferred.resolve(svg);
     });

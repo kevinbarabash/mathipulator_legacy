@@ -49,6 +49,11 @@ define(function (require) {
       // TODO: check if my parent is a <msup>
       $(this).prepend('<mo>-</mo>');
     });
+
+    var mrow = $(xml).children().first();
+    mrow.findOp('(').attr('stretchy', 'false');
+    mrow.findOp(')').attr('stretchy', 'false');
+    console.log(xml);
 //    this.removeUnnecessaryParentheses(xml);
   };
 

@@ -12,7 +12,9 @@ define(function (require) {
 
   var transforms = require('model/transform_list');
 
-  var model = null;
+  var models = [];
+  var model;
+  var stepIndex = -1;
   var views = [];
   var selection = new Selection();
 
@@ -39,14 +41,18 @@ define(function (require) {
   });
 
   function addExpression(expr) {
+    models.push(expr);
+    stepIndex = 0;
+
     var view;
     var options = { format: 'algebra' };
     if (getParameterByName('format')) {
       options.format = getParameterByName('format');
     }
 
+    var animate = views.length > 0;
     view = new ExpressionView(expr, options);
-    view.render();
+    view.render(animate);
 
     if (views.length > 1) {
       var secondLastView = views[views.length - 2];
@@ -120,6 +126,24 @@ define(function (require) {
     $('.result').each(function () {
       this.classList.toggle('blue');
     });
+  });
+
+  $('#undo').click(function () {
+    if (models.length > 0 && views.length > 0 && models.length === views.length) {
+      var lastView = views[views.length - 1];
+      var secondLastView = views[views.length - 2];
+      var thirdLastView = views[views.length - 3];
+
+      $(thirdLastView.svg).parent().parent().animate({ opacity: 0.3 });
+      $(secondLastView.svg).parent().parent().animate({ opacity: 1.0 });
+      $(lastView.svg).parent().parent().animate({ opacity: 0.0 });
+
+      // TODO: update this so that we're not actually remove stuff from the stack but instead tracking the top
+      // TODO: think about using an index or using a linked list...
+      // TODO: an index is probably simpler if we have to remove everything after a certain point
+      models = models.slice(0, models.length - 1);
+      views = views.slice(0, views.length - 1);
+    }
   });
 
   function applyTransform(Transform) {
