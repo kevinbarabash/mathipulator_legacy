@@ -12,6 +12,8 @@ define(function (require) {
   require('jquery_extensions');
 
   function ExpressionView(model, options) {
+    this.model = model;
+    this.model.view = this;
     this.xml = $(model.xml).clone().get(0);
 
     $(this.xml).find('mn').addClass('num');

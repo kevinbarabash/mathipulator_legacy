@@ -78,7 +78,7 @@ define(function (require) {
       }
 
       if (id !== selection.id) {
-        var node = model.getNode(id);
+        var node = model.getNodeWithOld(id);
         selection.set(node);
         $(view.svg).find('[for="' + id + '"]').attr('class', 'selected');
 
@@ -124,8 +124,12 @@ define(function (require) {
     addExpression(model);
   });
 
+  // TODO: improve organization of views... provide a list abstraction with commands like current, previous, etc.
   $('#toggle_results').click(function () {
     $('.result').last().each(function () {
+      this.classList.toggle('blue');    // can't use jQuery's toggle because this an SVG node
+    });
+    $('.result-input').each(function () {
       this.classList.toggle('blue');    // can't use jQuery's toggle because this an SVG node
     });
   });
@@ -159,8 +163,16 @@ define(function (require) {
 
   function applyTransform(Transform) {
     var clone = model.clone();
-    Transform.transform(clone.getNode(selection.id));
+    var inputIds = Transform.transform(clone.getNodeWithOld(selection.id));
     $(clone.xml).removeExtra('mrow');  // TODO: move this into the distribute transform's cleanup
+    var mappedInputIds = inputIds.map(function (id) {
+      return clone.newToOldMap[id];
+    });
+    var svg = model.view.svg;
+    mappedInputIds.forEach(function (id) {
+      var elem = $(svg).find('#' + id ).get(0);
+      elem.classList.add('result-input');  // TODO: update result -> result-output
+    });
     model = clone;
 
     addExpression(model);

@@ -33,9 +33,9 @@ define(function (require) {
     return ExpressionModel.fromXML(this.xml);
   };
 
-  ExpressionModel.prototype.getNode = function (id) {
-    if (this.map[id]) {
-      id = this.map[id];
+  ExpressionModel.prototype.getNodeWithOld = function (id) {
+    if (this.oldToNewMap[id]) {
+      id = this.oldToNewMap[id];
     }
     return $(this.xml).find('#' + id).get(0);
   };
@@ -43,11 +43,14 @@ define(function (require) {
   var id = 0;
 
   ExpressionModel.prototype.addIds = function () {
-    var map = this.map = {};
+    var oldToNewMap = this.oldToNewMap = {};
+    var newToOldMap = this.newToOldMap = {};
 
     $(this.xml).find('mrow,msup,mn,mi,mo').each(function () {
       if ($(this).attr('id')) {
-        map[$(this).attr('id')] = '_' + id;
+        // bidirectional map relies on unique ids between steps
+        newToOldMap['_' + id] = $(this).attr('id');
+        oldToNewMap[$(this).attr('id')] = '_' + id;
       }
       $(this).attr('id', '_' + id);
       id++;

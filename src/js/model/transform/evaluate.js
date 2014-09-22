@@ -84,8 +84,16 @@ define(function (require) {
     // TODO: return a record describe the inputs/outputs which can be used to color them later
     transform: function (node) {
       if (this.canTransform(node)) {
+        var prev = $(node).prev();
+        var next = $(node).next();
+        var inputIds = [
+          $(prev).attr('id'),
+          $(node).attr('id'),
+          $(next).attr('id')
+        ];
         var result = evaluate(node);
         cleanup(result);
+        return inputIds;
       }
     }
   };

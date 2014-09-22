@@ -5,6 +5,7 @@
 define(function (require) {
 
   var MathSymbols = require('view/math_symbols');
+  var uuid = require('uuid');
   var $ = require('jquery');
 
   require('jquery_extensions');
@@ -62,7 +63,7 @@ define(function (require) {
       var num = $(this).text();
       if (num.indexOf('-') !== -1) {
         num = -parseFloat(num);
-        var mrow = '<mrow class="' + $(this).attr('class') + '"><mo>-</mo><mn>' + num + '</mn></mrow>';
+        var mrow = '<mrow class="' + $(this).attr('class') + '" id="' + $(this).attr('id') + '"><mo>-</mo><mn>' + num + '</mn></mrow>';
         if ($(this).parent().is('mfrac') || $(this).parent().is('msup')) {
           $(this).replaceWith(mrow);
         } else {
