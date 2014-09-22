@@ -53,7 +53,6 @@ define(function (require) {
     var mrow = $(xml).children().first();
     mrow.findOp('(').attr('stretchy', 'false');
     mrow.findOp(')').attr('stretchy', 'false');
-    console.log(xml);
 //    this.removeUnnecessaryParentheses(xml);
   };
 

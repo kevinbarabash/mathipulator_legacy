@@ -27,7 +27,7 @@ define(function (require) {
 
   ExpressionView.prototype.createSelectionOverlay = function (svg) {
     var selectionGroup = SVGUtils.createSVGElement('g');
-    selectionGroup.setAttribute('class', 'selectionOverlay');
+    selectionGroup.setAttribute('class', 'selection-overlay');
     $(selectionGroup).appendTo(svg.firstElementChild);
 
     this.addCircles(svg, selectionGroup);
@@ -75,6 +75,8 @@ define(function (require) {
       if (animate) {
         $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
       }
+      var overlay = $(svg).find('.selection-overlay').get(0);
+      overlay.classList.add('active');
 
       deferred.resolve(svg);
     });

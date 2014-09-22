@@ -129,6 +129,7 @@ define(function (require) {
       it('should add parentheses for multiplication of numbers', function () {
         var xml = parser.parse('2*3');
         Formatter.formatAlgebra(xml);
+        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
         var expectedXml = '<mrow><mo>(</mo><mn>2</mn><mo>)</mo><mo>(</mo><mn>3</mn><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -143,6 +144,7 @@ define(function (require) {
       it('should remove the \'*\' and add parentheses for multiplication of a number and an expression', function () {
         var xml = parser.parse('2*(x+1)');
         Formatter.formatAlgebra(xml);
+        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
         var expectedXml = '<mrow><mn>2</mn><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });

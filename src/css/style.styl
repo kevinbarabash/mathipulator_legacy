@@ -1,0 +1,42 @@
+html
+  height 100%
+
+body
+  margin 0
+  height 100%
+
+div#input
+  border solid 2px darkgray
+  border-radius 4px
+  left 10px
+  top 10px
+  font-family sans-serif
+  color dimgray
+  padding 20px
+  background-color white
+  margin 10px
+  height 110px
+
+input[type=text]
+  font-size 28px
+  width 100%
+  box-sizing border-box
+
+.blue
+  fill blue
+
+.button-row
+  line-height 30px
+
+#context-menu button
+  display none
+
+g.selection-overlay.active
+  circle, rect
+    fill transparent
+
+  circle:hover, circle.selected
+    fill rgba(255,255,0,0.5)
+
+  rect:hover, rect.selected
+    fill rgba(255,0,255,0.5)

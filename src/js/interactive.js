@@ -26,7 +26,7 @@ define(function (require) {
   }
 
   function hideContextMenu() {
-    var contextMenu = $('#context_menu');
+    var contextMenu = $('#context-menu');
     contextMenu.find('button').hide();
   }
 
@@ -60,6 +60,8 @@ define(function (require) {
     }
     if (views.length > 0) {
       var lastView = views[views.length - 1];
+      var overlay = $(lastView.svg).find('.selection-overlay').get(0);
+      overlay.classList.remove('active');
       $(lastView.svg).parent().parent().animate({ opacity: 0.3 });
     }
     views.push(view);
@@ -85,7 +87,7 @@ define(function (require) {
         transforms.filter(function (transform) {
           return transform.canTransform(node);
         }).forEach(function (transform) {
-          $('#context_menu #' + transform.name).show();
+          $('#context-menu #' + transform.name).show();
         });
       } else {
         selection.clear();
@@ -123,8 +125,8 @@ define(function (require) {
   });
 
   $('#toggle_results').click(function () {
-    $('.result').each(function () {
-      this.classList.toggle('blue');
+    $('.result').last().each(function () {
+      this.classList.toggle('blue');    // can't use jQuery's toggle because this an SVG node
     });
   });
 
@@ -137,6 +139,15 @@ define(function (require) {
       $(thirdLastView.svg).parent().parent().animate({ opacity: 0.3 });
       $(secondLastView.svg).parent().parent().animate({ opacity: 1.0 });
       $(lastView.svg).parent().parent().animate({ opacity: 0.0 });
+
+      var lastOverlay = $(lastView.svg).find('.selection-overlay').get(0);
+      lastOverlay.classList.remove('active');
+
+      var secondLastOverlay = $(secondLastView.svg).find('.selection-overlay').get(0);
+      secondLastOverlay.classList.add('active');
+
+      var thirdLastOverlay = $(thirdLastView.svg).find('.selection-overlay').get(0);
+      thirdLastOverlay.classList.remove('active');
 
       // TODO: update this so that we're not actually remove stuff from the stack but instead tracking the top
       // TODO: think about using an index or using a linked list...
