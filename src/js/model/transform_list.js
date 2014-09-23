@@ -4,6 +4,12 @@
 
 define(function (require) {
 
+  /**
+   * TODO: transforms to add:
+   * - add/sub on like terms
+   * - simplify exponents in mul/div ops
+   */
+
   return [
     require('model/transform/commute'),
     require('model/transform/evaluate'),

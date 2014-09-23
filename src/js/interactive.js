@@ -24,9 +24,18 @@ define(function (require) {
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 
-  function hideContextMenu() {
+  function updateContextMenu() {
     var contextMenu = $('#context-menu');
     contextMenu.find('button').hide();
+
+    if (selection.id) {
+      var node = model.getNode(selection.id);
+      transforms.filter(function (transform) {
+        return transform.canTransform(node);
+      }).forEach(function (transform) {
+        $('#context-menu #' + transform.name).show();
+      });
+    }
   }
 
   document.body.addEventListener('click', function (e) {
@@ -34,12 +43,14 @@ define(function (require) {
       if (!selection.isEmpty()) {
         $('svg').find('[for="' + selection.id + '"]').removeAttr('class');
         selection.clear();
-        hideContextMenu();
+        updateContextMenu();
       }
     }
   });
 
   function addExpression(expr) {
+    selection.clear();
+    updateContextMenu();
     models.push(expr);
 
     var view;
@@ -51,48 +62,28 @@ define(function (require) {
     var animate = views.length > 0;
     view = new ExpressionView(expr, options);
     view.render(animate);
-
-    if (views.length > 1) {
-      var secondLastView = views[views.length - 2];
-      $(secondLastView.svg).parent().parent().animate({ opacity: 0.0 });
-    }
-    if (views.length > 0) {
-      var lastView = views[views.length - 1];
-      var overlay = $(lastView.svg).find('.selection-overlay').get(0);
-      overlay.classList.remove('active');
-      $(lastView.svg).parent().parent().animate({ opacity: 0.3 });
-    }
     views.push(view);
 
-    // TODO: get rid of the hover
-    // TODO: populate the action list;
+    if (views.length > 2) {
+      views[views.length - 3].hide();     // third last
+    }
+    if (views.length > 1) {
+      views[views.length - 2].fade(0.3);  // second last
+    }
 
     $(view).on('operatorClick numberClick', function (e, vid) {
-      var mid, sid;
-
       if (!selection.isEmpty()) {
-        sid = selection.id.replace('m', 's');
-        $(view.svg).find('#' + sid).removeAttr('class'); // can't use removeClass b/c SVG
+        view.deselectNode(selection.id);
       }
 
-      mid = view.viewToModelMap[vid];
+      var mid = view.viewToModelMap[vid];
       if (mid !== selection.id) {
-        var node = model.getNode(mid);
-        selection.set(node);
-        sid = mid.replace('m', 's');
-        $(view.svg).find('#' + sid).attr('class', 'selected');
-
-        hideContextMenu();
-
-        transforms.filter(function (transform) {
-          return transform.canTransform(node);
-        }).forEach(function (transform) {
-          $('#context-menu #' + transform.name).show();
-        });
+        selection.set(mid);
+        view.selectNode(mid);
       } else {
         selection.clear();
-        hideContextMenu();
       }
+      updateContextMenu();
     });
   }
 
@@ -113,7 +104,6 @@ define(function (require) {
 
     model = model.modify(operator, expr);
     addExpression(model);
-    // TODO: have a list of models, one for each line/step
 
     mathInput$.val('');
   });
@@ -139,32 +129,25 @@ define(function (require) {
       var secondLastView = views[views.length - 2];
       var thirdLastView = views[views.length - 3];
 
-      $(thirdLastView.svg).parent().parent().animate({ opacity: 0.3 });
-      $(secondLastView.svg).parent().parent().animate({ opacity: 1.0 });
-      $(lastView.svg).parent().parent().animate({ opacity: 0.0 });
+      $(thirdLastView.svg).parent().animate({ opacity: 0.3 });
+      $(secondLastView.svg).parent().animate({ opacity: 1.0 });
+      $(lastView.svg).parent().animate({ opacity: 0.0 }, {
+        complete: function() {
+          $(this).hide();
+        }
+      });
 
-      var lastOverlay = $(lastView.svg).find('.selection-overlay').get(0);
-      lastOverlay.classList.remove('active');
+      lastView.deactivate();
+      secondLastView.activate();
+      thirdLastView.deactivate();
 
-      var secondLastOverlay = $(secondLastView.svg).find('.selection-overlay').get(0);
-      secondLastOverlay.classList.add('active');
-
-      var thirdLastOverlay = $(thirdLastView.svg).find('.selection-overlay').get(0);
-      thirdLastOverlay.classList.remove('active');
-
-      // TODO: update this so that we're not actually remove stuff from the stack but instead tracking the top
-      // TODO: think about using an index or using a linked list...
-      // TODO: an index is probably simpler if we have to remove everything after a certain point
+      // TODO: create an undo/redo stack
       models = models.slice(0, models.length - 1);
       views = views.slice(0, views.length - 1);
     }
   });
 
-  function applyTransform(Transform) {
-    var clone = model.clone();
-    var inputIds = Transform.transform(clone.getNode(selection.id));
-    var svg = model.view.svg;
-
+  function markInputNodes(svg, inputIds) {
     if (inputIds) {
       inputIds.forEach(function (mid) {
         var vid = model.view.modelToViewMap[mid];
@@ -172,11 +155,15 @@ define(function (require) {
         elem.classList.add('result-input');
       });
     }
+  }
+
+  function applyTransform(Transform) {
+    var clone = model.clone();
+    var inputIds = Transform.transform(clone.getNode(selection.id));
+    markInputNodes(model.view.svg, inputIds);
 
     model = clone;
-
     addExpression(model);
-    hideContextMenu();
   }
 
   // context specific actions
@@ -186,5 +173,4 @@ define(function (require) {
     });
   });
 
-  // TODO: collect like terms
 });

@@ -55,6 +55,18 @@ define(function (require) {
     });
   };
 
+  ExpressionView.prototype.selectNode = function(mid) {
+    var sid = this.modelToViewMap[mid].replace('v','s');
+    var elem = $(this.svg).find('#' + sid).get(0);
+    elem.classList.add('selected');
+  };
+
+  ExpressionView.prototype.deselectNode = function(mid) {
+    var sid = this.modelToViewMap[mid].replace('v','s');
+    var elem = $(this.svg).find('#' + sid).get(0);
+    elem.classList.remove('selected');
+  };
+
   ExpressionView.prototype.createSelectionOverlay = function (svg) {
     var selectionGroup = SVGUtils.createSVGElement('g');
     selectionGroup.setAttribute('class', 'selection-overlay');
@@ -62,6 +74,8 @@ define(function (require) {
 
     this.addCircles(svg, selectionGroup);
     this.addNumberHighlights(svg, selectionGroup);
+
+    this.overlay = selectionGroup;
   };
 
   ExpressionView.prototype.addCircles = function (svg, selectionGroup) {
@@ -101,12 +115,20 @@ define(function (require) {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, script], function () {
       var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
 
+      var oldContainer = $(svg).parent().parent();
+      var newContainer = $('<div></div>').css({
+        'font-size': '300%',
+        'text-align': 'center'
+      }).append(svg);
+      oldContainer.replaceWith(newContainer);
+
       view.createSelectionOverlay(svg);
       view.svg = svg;
       SVGUtils.correctBBox(svg);
       if (animate) {
         $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
       }
+
       var overlay = $(svg).find('.selection-overlay').get(0);
       overlay.classList.add('active');
 
@@ -114,6 +136,27 @@ define(function (require) {
     });
 
     return deferred;
+  };
+
+  ExpressionView.prototype.activate = function () {
+    this.overlay.classList.add('active');
+  };
+
+  ExpressionView.prototype.deactivate = function () {
+    this.overlay.classList.remove('active');
+  };
+
+  ExpressionView.prototype.hide = function () {
+    $(this.svg).parent().animate({ opacity: 0.0 }, {
+      complete: function () {
+        $(this).hide();
+      }
+    });
+  };
+
+  ExpressionView.prototype.fade = function (opacity) {
+    this.deactivate();
+    $(this.svg).parent().animate({ opacity: opacity });
   };
 
   return ExpressionView;
