@@ -5,7 +5,6 @@
 define(function (require) {
 
   var MathSymbols = require('view/math_symbols');
-  var uuid = require('uuid');
   var $ = require('jquery');
 
   require('jquery_extensions');

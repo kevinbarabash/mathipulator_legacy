@@ -75,7 +75,7 @@ define(function (require) {
       it('should add parentheses around a single negative number', function () {
         var xml = parser.parse('-2');
         Formatter.formatArithmetic(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class id');
         var expectedXml = '<mo>(</mo><mrow><mo>\u2212</mo><mn>2</mn></mrow><mo>)</mo>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -83,7 +83,7 @@ define(function (require) {
       it('should add parentheses around negative numbers in an expression', function () {
         var xml = parser.parse('x + -2');
         Formatter.formatArithmetic(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy  class id');
         var expectedXml = '<mrow><mi>x</mi><mo>+</mo><mo>(</mo><mrow><mo>\u2212</mo><mn>2</mn></mrow><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -91,7 +91,7 @@ define(function (require) {
       it('should add parentheses around a single negative variable', function () {
         var xml = parser.parse('-x');
         Formatter.formatArithmetic(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class');
         var expectedXml = '<mo>(</mo><mrow><mo>\u2212</mo><mi>x</mi></mrow><mo>)</mo>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -99,7 +99,7 @@ define(function (require) {
       it('should add parentheses around negative variables in an expression', function () {
         var xml = parser.parse('1 + -x');
         Formatter.formatArithmetic(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class');
         var expectedXml = '<mrow><mn>1</mn><mo>+</mo><mo>(</mo><mrow><mo>\u2212</mo><mi>x</mi></mrow><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -121,7 +121,7 @@ define(function (require) {
       it('should add parentheses around negative numbers in an expression', function () {
         var xml = parser.parse('x + -2');
         Formatter.formatArithmetic(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class id');
         var expectedXml = '<mrow><mi>x</mi><mo>+</mo><mo>(</mo><mrow><mo>\u2212</mo><mn>2</mn></mrow><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -129,7 +129,7 @@ define(function (require) {
       it('should add parentheses for multiplication of numbers', function () {
         var xml = parser.parse('2*3');
         Formatter.formatAlgebra(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class');
         var expectedXml = '<mrow><mo>(</mo><mn>2</mn><mo>)</mo><mo>(</mo><mn>3</mn><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -144,7 +144,7 @@ define(function (require) {
       it('should remove the \'*\' and add parentheses for multiplication of a number and an expression', function () {
         var xml = parser.parse('2*(x+1)');
         Formatter.formatAlgebra(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class');
         var expectedXml = '<mrow><mn>2</mn><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -159,7 +159,7 @@ define(function (require) {
       it('should format simple fractions without parentheses correctly', function () {
         var xml = parser.parse('1/2+-3/4');
         Formatter.formatAlgebra(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class id');
         var expectedXml = '<mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><mfrac><mrow><mo>-</mo><mn>3</mn></mrow><mn>4</mn></mfrac></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -167,7 +167,7 @@ define(function (require) {
       it('should format simple fractions with parentheses correctly', function () {
         var xml = parser.parse('(1/2)+(-3/4)');
         Formatter.formatAlgebra(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class id');
         var expectedXml = '<mrow><mo>(</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>)</mo><mo>+</mo><mo>(</mo><mfrac><mrow><mo>-</mo><mn>3</mn></mrow><mn>4</mn></mfrac><mo>)</mo></mrow>';
         assert.equal(xml.innerHTML, expectedXml);
       });
@@ -175,7 +175,7 @@ define(function (require) {
       it('should add parentheses for multiplication of an expression and a number', function () {
         var xml = parser.parse('2*(x+1)');
         Formatter.formatAlgebra(xml);
-        $(xml).find('*').removeAttr('stretchy').removeAttr('class');
+        $(xml).find('*').removeAttr('stretchy class');
         var expectedXml = '<mrow><mn>2</mn><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow>';
         // TODO: do we even need extra <mrow>s in the the view MathML as long as we have a mapping between the view elements and the model?
         assert.equal(xml.innerHTML, expectedXml);

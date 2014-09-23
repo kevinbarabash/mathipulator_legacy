@@ -25,6 +25,7 @@ define(function (require) {
       $(expr).remove();
 
       $(mrow).removeAttr('parens');
+      $(mrow).closest('math').removeExtra('mrow');
     }
   }
 

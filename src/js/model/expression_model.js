@@ -24,7 +24,6 @@ define(function (require) {
   ExpressionModel.fromXML = function (xml) {
     var model = new ExpressionModel();
     model.xml = $(xml).clone().get(0);
-    model.addIds();
     $(model.xml).find('.result').removeClass('result');
     return model;
   };
@@ -33,28 +32,19 @@ define(function (require) {
     return ExpressionModel.fromXML(this.xml);
   };
 
-  ExpressionModel.prototype.getNodeWithOld = function (id) {
-    if (this.oldToNewMap[id]) {
-      id = this.oldToNewMap[id];
-    }
-    return $(this.xml).find('#' + id).get(0);
-  };
-
   var id = 0;
+  function genId() {
+    return 'mid-' + (id++);
+  }
 
   ExpressionModel.prototype.addIds = function () {
-    var oldToNewMap = this.oldToNewMap = {};
-    var newToOldMap = this.newToOldMap = {};
-
     $(this.xml).find('mrow,msup,mn,mi,mo').each(function () {
-      if ($(this).attr('id')) {
-        // bidirectional map relies on unique ids between steps
-        newToOldMap['_' + id] = $(this).attr('id');
-        oldToNewMap[$(this).attr('id')] = '_' + id;
-      }
-      $(this).attr('id', '_' + id);
-      id++;
+      $(this).attr('id', genId());
     });
+  };
+
+  ExpressionModel.prototype.getNode = function (id) {
+    return $(this.xml).find('#' + id).get(0);
   };
 
   // non-context specific transforms

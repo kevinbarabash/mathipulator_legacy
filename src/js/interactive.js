@@ -14,7 +14,6 @@ define(function (require) {
 
   var models = [];
   var model;
-  var stepIndex = -1;
   var views = [];
   var selection = new Selection();
 
@@ -42,7 +41,6 @@ define(function (require) {
 
   function addExpression(expr) {
     models.push(expr);
-    stepIndex = 0;
 
     var view;
     var options = { format: 'algebra' };
@@ -66,21 +64,23 @@ define(function (require) {
     }
     views.push(view);
 
-    // TODO: prevent selection of items in old views
-    // TODO: come up with something better than 'for'
-
-    // TODO: insert a separate object for the highlight and get rid of the hover
+    // TODO: get rid of the hover
     // TODO: populate the action list;
 
-    $(view).on('operatorClick numberClick', function (e, id) {
+    $(view).on('operatorClick numberClick', function (e, vid) {
+      var mid, sid;
+
       if (!selection.isEmpty()) {
-        $(view.svg).find('[for="' + selection.id + '"]').removeAttr('class'); // can't use removeClass b/c SVG
+        sid = selection.id.replace('m', 's');
+        $(view.svg).find('#' + sid).removeAttr('class'); // can't use removeClass b/c SVG
       }
 
-      if (id !== selection.id) {
-        var node = model.getNodeWithOld(id);
+      mid = view.viewToModelMap[vid];
+      if (mid !== selection.id) {
+        var node = model.getNode(mid);
         selection.set(node);
-        $(view.svg).find('[for="' + id + '"]').attr('class', 'selected');
+        sid = mid.replace('m', 's');
+        $(view.svg).find('#' + sid).attr('class', 'selected');
 
         hideContextMenu();
 
@@ -96,11 +96,10 @@ define(function (require) {
     });
   }
 
-  // TODO: allow people to type in an expression (or select from a list)
-
-  model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
   if (getParameterByName('format') === 'arithmetic') {
     model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+  } else {
+    model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
   }
 
   addExpression(model);
@@ -163,16 +162,17 @@ define(function (require) {
 
   function applyTransform(Transform) {
     var clone = model.clone();
-    var inputIds = Transform.transform(clone.getNodeWithOld(selection.id));
-    $(clone.xml).removeExtra('mrow');  // TODO: move this into the distribute transform's cleanup
-    var mappedInputIds = inputIds.map(function (id) {
-      return clone.newToOldMap[id];
-    });
+    var inputIds = Transform.transform(clone.getNode(selection.id));
     var svg = model.view.svg;
-    mappedInputIds.forEach(function (id) {
-      var elem = $(svg).find('#' + id ).get(0);
-      elem.classList.add('result-input');  // TODO: update result -> result-output
-    });
+
+    if (inputIds) {
+      inputIds.forEach(function (mid) {
+        var vid = model.view.modelToViewMap[mid];
+        var elem = $(svg).find('#' + vid).get(0);
+        elem.classList.add('result-input');
+      });
+    }
+
     model = clone;
 
     addExpression(model);

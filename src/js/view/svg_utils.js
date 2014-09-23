@@ -49,7 +49,7 @@ define(function (require) {
         cy: translate.ty + bbox.height / 2 + bbox.y,
         r: radius,
         fill: 'transparent',
-        for: op.id
+        id: op.id.replace('v', 's')
       });
 
       return circle;
@@ -69,7 +69,7 @@ define(function (require) {
         width: bbox.width + 2 * padding,
         height: bbox.height + 2 * padding,
         fill: 'transparent',
-        for: num.id
+        id: num.id.replace('v', 's')
       });
 
       return rect;

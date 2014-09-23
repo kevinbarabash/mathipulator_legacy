@@ -12,9 +12,13 @@ define(function (require) {
   require('jquery_extensions');
 
   function ExpressionView(model, options) {
+    this.modelToViewMap = {};
+    this.viewToModelMap = {};
     this.model = model;
     this.model.view = this;
+
     this.xml = $(model.xml).clone().get(0);
+    this.createIdMap();
 
     $(this.xml).find('mn').addClass('num');
     $(this.xml).find('mo').addClass('op');
@@ -26,6 +30,30 @@ define(function (require) {
       Formatter.formatAlgebra(this.xml);
     }
   }
+
+  var id = 0;
+  function genId() {
+    return 'vid-' + (id++);
+  }
+
+  function sidToVid(sid) {
+    return sid.replace('s', 'v');
+  }
+
+  ExpressionView.prototype.createIdMap = function() {
+    var modelToViewMap = this.modelToViewMap;
+    var viewToModelMap = this.viewToModelMap;
+
+    $(this.xml).find('[id]').each(function () {
+      var modelId = $(this).attr('id');
+      var viewId = genId();
+
+      $(this).attr('id', viewId);
+
+      modelToViewMap[modelId] = viewId;
+      viewToModelMap[viewId] = modelId;
+    });
+  };
 
   ExpressionView.prototype.createSelectionOverlay = function (svg) {
     var selectionGroup = SVGUtils.createSVGElement('g');
@@ -43,8 +71,9 @@ define(function (require) {
       var op = this;
       var node = $(view.xml).find('#' + op.id); // xml is actually mathML... precision of language
       var circle = SVGUtils.createCircleAroundOperator(op, node);
+      var id = sidToVid(op.id);
       $(circle).click(function () {
-        $(view).trigger('operatorClick', $(this).attr('for'));
+        $(view).trigger('operatorClick', id);
       }).appendTo(selectionGroup);
     });
   };
@@ -55,8 +84,9 @@ define(function (require) {
     $(svg).find('.num').each(function () {
       var num = this;
       var rect = SVGUtils.createRectangleAroundNumber(num);
+      var id = sidToVid(num.id);
       $(rect).click(function () {
-        $(view).trigger('numberClick', $(this).attr('for'));
+        $(view).trigger('numberClick', id);
       }).appendTo(selectionGroup);
     });
   };
