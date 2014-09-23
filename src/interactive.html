@@ -41,5 +41,30 @@
 </body>
 </html>
 <script>
-  require(['interactive'], function () {});
+  function getParameterByName(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+            results = regex.exec(location.search);
+    return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
+
+  require(['app_controller', 'model/expression_model'],
+    function (AppController, ExpressionModel) {
+
+      var model, options;
+
+      if (getParameterByName('format') === 'arithmetic') {
+        model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
+      } else {
+        model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
+      }
+
+      options = { format: 'algebra' };
+      if (getParameterByName('format')) {
+        options.format = getParameterByName('format');
+      }
+
+      var controller = new AppController(options);
+      controller.addExpression(model);
+  });
 </script>
