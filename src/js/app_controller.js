@@ -57,23 +57,32 @@ define(function (require) {
     }
   };
 
+  AppController.prototype.fadeTransition = function () {
+    $('#fg').children().appendTo($('#bg')).animate({
+      opacity: 0.0,
+      top: '-57px'
+    }, {
+      complete: function () {
+        $(this).hide();
+      }
+    }).find('.selected').each(function () {
+      this.classList.remove('selected');
+    });
+  };
+
   AppController.prototype.addExpression = function (expr) {
     this.selection.clear();
     this.updateContextMenu();
     this.models.push(expr);
     this.model = expr;
 
+    this.fadeTransition();
+
     var animate = this.views.length > 0;
     var view = new ExpressionView(expr, this.options);
     view.render(animate);
     this.views.push(view);
 
-    if (this.views.length > 2) {
-      this.views[this.views.length - 3].hide();     // third last
-    }
-    if (this.views.length > 1) {
-      this.views[this.views.length - 2].fade(0.3);  // second last
-    }
 
     var that = this;
     $(view).on('operatorClick numberClick', function (e, vid) {
@@ -119,6 +128,25 @@ define(function (require) {
     });
   };
 
+  AppController.prototype.animateUndo = function (currentView, previousView) {
+    $(previousView.svg).parent().show().animate({
+      opacity: 1.0,
+      top: 0
+    }, {
+      complete: function () {
+        $('#fg').append(this);
+      }
+    });
+
+    $(currentView.svg).parent().animate({
+      opacity: 0.0
+    }, {
+      complete: function() {
+        $(this).hide();
+      }
+    });
+  };
+
   AppController.prototype.undoHandler = function () {
     var models = this.models;
     var views = this.views;
@@ -126,19 +154,11 @@ define(function (require) {
     if (models.length > 0 && views.length > 0 && models.length === views.length) {
       var lastView = views[views.length - 1];
       var secondLastView = views[views.length - 2];
-      var thirdLastView = views[views.length - 3];
 
-      $(thirdLastView.svg).parent().animate({ opacity: 0.3 });
-      $(secondLastView.svg).parent().animate({ opacity: 1.0 });
-      $(lastView.svg).parent().animate({ opacity: 0.0 }, {
-        complete: function() {
-          $(this).hide();
-        }
-      });
+      this.animateUndo(views[views.length - 1], views[views.length - 2]);
 
       lastView.deactivate();
       secondLastView.activate();
-      thirdLastView.deactivate();
 
       // TODO: create an undo/redo stack
       this.models = models.slice(0, models.length - 1);

@@ -107,7 +107,7 @@ define(function (require) {
 
   ExpressionView.prototype.render = function (animate) {
     var script = document.createElement('script');
-    $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo(document.body);
+    $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo($('#fg'));
 
     var deferred = $.Deferred();
     var view = this;
@@ -131,6 +131,9 @@ define(function (require) {
 
       var overlay = $(svg).find('.selection-overlay').get(0);
       overlay.classList.add('active');
+      $(svg).find('.result').each(function () {
+        this.classList.add('blue');
+      });
 
       deferred.resolve(svg);
     });

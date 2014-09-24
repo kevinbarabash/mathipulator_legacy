@@ -6,6 +6,7 @@ body
   height 100%
 
 div#input
+  position absolute
   border solid 2px darkgray
   border-radius 4px
   left 10px
@@ -16,6 +17,31 @@ div#input
   background-color white
   margin 10px
   height 110px
+
+div#steps
+  height 100%
+  width 100%
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+
+.container
+  position absolute
+  left 0
+  top 0
+  height 100%
+  width 100%
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+  pointer-events none
+
+  div
+    position relative
+    pointer-events all
+
 
 input[type=text]
   font-size 28px
