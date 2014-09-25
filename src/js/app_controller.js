@@ -8,38 +8,45 @@ define(function (require) {
   var ExpressionModel = require('model/expression_model');
   var ExpressionView = require('view/expression_view');
   var Selection = require('selection');
+  var UndoManager = require('undo_manager');
   var $ = require('jquery');
   require('jquery.transit');
 
   var TransformList = require('model/transform_list');
 
   function AppController(options) {
-    this.models = [];
-    this.model = null;
-    this.views = [];
     this.selection = new Selection();
     this.options = options;
+    this.undoManager = new UndoManager();
+    window.undoManager = this.undoManager;
 
     document.body.addEventListener('click', this.globalClickHandler.bind(this));
 
     $('#modExpr').click(this.modifyExpressionHandler.bind(this));
     $('#simplify').click(this.simplifyExpressionHandler.bind(this));
-    $('#toggle_results').click(this.toggleResultsHandler.bind(this));
     $('#undo').click(this.undoHandler.bind(this));
+    $('#redo').click(this.redoHandler.bind(this));
 
     TransformList.forEach(function (Transform) {
       $('#' + Transform.name).click(this.applyTransform.bind(this, Transform));
       var button = document.getElementById(Transform.name);
       button.addEventListener('touchstart', this.applyTransform.bind(this, Transform));
     }, this);
+
+    $(this.undoManager).on('canUndoChanged', this.handleCanUndoChanged.bind(this));
   }
+
+  AppController.prototype.handleCanUndoChanged = function () {
+    console.log('undo state: ' + this.undoManager.canUndo);
+  };
 
   AppController.prototype.updateContextMenu = function () {
     var contextMenu = $('#context-menu');
     contextMenu.find('li').hide();
+    var model = this.undoManager.position.value;
 
     if (this.selection.id) {
-      var node = this.model.getNode(this.selection.id);
+      var node = model.getNode(this.selection.id);
       TransformList.filter(function (transform) {
         return transform.canTransform(node);
       }).forEach(function (transform) {
@@ -65,7 +72,7 @@ define(function (require) {
       opacity: 0.0
     }, {
       complete: function () {
-        $(this).hide();
+        $(this).remove();
       }
     }).find('.selected').each(function () {
       this.classList.remove('selected');
@@ -74,17 +81,17 @@ define(function (require) {
 
   AppController.prototype.addExpression = function (expr) {
     this.selection.clear();
+
+    this.undoManager.push(expr);
+    this.showModel(expr);
+
     this.updateContextMenu();
-    this.models.push(expr);
-    this.model = expr;
+  };
 
+  AppController.prototype.showModel = function (model) {
     this.fadeTransition();
-
-    var animate = this.views.length > 0;
-    var view = new ExpressionView(expr, this.options);
-    view.render($('#fg'), animate);
-    this.views.push(view);
-
+    var view = new ExpressionView(model, this.options);
+    view.render($('#fg'), true);
 
     var that = this;
     $(view).on('operatorClick numberClick', function (e, vid) {
@@ -109,84 +116,40 @@ define(function (require) {
 
     var operator = input[0];
     var expr = ExpressionModel.fromASCII(input.substring(1));
+    var model = this.undoManager.position.value;
 
-    this.model = this.model.modify(operator, expr);
-    this.addExpression(this.model);
+    this.addExpression(model.modify(operator, expr));
 
     mathInput$.val('');
   };
 
   AppController.prototype.simplifyExpressionHandler = function () {
-    this.model = this.model.simplify();
-    this.addExpression(this.model);
-  };
-
-  AppController.prototype.toggleResultsHandler = function () {
-    $('.result').last().each(function () {
-      this.classList.toggle('blue');    // can't use jQuery's toggle because this an SVG node
-    });
-    $('.result-input').each(function () {
-      this.classList.toggle('blue');    // can't use jQuery's toggle because this an SVG node
-    });
-  };
-
-  AppController.prototype.animateUndo = function (currentView, previousView) {
-    $(previousView.svg).parent().show().transition({
-      opacity: 1.0,
-      top: 0
-    }, {
-      complete: function () {
-        $('#fg').append(this);
-      }
-    });
-
-    $(currentView.svg).parent().transition({
-      opacity: 0.0
-    }, {
-      complete: function() {
-        $(this).hide();
-      }
-    });
+    var model = this.undoManager.position.value;
+    this.addExpression(model.simplify());
   };
 
   AppController.prototype.undoHandler = function () {
-    var models = this.models;
-    var views = this.views;
-
-    if (models.length > 0 && views.length > 0 && models.length === views.length) {
-      var lastView = views[views.length - 1];
-      var secondLastView = views[views.length - 2];
-
-      this.animateUndo(views[views.length - 1], views[views.length - 2]);
-
-      lastView.deactivate();
-      secondLastView.activate();
-
-      // TODO: create an undo/redo stack
-      this.models = models.slice(0, models.length - 1);
-      this.views = views.slice(0, views.length - 1);
+    if (this.undoManager.canUndo) {
+      var model = this.undoManager.undo();
+      this.showModel(model);
     }
   };
 
-  AppController.prototype.markInputNodes = function (svg, inputIds) {
-    if (inputIds) {
-      inputIds.forEach(function (mid) {
-        var vid = this.model.view.modelToViewMap[mid];
-        var elem = $(svg).find('#' + vid).get(0);
-        elem.classList.add('result-input');
-      }, this);
+  AppController.prototype.redoHandler = function () {
+    if (this.undoManager.canRedo) {
+      var model = this.undoManager.redo();
+      this.showModel(model);
     }
   };
 
   AppController.prototype.applyTransform = function (Transform) {
-    var clone = this.model.clone();
-    var inputIds = Transform.transform(clone.getNode(this.selection.id));
-    this.markInputNodes(this.model.view.svg, inputIds);
-
-    this.model = clone;
-    this.addExpression(this.model);
+    var model = this.undoManager.position.value;
+    var clone = model.clone();
+    Transform.transform(clone.getNode(this.selection.id));
+    this.addExpression(clone);
   };
 
   return AppController;
-  // TODO: create a stack with commands like current, previous, etc.
+
+  // TODO: update how we show the inputs to a particular action
 });
