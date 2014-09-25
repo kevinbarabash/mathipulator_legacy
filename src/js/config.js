@@ -5,6 +5,7 @@
 require.config({
   baseUrl: 'js',
   paths: {
-    jquery: '../../bower_components/jquery/dist/jquery.min'
+    jquery: '../../bower_components/jquery/dist/jquery.min',
+    'jquery.transit': '../../bower_components/jquery.transit/jquery.transit'
   }
 });

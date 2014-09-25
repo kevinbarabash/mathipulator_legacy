@@ -9,6 +9,7 @@ define(function (require) {
   var ExpressionView = require('view/expression_view');
   var Selection = require('selection');
   var $ = require('jquery');
+  require('jquery.transit');
 
   var TransformList = require('model/transform_list');
 
@@ -61,9 +62,9 @@ define(function (require) {
   };
 
   AppController.prototype.fadeTransition = function () {
-    $('#fg').children().appendTo($('#bg')).animate({
-      opacity: 0.0
-//      top: '-40px'
+    $('#fg').children().appendTo($('#bg')).transition({
+      opacity: 0.0,
+      top: '-40px'
     }, {
       complete: function () {
         $(this).hide();
@@ -132,7 +133,7 @@ define(function (require) {
   };
 
   AppController.prototype.animateUndo = function (currentView, previousView) {
-    $(previousView.svg).parent().show().animate({
+    $(previousView.svg).parent().show().transition({
       opacity: 1.0,
       top: 0
     }, {
@@ -141,7 +142,7 @@ define(function (require) {
       }
     });
 
-    $(currentView.svg).parent().animate({
+    $(currentView.svg).parent().transition({
       opacity: 0.0
     }, {
       complete: function() {

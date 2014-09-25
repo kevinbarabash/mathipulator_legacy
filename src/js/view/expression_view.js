@@ -9,6 +9,7 @@ define(function (require) {
   var SVGUtils = require('view/svg_utils');
   var $ = require('jquery');
 
+  require('jquery.transit');
   require('jquery_extensions');
 
   function ExpressionView(model, options) {
@@ -156,7 +157,7 @@ define(function (require) {
   };
 
   ExpressionView.prototype.hide = function () {
-    $(this.svg).parent().animate({ opacity: 0.0 }, {
+    $(this.svg).parent().transition({ opacity: 0.0 }, {
       complete: function () {
         $(this).hide();
       }
@@ -165,7 +166,7 @@ define(function (require) {
 
   ExpressionView.prototype.fade = function (opacity) {
     this.deactivate();
-    $(this.svg).parent().animate({ opacity: opacity });
+    $(this.svg).parent().transition({ opacity: opacity });
   };
 
   return ExpressionView;
