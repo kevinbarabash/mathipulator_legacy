@@ -1,0 +1,115 @@
+html
+  height: 100%;
+
+body
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+
+.app
+  height: 100%;
+  display: -webkit-flex; display: flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  background-color: lightyellow;
+  font-family: sans-serif;
+  font-weight: 100;
+
+.math-content
+  font-size: 32px;
+  text-align: center;
+  margin: 20px 0;
+  padding: 5px;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+  height: 48px;
+  line-height: 48px;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+
+  .content-container
+    position: absolute
+    width 100%
+
+.buttons
+  display: -webkit-flex; display: flex;
+  flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-grow: 1;
+  -webkit-flex-grow: 1;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+
+.contextual-buttons
+  background-color: rgb(0,128,128);
+  flex-grow: 1;
+  -webkit-flex-grow: 1;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  width: 50%;
+
+.global-buttons
+  background-color: rgb(0,192,192);
+  flex-grow: 1;
+  flex-shrink: 0;
+  width: 50%;
+
+ul
+  list-style: none;
+  padding: 0;
+  /*border: solid black;*/
+  border-width: 0 0 1px 1px;
+  margin: 0;
+
+li
+  color: white;
+  padding: 14px;
+  font-size: 22px;
+  /*border: solid black;*/
+  border-width: 1px 1px 0 0;
+
+
+.buttons
+  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+
+.textbox
+  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+  margin-bottom: 20px;
+  padding: 0;
+  display: -webkit-flex; display: flex;
+  flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+
+  input[type="text"]
+    font-size: 18px;
+    border:none;
+    background-color: white;
+    padding: 10px;
+    margin: 0;
+    box-sizing: border-box;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+
+  div
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
+    font-size: 22px;
+    padding: 7px 12px;
+    background-color: grey;
+    color: white;
+
+input:focus
+  outline: none;
+
+svg g
+  fill rgb(64,64,64)
+
+g.selection-overlay.active
+circle, rect
+  fill transparent
+
+circle:hover, circle.selected
+  fill rgba(255,255,0,0.5)
+
+rect:hover, rect.selected
+  fill rgba(255,0,255,0.5)

@@ -15,6 +15,11 @@ gulp.task('watch', function () {
       .src('test/runner.html')
       .pipe(mochaPhantomJS({reporter: 'dot'}));
   });
+  watch(['src/css/*.styl'], function () {
+    return gulp.src('src/css/*.styl')
+      .pipe(stylus())
+      .pipe(gulp.dest('src/css'));
+  });
 });
 
 gulp.task('test', function () {

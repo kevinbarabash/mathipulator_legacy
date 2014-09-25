@@ -89,6 +89,9 @@ define(function (require) {
       $(circle).click(function () {
         $(view).trigger('operatorClick', id);
       }).appendTo(selectionGroup);
+      circle.addEventListener('touchstart', function () {
+        $(view).trigger('operatorClick', id);
+      });
     });
   };
 
@@ -102,6 +105,9 @@ define(function (require) {
       $(rect).click(function () {
         $(view).trigger('numberClick', id);
       }).appendTo(selectionGroup);
+      rect.addEventListener('touchstart', function () {
+        $(view).trigger('operatorClick', id);
+      });
     });
   };
 
@@ -117,7 +123,7 @@ define(function (require) {
 
       var oldContainer = $(svg).parent().parent();
       var newContainer = $('<div></div>').css({
-        'font-size': '300%',
+        'font-size': '100%',
         'text-align': 'center'
       }).append(svg);
       oldContainer.replaceWith(newContainer);

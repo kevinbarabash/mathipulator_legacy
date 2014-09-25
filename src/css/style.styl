@@ -5,18 +5,6 @@ body
   margin 0
   height 100%
 
-div#input
-  position absolute
-  border solid 2px darkgray
-  border-radius 4px
-  left 10px
-  top 10px
-  font-family sans-serif
-  color dimgray
-  padding 20px
-  background-color white
-  margin 10px
-  height 110px
 
 div#steps
   height 100%
@@ -26,7 +14,7 @@ div#steps
   justify-content center
   flex-direction column
 
-.container
+.content-container
   position absolute
   left 0
   top 0
@@ -42,20 +30,34 @@ div#steps
     position relative
     pointer-events all
 
+.container
+  height 100%
+  width 100%
+  display flex
+  align-items center
+  justify-content center
+  flex-direction column
+  pointer-events none
 
 input[type=text]
-  font-size 28px
-  width 100%
   box-sizing border-box
 
 .blue
   fill blue
 
 .button-row
-  line-height 30px
+  width 100%
+  pointer-events all
+  text-align left
+  flex-shrink 0
+  button
+    margin-right 10px
+  div
+    margin 10px
 
 #context-menu button
   display none
+
 
 g.selection-overlay.active
   circle, rect
@@ -66,3 +68,15 @@ g.selection-overlay.active
 
   rect:hover, rect.selected
     fill rgba(255,0,255,0.5)
+
+/*button*/
+  /*background-color darkgray*/
+  /*color #ffffff*/
+  /*border none*/
+  /*padding 8px*/
+  /*font-size 16px*/
+  /*border-radius 8px*/
+  /*box-shadow 0 0 10px rgba(0,0,0,0.5)*/
+
+/*button:focus*/
+  /*outline none*/

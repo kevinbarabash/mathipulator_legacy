@@ -2,9 +2,11 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
   <title>Interactive Math</title>
   <link rel="stylesheet" href="css/style.css"/>
   <script type="text/x-mathjax-config">MathJax.Hub.Config({
+    messageStyle: "none",
     SVG: {
       scale: 300,
       font: "TeX",  // possible values: TeX, STIX-Web, Asana-Math, Neo-Euler, Gyre-Pagella, Gyre-Termes, Latin-Modern
@@ -17,36 +19,43 @@
 </head>
 <body>
 
-<div class="container" id="bg">
-
-</div>
-<div class="container" id="mid">
-
-</div>
-<div class="container" id="fg">
-
-</div>
-
-<div id="input">
-  <div>
-    <label for="inputMath">Expression:</label><input id="inputMath" type="text">
-  </div>
+<div class="container">
   <div class="button-row">
-    <button id="modExpr">Modify Expression</button>
-    <button id="simplify">Simplify</button>
-    <button id="toggle_results">Toggle Results</button>
-    <button id="undo">Undo</button>
+    <div>
+      <label for="inputMath">Expression:</label><input id="inputMath" type="text">
+      <button id="modExpr">Modify</button>
+    </div>
+    <div>
+      <button id="simplify">Simplify</button>
+      <button id="toggle_results">Toggle Results</button>
+      <button id="undo">Undo</button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="content-container" id="bg">
+
+    </div>
+    <div class="content-container" id="mid">
+
+    </div>
+    <div class="content-container" id="fg">
+
+    </div>
   </div>
   <div class="button-row" id="context-menu">
-    <button id="distribute_backwards">Distribute Backwards</button>
-    <button id="distribute_forwards">Distribute Forwards</button>
-    <button id="evaluate">Evaluate</button>
-    <button id="commute">Commute</button>
-    <button id="rewrite_subtraction">Rewrite Subtraction</button>
-    <button id="rewrite_division">Rewrite Division</button>
-    <button id="write_as_subtraction">Write As Subtraction</button>
+    <div>
+      <button id="distribute_backwards">Distribute Backwards</button>
+      <button id="distribute_forwards">Distribute Forwards</button>
+      <button id="evaluate">Evaluate</button>
+      <button id="commute">Commute</button>
+      <button id="rewrite_subtraction">Rewrite Subtraction</button>
+      <button id="rewrite_division">Rewrite Division</button>
+      <button id="write_as_subtraction">Write As Subtraction</button>
+    </div>
   </div>
 </div>
+
+
 
 </body>
 </html>

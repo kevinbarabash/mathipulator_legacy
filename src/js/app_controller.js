@@ -28,12 +28,15 @@ define(function (require) {
 
     TransformList.forEach(function (Transform) {
       $('#' + Transform.name).click(this.applyTransform.bind(this, Transform));
+      var button = document.getElementById(Transform.name);
+      button.addEventListener('touchstart', this.applyTransform.bind(this, Transform));
     }, this);
   }
 
   AppController.prototype.updateContextMenu = function () {
     var contextMenu = $('#context-menu');
     contextMenu.find('button').hide();
+    contextMenu.find('li').hide();
 
     if (this.selection.id) {
       var node = this.model.getNode(this.selection.id);
@@ -59,8 +62,8 @@ define(function (require) {
 
   AppController.prototype.fadeTransition = function () {
     $('#fg').children().appendTo($('#bg')).animate({
-      opacity: 0.0,
-      top: '-57px'
+      opacity: 0.0
+//      top: '-40px'
     }, {
       complete: function () {
         $(this).hide();
