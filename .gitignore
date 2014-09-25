@@ -2,3 +2,4 @@ bower_components
 node_modules
 .idea
 src/css/*.css
+build

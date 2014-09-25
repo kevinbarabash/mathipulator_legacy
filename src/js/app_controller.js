@@ -84,7 +84,7 @@ define(function (require) {
 
     var animate = this.views.length > 0;
     var view = new ExpressionView(expr, this.options);
-    view.render(animate);
+    view.render($('#fg'), animate);
     this.views.push(view);
 
 

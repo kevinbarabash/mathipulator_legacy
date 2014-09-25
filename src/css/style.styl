@@ -1,10 +1,12 @@
+@import 'nib'
+@import 'svg'
+
 html
   height 100%
 
 body
   margin 0
   height 100%
-
 
 div#steps
   height 100%
@@ -57,26 +59,3 @@ input[type=text]
 
 #context-menu button
   display none
-
-
-g.selection-overlay.active
-  circle, rect
-    fill transparent
-
-  circle:hover, circle.selected
-    fill rgba(255,255,0,0.5)
-
-  rect:hover, rect.selected
-    fill rgba(255,0,255,0.5)
-
-/*button*/
-  /*background-color darkgray*/
-  /*color #ffffff*/
-  /*border none*/
-  /*padding 8px*/
-  /*font-size 16px*/
-  /*border-radius 8px*/
-  /*box-shadow 0 0 10px rgba(0,0,0,0.5)*/
-
-/*button:focus*/
-  /*outline none*/

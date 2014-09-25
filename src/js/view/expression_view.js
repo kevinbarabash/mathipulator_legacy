@@ -112,9 +112,9 @@ define(function (require) {
     });
   };
 
-  ExpressionView.prototype.render = function (animate) {
+  ExpressionView.prototype.render = function(container, animate) {
     var script = document.createElement('script');
-    $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo($('#fg'));
+    $(script).attr('type', 'math/mml').text(this.xml.outerHTML).appendTo(container);
 
     var deferred = $.Deferred();
     var view = this;

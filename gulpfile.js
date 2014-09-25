@@ -8,6 +8,7 @@ var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var sloc = require('gulp-sloc');
 var eslint = require('gulp-eslint');
 var stylus = require('gulp-stylus');
+var nib = require('nib');
 
 gulp.task('watch', function () {
   watch(['src/**/*.js', 'test/**/*.js'], function() {
@@ -18,7 +19,7 @@ gulp.task('watch', function () {
   watch(['src/css/*.styl'], function () {
     return gulp.src('src/css/*.styl')
       .pipe(stylus())
-      .pipe(gulp.dest('src/css'));
+      .pipe(gulp.dest('build/css'));
   });
 });
 
@@ -45,6 +46,6 @@ gulp.task('lint', function () {
 
 gulp.task('stylus', function () {
   gulp.src('src/css/*.styl')
-    .pipe(stylus())
-    .pipe(gulp.dest('src/css'));
+    .pipe(stylus({use: [nib()]}))
+    .pipe(gulp.dest('build/css'));
 });

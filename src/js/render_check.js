@@ -36,7 +36,7 @@ define(function (require) {
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
     var view = new ExpressionView(model, { format: 'algebra' });
-    view.render();
+    view.render(document.body);
   });
 
   // Arithmetic
@@ -49,6 +49,6 @@ define(function (require) {
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
     var view = new ExpressionView(model, { format: 'arithmetic' });
-    view.render();
+    view.render(document.body);
   });
 });

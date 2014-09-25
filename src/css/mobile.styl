@@ -1,120 +1,91 @@
+@import 'nib'
+@import 'svg'
+
 html
-  height: 100%;
+  height: 100%
 
 body
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
+  height: 100%
+  margin: 0
+  overflow: hidden
 
 .app
-  height: 100%;
-  display: -webkit-flex; display: flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  background-color: lightyellow;
-  font-family: sans-serif;
-  font-weight: 100;
+  display flex
+  flex-direction column
+  height 100%
+  background-color lightyellow
+  font-family sans-serif
+  font-weight 100
 
 .math-content
-  margin: 20px 0;
-  padding: 5px;
-  background-color: white;
-  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+  flex-shrink 0
+  margin 20px 0
+  padding 5px
+  background-color white
+  box-shadow 0 0 5px rgba(0,0,0,0.25)
   height 64px
-  flex-shrink: 0;
-  -webkit-flex-shrink: 0;
 
   .content-container
+    display flex
     font-size: 32px
     width 100%
     height 64px
     position absolute
-    display: -webkit-flex; display: flex;
     align-items center
     justify-content center
 
 .buttons
-  display: -webkit-flex; display: flex;
-  flex-direction: row;
-  -webkit-flex-direction: row;
-  flex-grow: 1;
-  -webkit-flex-grow: 1;
-  flex-shrink: 0;
-  -webkit-flex-shrink: 0;
+  display flex
+  flex-direction row
+  flex 1 0
 
 .contextual-buttons
-  background-color: rgb(0,128,128);
-  flex-grow: 1;
-  -webkit-flex-grow: 1;
-  flex-shrink: 0;
-  -webkit-flex-shrink: 0;
-  width: 50%;
+  flex 1 0
+  background-color rgb(0,128,128)
+  width 50%
 
   li
     display none
 
 .global-buttons
-  background-color: rgb(0,192,192);
-  flex-grow: 1;
-  flex-shrink: 0;
-  width: 50%;
+  flex 1 0
+  background-color rgb(0,192,192)
+  width 50%
 
 ul
-  list-style: none;
-  padding: 0;
-  /*border: solid black;*/
-  border-width: 0 0 1px 1px;
-  margin: 0;
+  list-style none
+  padding 0
+  margin 0
 
 li
-  color: white;
-  padding: 14px;
-  font-size: 22px;
-  /*border: solid black;*/
-  border-width: 1px 1px 0 0;
-
+  color: white
+  padding: 14px
+  font-size: 22px
 
 .buttons
-  box-shadow: 0 0 5px rgba(0,0,0,0.25);
+  box-shadow 0 0 5px rgba(0,0,0,0.25)
 
 .textbox
-  box-shadow: 0 0 5px rgba(0,0,0,0.25);
-  margin-bottom: 20px;
-  padding: 0;
-  display: -webkit-flex; display: flex;
-  flex-shrink: 0;
-  -webkit-flex-shrink: 0;
+  display flex
+  flex-shrink 0
+  box-shadow 0 0 5px rgba(0,0,0,0.25)
+  margin-bottom 20px
+  padding 0
 
   input[type="text"]
-    font-size: 18px;
-    border:none;
-    background-color: white;
-    padding: 10px;
-    margin: 0;
-    box-sizing: border-box;
-    flex-grow: 1;
-    -webkit-flex-grow: 1;
+    flex-grow 1
+    font-size 18px
+    border none
+    background-color white
+    padding 10px
+    margin 0
 
   div
-    flex-shrink: 0;
-    -webkit-flex-shrink: 0;
-    font-size: 22px;
-    padding: 7px 12px;
-    background-color: grey;
-    color: white;
+    flex-shrink 0
+    font-size 22px
+    padding 7px 12px
+    background-color grey
+    color white
 
 input:focus
-  outline: none;
-
-svg g
-  fill rgb(64,64,64)
-
-g.selection-overlay.active
-circle, rect
-  fill transparent
-
-circle:hover, circle.selected
-  fill rgba(255,255,0,0.5)
-
-rect:hover, rect.selected
-  fill rgba(255,0,255,0.5)
+  outline: none
