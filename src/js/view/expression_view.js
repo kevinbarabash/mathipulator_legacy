@@ -105,7 +105,7 @@ define(function (require) {
 
     $(svg).find('.num').each(function () {
       var num = this;
-      var rect = SVGUtils.createRectangleAroundNumber(num);
+      var rect = SVGUtils.createRoundedRectangleAroundNode(num);
       var id = sidToVid(num.id);
       $(rect).click(function () {
         $(view).trigger('numberClick', id);

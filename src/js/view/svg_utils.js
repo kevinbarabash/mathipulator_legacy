@@ -60,8 +60,8 @@ define(function (require) {
       var bbox = num.getBBox();
 
       var rect = document.createElementNS(svgNS, 'rect');
-      var multipier = 29;
-      var padding = multipier * 5;
+      var multiplier = 29;
+      var padding = multiplier * 5;
 
       $(rect).attr({
         x: translate.tx + bbox.x - padding,
@@ -73,6 +73,38 @@ define(function (require) {
       });
 
       return rect;
+    },
+
+    createRoundedRectangleAroundNode: function (node) {
+      var translate = accumTranslate(node);
+      var bbox = node.getBBox();
+
+      var path = document.createElementNS(svgNS, 'path');
+      var radius = 300;
+
+      var x = translate.tx + bbox.x - radius / 2;
+      var y = translate.ty + bbox.y - radius / 2;
+      var width = bbox.width + radius;
+      var height = bbox.height + radius;
+
+      var d = 'M' + x + ',' + y
+        + 'h' + (width - radius)
+        + 'a' + radius + ',' + radius + ' 0 0 1 ' + radius + ',' + radius
+        + 'v' + (height - 2 * radius)
+        + 'a' + radius + ',' + radius + ' 0 0 1 ' + -radius + ',' + radius
+        + 'h' + (2 * radius - width)
+        + 'a' + -radius + ',' + radius + ' 0 0 1 ' + -radius + ',' + -radius
+        + 'v' + (2 * radius - height)
+        + 'a' + -radius + ',' + -radius + ' 0 0 1 ' + radius + ',' + -radius
+        + 'z';
+
+      $(path).attr({
+        d: d,
+        fill: 'transparent',
+        id: node.id.replace('v', 's')
+      });
+
+      return path;
     },
 
     correctBBox: function (svg) {
