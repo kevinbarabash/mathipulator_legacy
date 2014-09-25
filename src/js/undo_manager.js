@@ -8,52 +8,55 @@ define(function (require) {
 
   function UndoManager() {
     this.list = new LinkedList();
-    this.position = this.list.last;
+    this.current = this.list.last;
   }
 
   UndoManager.prototype.push = function (value) {
-    // clear everything after the current location
-    if (this.position !== this.list.last) {
-      this.position.next.prev = null;
-      this.position.next = null;
-      this.list.last = this.position;
-    }
+    this.clear();
 
     var canUndo = this.canUndo;
     this.list.push(value);
-    this.position = this.list.last;
+    this.current = this.list.last;
     if (!canUndo) {
       $(this).trigger('canUndoChanged');
     }
   };
 
+  UndoManager.prototype.clear = function () {
+    if (this.current !== this.list.last) {
+      this.current.next.prev = null;
+      this.current.next = null;
+      this.list.last = this.current;
+    }
+  };
+
   Object.defineProperty(UndoManager.prototype, 'canUndo', {
     get: function () {
-      return this.position !== this.list.first;
+      return this.current !== this.list.first;
     }
   });
 
   Object.defineProperty(UndoManager.prototype, 'canRedo', {
     get: function () {
-      return this.position !== this.list.last;
+      return this.current !== this.list.last;
     }
   });
 
   UndoManager.prototype.undo = function () {
     if (this.canUndo) {
-      this.position = this.position.prev;
+      this.current = this.current.prev;
       if (!this.canUndo) {
         $(this).trigger('canUndoChanged');
       }
-      return this.position.value;
+      return this.current.value;
     }
     return null;
   };
 
   UndoManager.prototype.redo = function () {
     if (this.canRedo) {
-      this.position = this.position.next;
-      return this.position.value;
+      this.current = this.current.next;
+      return this.current.value;
     }
   };
 

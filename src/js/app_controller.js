@@ -26,6 +26,7 @@ define(function (require) {
     $('#simplify').click(this.simplifyExpressionHandler.bind(this));
     $('#undo').click(this.undoHandler.bind(this));
     $('#redo').click(this.redoHandler.bind(this));
+    $('#reset').click(this.resetHandler.bind(this));
 
     TransformList.forEach(function (Transform) {
       $('#' + Transform.name).click(this.applyTransform.bind(this, Transform));
@@ -43,7 +44,7 @@ define(function (require) {
   AppController.prototype.updateContextMenu = function () {
     var contextMenu = $('#context-menu');
     contextMenu.find('li').hide();
-    var model = this.undoManager.position.value;
+    var model = this.undoManager.current.value;
 
     if (this.selection.id) {
       var node = model.getNode(this.selection.id);
@@ -116,7 +117,7 @@ define(function (require) {
 
     var operator = input[0];
     var expr = ExpressionModel.fromASCII(input.substring(1));
-    var model = this.undoManager.position.value;
+    var model = this.undoManager.current.value;
 
     this.addExpression(model.modify(operator, expr));
 
@@ -124,7 +125,7 @@ define(function (require) {
   };
 
   AppController.prototype.simplifyExpressionHandler = function () {
-    var model = this.undoManager.position.value;
+    var model = this.undoManager.current.value;
     this.addExpression(model.simplify());
   };
 
@@ -142,8 +143,15 @@ define(function (require) {
     }
   };
 
+  AppController.prototype.resetHandler = function () {
+    this.undoManager.current = this.undoManager.list.first;
+    this.undoManager.clear();
+    var model = this.undoManager.current.value;
+    this.showModel(model);
+  };
+
   AppController.prototype.applyTransform = function (Transform) {
-    var model = this.undoManager.position.value;
+    var model = this.undoManager.current.value;
     var clone = model.clone();
     Transform.transform(clone.getNode(this.selection.id));
     this.addExpression(clone);
