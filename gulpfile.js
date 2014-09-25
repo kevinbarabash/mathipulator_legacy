@@ -18,7 +18,7 @@ gulp.task('watch', function () {
   });
   watch(['src/css/*.styl'], function () {
     return gulp.src('src/css/*.styl')
-      .pipe(stylus())
+      .pipe(stylus({use: [nib()]}))
       .pipe(gulp.dest('build/css'));
   });
 });

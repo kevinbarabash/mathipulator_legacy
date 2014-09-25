@@ -36,7 +36,6 @@ define(function (require) {
 
   AppController.prototype.updateContextMenu = function () {
     var contextMenu = $('#context-menu');
-    contextMenu.find('button').hide();
     contextMenu.find('li').hide();
 
     if (this.selection.id) {
@@ -63,8 +62,7 @@ define(function (require) {
 
   AppController.prototype.fadeTransition = function () {
     $('#fg').children().appendTo($('#bg')).transition({
-      opacity: 0.0,
-      top: '-40px'
+      opacity: 0.0
     }, {
       complete: function () {
         $(this).hide();

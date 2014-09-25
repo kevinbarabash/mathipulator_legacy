@@ -25,11 +25,15 @@ define(function (require) {
     $(this.xml).find('mo').addClass('op');
     $(this.xml).attr('display', 'block');
 
-    if (options && options.format === 'arithmetic') {
+    var format = options.format || 'arithmetic';
+
+    if (format === 'arithmetic') {
       Formatter.formatArithmetic(this.xml);
     } else {
       Formatter.formatAlgebra(this.xml);
     }
+
+    this.fontSize = options.fontSize || '100%';
   }
 
   var id = 0;
@@ -71,7 +75,7 @@ define(function (require) {
   ExpressionView.prototype.createSelectionOverlay = function (svg) {
     var selectionGroup = SVGUtils.createSVGElement('g');
     selectionGroup.setAttribute('class', 'selection-overlay');
-    $(selectionGroup).appendTo(svg.firstElementChild);
+    $(selectionGroup).prependTo(svg.firstElementChild);
 
     this.addCircles(svg, selectionGroup);
     this.addNumberHighlights(svg, selectionGroup);
@@ -122,16 +126,17 @@ define(function (require) {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, script], function () {
       var svg = $('#' + script.id + '-Frame' + ' svg').get(0);
 
-      var oldContainer = $(svg).parent().parent();
-      var newContainer = $('<div></div>').css({
-        'font-size': '100%',
-        'text-align': 'center'
-      }).append(svg);
-      oldContainer.replaceWith(newContainer);
+      var container = $(svg).parent().parent();
+//      var newContainer = $('<div></div>').css({
+//        'font-size': view.fontSize,
+//        'text-align': 'center'
+//      }).append(svg);
+      container.replaceWith(svg);
 
       view.createSelectionOverlay(svg);
       view.svg = svg;
       SVGUtils.correctBBox(svg);
+      $(svg).css({ width: '80%', height: '', 'max-height': '20%' });
       if (animate) {
         $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
       }

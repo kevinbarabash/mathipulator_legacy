@@ -16,6 +16,61 @@ div#steps
   justify-content center
   flex-direction column
 
+.header
+  background-color #808080
+  font-size 32px
+  font-weight 100
+  font-family sans-serif
+  color white
+  padding 5px 10px
+
+.main
+  display flex
+  flex-direction row
+  height 100%
+
+.math-content
+  height 100%
+  flex-grow 1
+  position relative
+
+.menus
+  height 100%
+  width 200px
+  flex-shrink 0
+  display flex
+  flex-direction column
+
+  div
+    font-size 18px
+    font-family sans-serif
+    font-weight 100
+    color white
+
+ul
+  padding 0
+  margin 5px 0
+  list-style-type none
+
+  li
+    padding 10px 20px
+
+  li:hover
+    cursor pointer
+
+.global-menu
+  background-color rgb(0,192,192)
+  flex-grow 0
+  flex-shrink 0
+
+#context-menu
+  height 100%
+  background-color rgb(0,128,128)
+  flex-grow 1
+
+  li
+    display none
+
 .content-container
   position absolute
   left 0
@@ -28,34 +83,12 @@ div#steps
   flex-direction column
   pointer-events none
 
-  div
-    position relative
+  svg
     pointer-events all
 
-.container
-  height 100%
-  width 100%
-  display flex
-  align-items center
-  justify-content center
-  flex-direction column
-  pointer-events none
 
 input[type=text]
   box-sizing border-box
 
 .blue
   fill blue
-
-.button-row
-  width 100%
-  pointer-events all
-  text-align left
-  flex-shrink 0
-  button
-    margin-right 10px
-  div
-    margin 10px
-
-#context-menu button
-  display none

@@ -1,5 +1,6 @@
 svg g
   fill rgb(64,64,64)
+  pointer-events none
 
 g.selection-overlay.active
   circle, rect
@@ -9,4 +10,7 @@ g.selection-overlay.active
     fill rgba(255,255,0,0.5)
 
   rect:hover, rect.selected
-    fill rgba(255,0,255,0.5)
+    fill rgba(255,255,0,0.5)
+
+g.selection-overlay
+  pointer-events all

@@ -19,43 +19,36 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="button-row">
-    <div>
-      <label for="inputMath">Expression:</label><input id="inputMath" type="text">
-      <button id="modExpr">Modify</button>
-    </div>
-    <div>
-      <button id="simplify">Simplify</button>
-      <button id="toggle_results">Toggle Results</button>
-      <button id="undo">Undo</button>
-    </div>
+<div class="header">Interactive Math</div>
+<div class="main">
+  <div class="math-content">
+    <div class="content-container" id="bg"></div>
+    <div class="content-container" id="fg"></div>
   </div>
-  <div class="container">
-    <div class="content-container" id="bg">
-
+  <div class="menus">
+    <div class="global-menu">
+      <ul>
+        <li id="modExpr">Modify...</li>
+        <li id="simplify">Simplify</li>
+        <li id="undo">Undo</li>
+        <li id="redo">Redo</li>
+        <li id="history">History</li>
+        <li id="reset">Reset</li>
+      </ul>
     </div>
-    <div class="content-container" id="mid">
-
-    </div>
-    <div class="content-container" id="fg">
-
-    </div>
-  </div>
-  <div class="button-row" id="context-menu">
-    <div>
-      <button id="distribute_backwards">Distribute Backwards</button>
-      <button id="distribute_forwards">Distribute Forwards</button>
-      <button id="evaluate">Evaluate</button>
-      <button id="commute">Commute</button>
-      <button id="rewrite_subtraction">Rewrite Subtraction</button>
-      <button id="rewrite_division">Rewrite Division</button>
-      <button id="write_as_subtraction">Write As Subtraction</button>
+    <div id="context-menu">
+      <ul>
+        <li id="distribute_backwards">Distribute Backwards</li>
+        <li id="distribute_forwards">Distribute Forwards</li>
+        <li id="evaluate">Evaluate</li>
+        <li id="commute">Commute</li>
+        <li id="rewrite_subtraction">Rewrite Subtraction</li>
+        <li id="rewrite_division">Rewrite Division</li>
+        <li id="write_as_subtraction">Write As Subtraction</li>
+      </ul>
     </div>
   </div>
 </div>
-
-
 
 </body>
 </html>
@@ -78,7 +71,10 @@
         model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
       }
 
-      options = { format: 'algebra' };
+      options = {
+        format: 'algebra',
+        fontSize: '300%'
+      };
       if (getParameterByName('format')) {
         options.format = getParameterByName('format');
       }
