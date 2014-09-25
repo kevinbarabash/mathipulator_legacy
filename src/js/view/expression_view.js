@@ -136,7 +136,7 @@ define(function (require) {
       view.createSelectionOverlay(svg);
       view.svg = svg;
       SVGUtils.correctBBox(svg);
-      $(svg).css({ width: '80%', height: '', 'max-height': '20%' });
+      $(svg).css({ width: '80%', height: '20%' });
       if (animate) {
         $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
       }
