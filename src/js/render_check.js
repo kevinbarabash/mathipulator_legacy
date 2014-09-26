@@ -35,7 +35,13 @@ define(function (require) {
 
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
-    var view = new MathView(model, { format: 'algebra' });
+    var options = { format: 'algebra' };
+
+    var view = new MathView({
+      model: model,
+      options: options
+    });
+
     view.render(document.body);
   });
 
@@ -48,7 +54,13 @@ define(function (require) {
 
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
-    var view = new MathView(model, { format: 'arithmetic' });
+    var options = { format: 'arithmetic' };
+
+    var view = new MathView({
+      model: model,
+      options: options
+    });
+
     view.render(document.body);
   });
 });

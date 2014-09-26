@@ -25,9 +25,8 @@ define(function (require) {
     },
 
     applyTransform: function (e) {
-      var undoManager = this.mathView.undoManager;
-
-      var model = undoManager.current.value;
+      var mathCollection = this.mathView.mathCollection;
+      var model = mathCollection.at(mathCollection.position);
       var clone = model.clone();
 
       var transformName = e.target.id;
@@ -39,9 +38,9 @@ define(function (require) {
 
     update: function () {
       this.$('li').hide();
-      var undoManager = this.mathView.undoManager;
+      var mathCollection = this.mathView.mathCollection;
+      var model = mathCollection.at(mathCollection.position);
       var selection = this.mathView.selection;
-      var model = undoManager.current.value;
 
       if (selection.id) {
         var node = model.getNode(selection.id);

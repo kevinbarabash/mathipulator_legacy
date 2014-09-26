@@ -38,24 +38,25 @@ define(function (require) {
     },
 
     simplify: function () {
-      var model = this.mathView.undoManager.current.value;
+      var mathCollection = this.mathView.mathCollection;
+      var model = mathCollection.at(mathCollection.position);
       this.mathView.addExpression(model.simplify());
     },
 
     undo: function () {
-      var undoManager = this.mathView.undoManager;
+      var mathCollection = this.mathView.mathCollection;
 
-      if (undoManager.canUndo) {
-        var model = undoManager.undo();
+      if (mathCollection.canUndo) {
+        var model = mathCollection.undo();
         this.mathView.showModel(model);
       }
     },
 
     redo: function () {
-      var undoManager = this.mathView.undoManager;
+      var mathCollection = this.mathView.mathCollection;
 
-      if (undoManager.canRedo) {
-        var model = undoManager.redo();
+      if (mathCollection.canRedo) {
+        var model = mathCollection.redo();
         this.mathView.showModel(model);
       }
     },

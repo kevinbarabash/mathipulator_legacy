@@ -7,7 +7,6 @@ define(function (require) {
 
   var MathView = require('view/math_view');
   var Selection = require('selection');
-  var UndoManager = require('undo_manager');
   var GlobalMenu = require('global_menu');
   var ContextMenu = require('context_menu');
   var MathCollection = require('math_collection');
@@ -18,20 +17,17 @@ define(function (require) {
   function AppController(options) {
     this.selection = new Selection();
     this.options = options;
-    this.undoManager = new UndoManager();
-    window.undoManager = this.undoManager;
 
     document.body.addEventListener('click', this.globalClickHandler.bind(this));
 
-    $(this.undoManager).on('canUndoChanged', this.handleCanUndoChanged.bind(this));
-
+    this.mathCollection = new MathCollection();
     this.globalMenu = new GlobalMenu(this);
     this.contextMenu = new ContextMenu(this);
   }
 
-  AppController.prototype.handleCanUndoChanged = function () {
-    console.log('undo state: ' + this.undoManager.canUndo);
-  };
+//  AppController.prototype.handleCanUndoChanged = function () {
+//    console.log('undo state: ' + this.undoManager.canUndo);
+//  };
 
   AppController.prototype.globalClickHandler = function (e) {
     if ($(e.target).parents('svg').length === 0) {
@@ -60,7 +56,7 @@ define(function (require) {
   AppController.prototype.addExpression = function (expr) {
     this.selection.clear();
 
-    this.undoManager.push(expr);
+    this.mathCollection.push(expr);
     this.showModel(expr);
 
     this.contextMenu.update();
@@ -68,7 +64,12 @@ define(function (require) {
 
   AppController.prototype.showModel = function (model) {
     this.fadeTransition();
-    var view = new MathView(model, this.options);
+
+    var view = new MathView({
+      model: model,
+      options: this.options
+    });
+
     view.render($('#fg'), true);
 
     var that = this;

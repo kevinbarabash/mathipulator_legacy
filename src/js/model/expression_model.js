@@ -19,8 +19,8 @@ define(function (require) {
   }
 
   var ExpressionModel = Backbone.Model.extend({
-    constructor: function (xml) {
-      this.xml = xml;
+    initialize: function (attributes) {
+      this.xml = attributes.xml;
     },
 
     clone: function () {
@@ -56,13 +56,13 @@ define(function (require) {
 
   ExpressionModel.fromASCII = function (ascii) {
     var xml = parser.parse(ascii);
-    var model = new ExpressionModel(xml);
+    var model = new ExpressionModel({ xml:xml });
     model.addIds();
     return model;
   };
 
   ExpressionModel.fromXML = function (xml) {
-    var model = new ExpressionModel($(xml).clone().get(0));
+    var model = new ExpressionModel({ xml:$(xml).clone().get(0) });
     $(model.xml).find('.result').removeClass('result');
     return model;
   };
