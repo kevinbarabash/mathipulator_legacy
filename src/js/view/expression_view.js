@@ -12,6 +12,7 @@ define(function (require) {
   require('jquery.transit');
   require('jquery_extensions');
 
+  // TODO: update how we show the inputs to a particular action
   function ExpressionView(model, options) {
     this.modelToViewMap = {};
     this.viewToModelMap = {};

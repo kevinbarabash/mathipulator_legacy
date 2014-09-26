@@ -19,7 +19,8 @@
     "MathJax": "~2.4.0",
     "jquery": "~2.1.1",
     "requirejs": "~2.1.14",
-    "jquery.transit": "~0.9.12"
+    "jquery.transit": "~0.9.12",
+    "backbone": "~1.1.2"
   },
   "devDependencies": {
     "mocha": "~1.21.4",
