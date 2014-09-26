@@ -5,7 +5,7 @@
 define(function (require) {
   'use strict';
 
-  var ExpressionView = require('view/expression_view');
+  var MathView = require('view/math_view');
   var Selection = require('selection');
   var UndoManager = require('undo_manager');
   var GlobalMenu = require('global_menu');
@@ -67,11 +67,12 @@ define(function (require) {
 
   AppController.prototype.showModel = function (model) {
     this.fadeTransition();
-    var view = new ExpressionView(model, this.options);
+    var view = new MathView(model, this.options);
     view.render($('#fg'), true);
 
     var that = this;
 
+    // TODO: move selection into the math_view
     $(view).on('operatorClick numberClick', function (e, vid) {
       if (!that.selection.isEmpty()) {
         view.deselectNode(that.selection.id);
