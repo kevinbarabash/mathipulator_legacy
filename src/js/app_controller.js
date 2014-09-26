@@ -10,6 +10,7 @@ define(function (require) {
   var UndoManager = require('undo_manager');
   var GlobalMenu = require('global_menu');
   var ContextMenu = require('context_menu');
+  var MathCollection = require('math_collection');
 
   var $ = require('jquery');
   require('jquery.transit');
@@ -88,6 +89,9 @@ define(function (require) {
       that.contextMenu.update();
     });
   };
+
+  var collection = new MathCollection([]);
+  window.collection = collection;
 
   return AppController;
 });

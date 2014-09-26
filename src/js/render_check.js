@@ -6,7 +6,7 @@ define(function (require) {
   'use strict';
 
   var ExpressionModel = require('model/expression_model');
-  var ExpressionView = require('view/expression_view');
+  var MathView = require('view/math_view');
   var $ = require('jquery');
 
   var expressions;
@@ -35,7 +35,7 @@ define(function (require) {
 
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
-    var view = new ExpressionView(model, { format: 'algebra' });
+    var view = new MathView(model, { format: 'algebra' });
     view.render(document.body);
   });
 
@@ -48,7 +48,7 @@ define(function (require) {
 
   expressions.forEach(function (expr) {
     var model = ExpressionModel.fromASCII(expr);
-    var view = new ExpressionView(model, { format: 'arithmetic' });
+    var view = new MathView(model, { format: 'arithmetic' });
     view.render(document.body);
   });
 });
