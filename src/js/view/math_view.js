@@ -26,6 +26,8 @@ define(function (require) {
     viewToModelMap: {},
 
     initialize: function(opts) {
+      this.selection = new Backbone.Model();
+
       var model = opts.model;
       var options = opts.options;
 
@@ -45,6 +47,16 @@ define(function (require) {
       }
 
       this.fontSize = options.fontSize || '100%';
+
+      var selection = this.selection;
+      $(document.body).click(function (e) {
+        if ($(e.target).parents('svg').length === 0) {
+          $('.selected').each(function () {
+            this.classList.remove('selected');
+          });
+          selection.unset('mid');
+        }
+      });
     },
 
     createIdMaps: function () {
@@ -96,10 +108,11 @@ define(function (require) {
         var id = op.id.replace('s', 'v');
 
         $(circle).click(function () {
-          $(view).trigger('operatorClick', id);
+          view.updateSelection(id);
         }).appendTo(selectionGroup);
+
         circle.addEventListener('touchstart', function () {
-          $(view).trigger('operatorClick', id);
+          view.updateSelection(id);
         });
 
       });
@@ -112,13 +125,32 @@ define(function (require) {
         var num = this;
         var rect = SVGUtils.createRoundedRectangleAroundNode(num);
         var id = num.id.replace('s', 'v');
+
         $(rect).click(function () {
-          $(view).trigger('numberClick', id);
+          view.updateSelection(id);
         }).appendTo(selectionGroup);
+
         rect.addEventListener('touchstart', function () {
-          $(view).trigger('operatorClick', id);
+          view.updateSelection(id);
         });
       });
+    },
+
+    // TODO: just have a regulard property and created a
+    // selectionChanged method and use the before and after values
+    // to update the selection appropriately
+    updateSelection: function (vid) {
+      if (this.selection.get('mid')) {
+        this.deselectNode(this.selection.get('mid'));
+      }
+
+      var mid = this.viewToModelMap[vid];
+      if (mid !== this.selection.get('mid')) {
+        this.selection.set('mid', mid);
+        this.selectNode(mid);
+      } else {
+        this.selection.set('mid', 'asdf');
+      }
     },
 
     render: function (container, animate) {

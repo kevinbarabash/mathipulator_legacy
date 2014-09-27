@@ -70,6 +70,11 @@ define(function (require) {
 
       undoManager.current = undoManager.list.first;
       undoManager.clear();
+    },
+
+    positionCallback: function (collection) {
+      console.log('canUndo: ' + collection.canUndo);
+      console.log('canRedo: ' + collection.canRedo);
     }
   });
 });

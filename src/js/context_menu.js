@@ -51,6 +51,13 @@ define(function (require) {
           this.$('#' + transform.name).show();
         }, this);
       }
+    },
+
+    handleViewAdded: function (view) {
+      var selection = view.selection;
+      this.listenTo(selection, 'change:mid', this.update);
+      // TODO: register for view destroy events
+      // TODO: stop listening when the view gets destroyed
     }
   });
 });

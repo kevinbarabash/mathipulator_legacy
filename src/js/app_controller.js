@@ -19,8 +19,8 @@ define(function (require) {
 
     this.appView = new AppView();
     this.appView.listenTo(this.mathCollection, 'position', this.appView.positionCallback);
-
-    this.contextMenu.listenTo(this.appView.selection, 'change:mid', this.contextMenu.update);
+    this.globalMenu.listenTo(this.mathCollection, 'position', this.globalMenu.positionCallback);
+    this.contextMenu.listenTo(this.appView, 'viewadded', this.contextMenu.handleViewAdded);
   }
 
   return AppController;
