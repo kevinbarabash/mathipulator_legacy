@@ -145,9 +145,9 @@ define(function (require) {
         var overlay = $(svg).find('.selection-overlay').get(0);
         overlay.classList.add('active');
 
-        $(svg).find('.result').each(function () {
-          this.classList.add('blue');
-        });
+//        $(svg).find('.result').each(function () {
+//          this.classList.add('blue');
+//        });
 
         deferred.resolve(svg);
       });

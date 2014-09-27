@@ -44,6 +44,7 @@ define(function (require) {
     },
 
     fadeTransition: function () {
+      $('#bg').empty();
       $('#fg').children().appendTo($('#bg')).transition({
         opacity: 0.0
       }, {
