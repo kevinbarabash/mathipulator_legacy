@@ -12,24 +12,23 @@ define(function (require) {
       if (this.position < this.length - 1) {
         this.set(this.slice(0, this.position + 1));
       }
-      Backbone.Collection.prototype.push.call(this, model, options);
       this.position++;
+      Backbone.Collection.prototype.push.call(this, model, options);
+      this.trigger('position', this);
     },
 
     undo: function () {
       if (this.canUndo) {
         this.position--;
-        return this.at(this.position);
+        this.trigger('position', this);
       }
-      return null;
     },
 
     redo: function () {
       if (this.canRedo) {
         this.position++;
-        return this.at(this.position);
+        this.trigger('position', this);
       }
-      return null;
     }
   });
 

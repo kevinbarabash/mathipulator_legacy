@@ -30,20 +30,21 @@ define(function (require) {
       var clone = model.clone();
 
       var transformName = e.target.id;
-      var node = clone.getNode(this.mathView.selection.id);
+      var node = clone.getNode(this.mid);
       TransformDict[transformName].transform(node);
 
-      this.mathView.addExpression(clone);
+      this.mathView.mathCollection.push(clone);
     },
 
-    update: function () {
+    update: function (selection, value) {
       this.$('li').hide();
       var mathCollection = this.mathView.mathCollection;
       var model = mathCollection.at(mathCollection.position);
-      var selection = this.mathView.selection;
 
-      if (selection.id) {
-        var node = model.getNode(selection.id);
+      var mid = value;
+      this.mid = mid;
+      if (mid) {
+        var node = model.getNode(mid);
         TransformList.filter(function (transform) {
           return transform.canTransform(node);
         }).forEach(function (transform) {

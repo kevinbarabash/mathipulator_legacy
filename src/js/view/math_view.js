@@ -25,9 +25,10 @@ define(function (require) {
     modelToViewMap: {},
     viewToModelMap: {},
 
-    initialize: function(options) {
-      var model = options.model;
-      var options = options.options;
+    initialize: function(opts) {
+      var model = opts.model;
+      var options = opts.options;
+
       this.xml = $(model.xml).clone().get(0);
       this.createIdMaps();
 

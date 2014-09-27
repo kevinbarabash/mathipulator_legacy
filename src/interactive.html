@@ -77,11 +77,12 @@
         format: 'algebra',
         fontSize: '300%'
       };
+
       if (getParameterByName('format')) {
         options.format = getParameterByName('format');
       }
 
       var controller = new AppController(options);
-      controller.addExpression(model);
+      controller.mathCollection.push(model);
   });
 </script>

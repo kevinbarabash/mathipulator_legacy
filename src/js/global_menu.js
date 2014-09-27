@@ -18,9 +18,9 @@ define(function (require) {
       'click #reset': 'reset'
     },
 
-    initialize: function (mathView) { // TODO: eventually update this to be the real 'MathView'
+    initialize: function (appView) { // TODO: eventually update this to be the real 'appView'
       this.delegateEvents(this.events);
-      this.mathView = mathView;
+      this.appView = appView;
     },
 
     // TODO: figure out where to put the text box to enter a new expression/modification
@@ -38,26 +38,24 @@ define(function (require) {
     },
 
     simplify: function () {
-      var mathCollection = this.mathView.mathCollection;
+      var mathCollection = this.appView.mathCollection;
       var model = mathCollection.at(mathCollection.position);
-      this.mathView.addExpression(model.simplify());
+      mathCollection.push(model.simplify());
     },
 
     undo: function () {
-      var mathCollection = this.mathView.mathCollection;
+      var mathCollection = this.appView.mathCollection;
 
       if (mathCollection.canUndo) {
-        var model = mathCollection.undo();
-        this.mathView.showModel(model);
+        mathCollection.undo();
       }
     },
 
     redo: function () {
-      var mathCollection = this.mathView.mathCollection;
+      var mathCollection = this.appView.mathCollection;
 
       if (mathCollection.canRedo) {
-        var model = mathCollection.redo();
-        this.mathView.showModel(model);
+        mathCollection.redo();
       }
     },
 
@@ -66,13 +64,12 @@ define(function (require) {
       console.log('history: %o', e);
     },
 
+    // TODO: fix me
     reset: function () {
-      var undoManager = this.mathView.undoManager;
+      var undoManager = this.appView.undoManager;
 
       undoManager.current = undoManager.list.first;
       undoManager.clear();
-      var model = undoManager.current.value;
-      this.showModel(model);
     }
   });
 });
