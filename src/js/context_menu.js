@@ -12,20 +12,20 @@ define(function (require) {
   });
 
   return Backbone.View.extend({
-    el: '#context-menu',
+    tagName: 'ul',
 
     // TODO: turn each event into it's own ListMenuItemView
     events: {
       'click li': 'applyTransform'
     },
 
-    initialize: function (mathView) {
-      this.mathView = mathView;
+    initialize: function (options) {
+      this.collection = options.collection;
       this.delegateEvents(this.events);
     },
 
     applyTransform: function (e) {
-      var mathCollection = this.mathView.mathCollection;
+      var mathCollection = this.collection;
       var model = mathCollection.at(mathCollection.position);
       var clone = model.clone();
 
@@ -33,13 +33,13 @@ define(function (require) {
       var node = clone.getNode(this.mid);
       TransformDict[transformName].transform(node);
 
-      this.mathView.mathCollection.push(clone);
+      this.collection.push(clone);
     },
 
-    update: function (selection, value) {
+    update: function (value) {
       this.$('li').hide();
-      var mathCollection = this.mathView.mathCollection;
-      var model = mathCollection.at(mathCollection.position);
+      var collection = this.collection;
+      var model = collection.at(collection.position);
 
       var mid = value;
       this.mid = mid;
@@ -53,11 +53,17 @@ define(function (require) {
       }
     },
 
-    handleViewAdded: function (view) {
-      var selection = view.selection;
-      this.listenTo(selection, 'change:mid', this.update);
-      // TODO: register for view destroy events
-      // TODO: stop listening when the view gets destroyed
+    render: function() {
+      var html = '<li id="evaluate">Evaluate</li>' +
+        '<li id="commute">Commute</li>' +
+        '<li id="distribute_forwards">Distribute Forwards</li>' +
+        '<li id="distribute_backwards">Distribute Backwards</li>' +
+        '<li id="rewrite_subtraction">Rewrite Subtraction</li>' +
+        '<li id="rewrite_division">Rewrite Division</li>' +
+        '<li id="write_as_subtraction">Write As Subtraction</li>';
+
+      this.$el.html(html);
+      return this;
     }
   });
 });

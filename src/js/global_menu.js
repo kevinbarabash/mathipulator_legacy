@@ -73,8 +73,8 @@ define(function (require) {
     },
 
     positionCallback: function (collection) {
-      console.log('canUndo: ' + collection.canUndo);
-      console.log('canRedo: ' + collection.canRedo);
+//      console.log('canUndo: ' + collection.canUndo);
+//      console.log('canRedo: ' + collection.canRedo);
     }
   });
 });

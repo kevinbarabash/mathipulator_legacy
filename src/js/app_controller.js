@@ -14,13 +14,11 @@ define(function (require) {
 
   function AppController() {
     this.mathCollection = new MathCollection();
-    this.contextMenu = new ContextMenu(this);
     this.globalMenu = new GlobalMenu(this);
 
     this.appView = new AppView();
     this.appView.listenTo(this.mathCollection, 'position', this.appView.positionCallback);
     this.globalMenu.listenTo(this.mathCollection, 'position', this.globalMenu.positionCallback);
-    this.contextMenu.listenTo(this.appView, 'viewadded', this.contextMenu.handleViewAdded);
   }
 
   return AppController;

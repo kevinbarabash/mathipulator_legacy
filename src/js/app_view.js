@@ -9,29 +9,17 @@ define(function (require) {
 
   return Backbone.View.extend({
     positionCallback: function (collection) {
-      var model = collection.at(collection.position);
-      this.fadeTransition();
+      if (this.view) {
+        this.view.fadeOutAndRemove();
+      }
 
-      var view = new MathView({
+      var model = collection.at(collection.position);
+      this.view = new MathView({
         model: model,
         options: { format: 'arithmetic' }
       });
 
-      view.render($('#fg'), true);
-      this.trigger('viewadded', view);
-    },
-
-    fadeTransition: function () {
-      $('#bg').empty();
-      $('#fg').children().appendTo($('#bg')).transition({
-        opacity: 0.0
-      }, {
-        complete: function () {
-          $(this).remove();
-        }
-      }).find('.selected').each(function () {
-        this.classList.remove('selected');
-      });
+      this.view.render($('#fg'), true);
     }
   });
 });

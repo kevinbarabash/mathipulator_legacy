@@ -8,6 +8,7 @@ define(function (require) {
   var Backbone = require('backbone');
   var Formatter = require('view/formatter');
   var SVGUtils = require('view/svg_utils');
+  var ContextMenu = require('context_menu');
   var $ = require('jquery');
 
   require('jquery.transit');
@@ -47,16 +48,25 @@ define(function (require) {
       }
 
       this.fontSize = options.fontSize || '100%';
+      this.contextMenu = new ContextMenu({
+        collection: model.collection
+      });
+
+      $('#context-menu').append(this.contextMenu.render().$el);
 
       var selection = this.selection;
+      var contextMenu = this.contextMenu;
       $(document.body).click(function (e) {
         if ($(e.target).parents('svg').length === 0) {
           $('.selected').each(function () {
             this.classList.remove('selected');
           });
           selection.unset('mid');
+          contextMenu.update();
         }
       });
+
+      // TODO: remember to destroy the context menu
     },
 
     createIdMaps: function () {
@@ -151,6 +161,8 @@ define(function (require) {
       } else {
         this.selection.set('mid', 'asdf');
       }
+
+      this.contextMenu.update(mid);
     },
 
     render: function (container, animate) {
@@ -166,6 +178,7 @@ define(function (require) {
         var container = $(svg).parent().parent();
         container.replaceWith(svg);
 
+        view.el = svg;
         view.createSelectionOverlay(svg);
         view.svg = svg;
         SVGUtils.correctBBox(svg);
@@ -177,6 +190,7 @@ define(function (require) {
         var overlay = $(svg).find('.selection-overlay').get(0);
         overlay.classList.add('active');
 
+//        view.contextMenu.update();
 //        $(svg).find('.result').each(function () {
 //          this.classList.add('blue');
 //        });
@@ -185,6 +199,20 @@ define(function (require) {
       });
 
       return deferred;
+    },
+
+    fadeOutAndRemove: function () {
+      this.contextMenu.remove();
+      var view = this;
+
+      $('#bg').empty();
+      $(this.el).appendTo($('#bg')).transition({
+        opacity: 0.0
+      }, {
+        complete: function () {
+          view.remove();
+        }
+      });
     }
   });
 });
