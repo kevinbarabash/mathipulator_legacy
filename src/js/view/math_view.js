@@ -48,21 +48,15 @@ define(function (require) {
       }
 
       this.fontSize = options.fontSize || '100%';
-      this.contextMenu = new ContextMenu({
-        collection: model.collection
-      });
 
-      $('#context-menu').append(this.contextMenu.render().$el);
 
       var selection = this.selection;
-      var contextMenu = this.contextMenu;
       $(document.body).click(function (e) {
         if ($(e.target).parents('svg').length === 0) {
           $('.selected').each(function () {
             this.classList.remove('selected');
           });
           selection.unset('mid');
-          contextMenu.update();
         }
       });
 
@@ -161,8 +155,6 @@ define(function (require) {
       } else {
         this.selection.set('mid', 'asdf');
       }
-
-      this.contextMenu.update(mid);
     },
 
     render: function (container, animate) {
@@ -202,7 +194,6 @@ define(function (require) {
     },
 
     fadeOutAndRemove: function () {
-      this.contextMenu.remove();
       var view = this;
 
       $('#bg').empty();

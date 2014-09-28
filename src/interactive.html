@@ -72,7 +72,8 @@
         options.format = getParameterByName('format');
       }
 
+      // TODO: update MathProblem to require an initial value (starting step)
       var controller = new AppController(options);
-      controller.mathCollection.push(model);
+      controller.problem.push(model);
   });
 </script>
