@@ -19,22 +19,23 @@ define(function (require) {
 
     initialize: function () {
       this.problem = new MathProblem();
-      this.globalMenu = new GlobalMenu(this);
+      this.globalMenu = new GlobalMenu({
+        problem: this.problem
+      });
 
-      this.listenTo(this.problem, 'change:position', this.positionCallback);
-      this.globalMenu.listenTo(this.problem, 'change:position', this.globalMenu.positionCallback);
+      this.listenTo(this.problem, 'change:current', this.positionCallback);
+
+      this.globalMenu.listenTo(this.problem, 'change:canUndo', this.globalMenu.canUndoChanged);
+      this.globalMenu.listenTo(this.problem, 'change:canRedo', this.globalMenu.canRedoChanged);
     },
 
-    positionCallback: function (problem) {
+    positionCallback: function (problem, model) {
       if (this.view) {
         this.view.fadeOutAndRemove();
       }
-
-      this.problem = problem;
-      this.model = problem.current;
-
+      this.model = model;
       this.view = new MathView({
-        model: this.model,
+        model: model,
         options: { format: 'arithmetic' }
       });
 

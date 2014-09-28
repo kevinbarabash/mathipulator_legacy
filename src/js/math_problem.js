@@ -5,12 +5,14 @@
 define(function (require) {
   var Backbone = require('backbone');
 
-  var MathProblem = Backbone.Model.extend({
+  return Backbone.Model.extend({
     steps: new Backbone.Collection(),
 
     initialize: function () {
       this.set('position', -1);
       this.steps.problem = this;
+
+      this.on('change:position', this.positionChanged);
     },
 
     push: function (model) {
@@ -23,35 +25,29 @@ define(function (require) {
     },
 
     undo: function () {
-      if (this.canUndo) {
+      if (this.get('canUndo')) {
         this.set('position', this.get('position') - 1);
       }
     },
 
     redo: function () {
-      if (this.canRedo) {
+      if (this.get('canRedo')) {
         this.set('position', this.get('position') + 1);
       }
+    },
+
+    positionChanged: function (model, position) {
+      if (position > 0) {
+        this.set('canUndo', true);
+      } else {
+        this.set('canUndo', false);
+      }
+      if (position < this.steps.length - 1) {
+        this.set('canRedo', true);
+      } else {
+        this.set('canRedo', false);
+      }
+      this.set('current', this.steps.at(position));
     }
   });
-
-  Object.defineProperty(MathProblem.prototype, 'canUndo', {
-    get: function () {
-      return this.position > 0;
-    }
-  });
-
-  Object.defineProperty(MathProblem.prototype, 'canRedo', {
-    get: function () {
-      return this.get('position') < this.steps.length - 1;
-    }
-  });
-
-  Object.defineProperty(MathProblem.prototype, 'current', {
-    get: function () {
-      return this.steps.at(this.get('position'));
-    }
-  });
-
-  return MathProblem;
 });

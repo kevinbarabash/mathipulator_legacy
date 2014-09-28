@@ -135,9 +135,6 @@ define(function (require) {
       });
     },
 
-    // TODO: just have a regulard property and created a
-    // selectionChanged method and use the before and after values
-    // to update the selection appropriately
     updateSelection: function (vid) {
       if (this.selection.get('mid')) {
         this.deselectNode(this.selection.get('mid'));
@@ -190,9 +187,10 @@ define(function (require) {
 
     fadeOutAndRemove: function () {
       var view = this;
+      var $bg = $('#bg');
 
-      $('#bg').empty();
-      $(this.el).appendTo($('#bg')).transition({
+      $bg.empty();
+      $(this.el).appendTo($bg).transition({
         opacity: 0.0
       }, {
         complete: function () {

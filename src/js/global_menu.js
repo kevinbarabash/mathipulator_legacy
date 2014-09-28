@@ -4,6 +4,7 @@
 
 define(function (require) {
   var Backbone = require('backbone');
+  var $ = require('jquery');
 //  var ExpressionModel = require('model/expression_model');
 
   return Backbone.View.extend({
@@ -18,9 +19,9 @@ define(function (require) {
       'click #reset': 'reset'
     },
 
-    initialize: function (appView) { // TODO: eventually update this to be the real 'appView'
+    initialize: function (options) { // TODO: eventually update this to be the real 'appView'
       this.delegateEvents(this.events);
-      this.appView = appView;
+      this.problem = options.problem;
     },
 
     // TODO: figure out where to put the text box to enter a new expression/modification
@@ -38,24 +39,19 @@ define(function (require) {
     },
 
     simplify: function () {
-      var mathCollection = this.appView.mathCollection;
-      var model = mathCollection.at(mathCollection.position);
-      mathCollection.push(model.simplify());
+      var model = this.problem.get('current');
+      this.problem.push(model.simplify());
     },
 
     undo: function () {
-      var mathCollection = this.appView.mathCollection;
-
-      if (mathCollection.canUndo) {
-        mathCollection.undo();
+      if (this.problem.get('canUndo')) {
+        this.problem.undo();
       }
     },
 
     redo: function () {
-      var mathCollection = this.appView.mathCollection;
-
-      if (mathCollection.canRedo) {
-        mathCollection.redo();
+      if (this.problem.get('canRedo')) {
+        this.problem.redo();
       }
     },
 
@@ -66,15 +62,26 @@ define(function (require) {
 
     // TODO: fix me
     reset: function () {
-      var undoManager = this.appView.undoManager;
-
-      undoManager.current = undoManager.list.first;
-      undoManager.clear();
+//      var undoManager = this.appView.undoManager;
+//
+//      undoManager.current = undoManager.list.first;
+//      undoManager.clear();
     },
 
-    positionCallback: function (collection) {
-//      console.log('canUndo: ' + collection.canUndo);
-//      console.log('canRedo: ' + collection.canRedo);
+    canUndoChanged: function(model, value) {
+      if (value) {
+        $('#undo').css({ opacity: 1.0 });
+      } else {
+        $('#undo').css({ opacity: 0.5 });
+      }
+    },
+
+    canRedoChanged: function(model, value) {
+      if (value) {
+        $('#redo').css({ opacity: 1.0 });
+      } else {
+        $('#redo').css({ opacity: 0.5 });
+      }
     }
   });
 });
