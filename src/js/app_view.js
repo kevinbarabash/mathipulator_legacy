@@ -1,16 +1,30 @@
 /**
- * Created by kevin on 2014-09-26.
+ * Created by kevin on 2014-09-01.
  */
 
 define(function (require) {
+  'use strict';
+
   var Backbone = require('backbone');
+  var MathProblem = require('math_problem');
   var MathView = require('view/math_view');
+  var GlobalMenu = require('global_menu');
   var ContextMenu = require('context_menu');
   var TransformList = require('model/transform_list');
 
   var $ = require('jquery');
+  require('jquery.transit');
 
   return Backbone.View.extend({
+
+    initialize: function () {
+      this.problem = new MathProblem();
+      this.globalMenu = new GlobalMenu(this);
+
+      this.listenTo(this.problem, 'change:position', this.positionCallback);
+      this.globalMenu.listenTo(this.problem, 'change:position', this.globalMenu.positionCallback);
+    },
+
     positionCallback: function (problem) {
       if (this.view) {
         this.view.fadeOutAndRemove();

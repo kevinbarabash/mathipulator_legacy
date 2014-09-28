@@ -8,7 +8,6 @@ define(function (require) {
   var Backbone = require('backbone');
   var Formatter = require('view/formatter');
   var SVGUtils = require('view/svg_utils');
-  var ContextMenu = require('context_menu');
   var $ = require('jquery');
 
   require('jquery.transit');
@@ -22,7 +21,6 @@ define(function (require) {
   }
 
   return Backbone.View.extend({
-
     modelToViewMap: {},
     viewToModelMap: {},
 
@@ -49,7 +47,6 @@ define(function (require) {
 
       this.fontSize = options.fontSize || '100%';
 
-
       var selection = this.selection;
       $(document.body).click(function (e) {
         if ($(e.target).parents('svg').length === 0) {
@@ -59,8 +56,6 @@ define(function (require) {
           selection.unset('mid');
         }
       });
-
-      // TODO: remember to destroy the context menu
     },
 
     createIdMaps: function () {
@@ -153,7 +148,7 @@ define(function (require) {
         this.selection.set('mid', mid);
         this.selectNode(mid);
       } else {
-        this.selection.set('mid', 'asdf');
+        this.selection.unset('mid');
       }
     },
 

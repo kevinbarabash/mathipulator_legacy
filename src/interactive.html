@@ -52,8 +52,8 @@
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 
-  require(['app_controller', 'model/expression_model'],
-    function (AppController, ExpressionModel) {
+  require(['app_view', 'model/expression_model'],
+    function (AppView, ExpressionModel) {
 
       var model, options;
 
@@ -73,7 +73,7 @@
       }
 
       // TODO: update MathProblem to require an initial value (starting step)
-      var controller = new AppController(options);
+      var controller = new AppView(options);
       controller.problem.push(model);
   });
 </script>
