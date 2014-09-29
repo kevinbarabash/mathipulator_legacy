@@ -10,6 +10,7 @@ define(function (require) {
   return Backbone.View.extend({
     el: '.global-menu',
 
+    // TODO: change to 'click #undo.active'
     events: {
       'click #modify': 'modify',
       'click #simplify': 'simplify',
@@ -22,6 +23,7 @@ define(function (require) {
     initialize: function (options) { // TODO: eventually update this to be the real 'appView'
       this.delegateEvents(this.events);
       this.problem = options.problem;
+      this.historyView = options.historyView;
     },
 
     // TODO: figure out where to put the text box to enter a new expression/modification
@@ -55,21 +57,23 @@ define(function (require) {
       }
     },
 
-    // TODO: create a history view that we can swap out with the main view
-    history: function (e) {
-      console.log('history: %o', e);
+    history: function () {
+      this.historyView.toggle();
+      if (this.historyView.visible) {
+        $('#fg').css({ opacity: 0.0 });
+      } else {
+        $('#fg').css({ opacity: 1.0 });
+      }
     },
 
-    // TODO: fix me
     reset: function () {
-//      var undoManager = this.appView.undoManager;
-//
-//      undoManager.current = undoManager.list.first;
-//      undoManager.clear();
+      this.problem.reset();
+      this.historyView.reset();
     },
 
     canUndoChanged: function(model, value) {
       if (value) {
+        // TODO: put CSS in .style
         $('#undo').css({ opacity: 1.0 });
       } else {
         $('#undo').css({ opacity: 0.5 });
@@ -78,6 +82,7 @@ define(function (require) {
 
     canRedoChanged: function(model, value) {
       if (value) {
+        // TODO: put CSS in .style
         $('#redo').css({ opacity: 1.0 });
       } else {
         $('#redo').css({ opacity: 0.5 });

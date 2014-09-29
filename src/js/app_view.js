@@ -8,6 +8,7 @@ define(function (require) {
   var Backbone = require('backbone');
   var MathProblem = require('math_problem');
   var MathView = require('view/math_view');
+  var HistoryView = require('history_view');
   var GlobalMenu = require('global_menu');
   var ContextMenu = require('context_menu');
   var TransformList = require('model/transform_list');
@@ -19,14 +20,19 @@ define(function (require) {
 
     initialize: function () {
       this.problem = new MathProblem();
+      this.historyView = new HistoryView();
+
       this.globalMenu = new GlobalMenu({
-        problem: this.problem
+        problem: this.problem,
+        historyView: this.historyView
       });
 
       this.listenTo(this.problem, 'change:current', this.positionCallback);
-
       this.globalMenu.listenTo(this.problem, 'change:canUndo', this.globalMenu.canUndoChanged);
       this.globalMenu.listenTo(this.problem, 'change:canRedo', this.globalMenu.canRedoChanged);
+      this.historyView.listenTo(this.problem.steps, 'add', this.historyView.modelAdded);
+
+      this.historyView.hide();
     },
 
     positionCallback: function (problem, model) {

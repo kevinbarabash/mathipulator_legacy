@@ -56,6 +56,12 @@ define(function (require) {
           selection.unset('mid');
         }
       });
+
+      if (opts.active !== undefined) {
+        this.active = opts.active;
+      } else{
+        this.active = true;
+      }
     },
 
     createIdMaps: function () {
@@ -86,15 +92,19 @@ define(function (require) {
     },
 
     selectNode: function (mid) {
-      var sid = this.modelToViewMap[mid].replace('v','s');
-      var elem = $(this.svg).find('#' + sid).get(0);
-      elem.classList.add('selected');
+      if (this.active) {
+        var sid = this.modelToViewMap[mid].replace('v','s');
+        var elem = $(this.svg).find('#' + sid).get(0);
+        elem.classList.add('selected');
+      }
     },
 
     deselectNode: function(mid) {
-      var sid = this.modelToViewMap[mid].replace('v','s');
-      var elem = $(this.svg).find('#' + sid).get(0);
-      elem.classList.remove('selected');
+      if (this.active) {
+        var sid = this.modelToViewMap[mid].replace('v','s');
+        var elem = $(this.svg).find('#' + sid).get(0);
+        elem.classList.remove('selected');
+      }
     },
 
     addCircles: function (svg, selectionGroup) {
@@ -163,21 +173,19 @@ define(function (require) {
         container.replaceWith(svg);
 
         view.el = svg;
+        view.$el = $(svg);
         view.createSelectionOverlay(svg);
         view.svg = svg;
         SVGUtils.correctBBox(svg);
-        $(svg).css({ width: '80%', height: '20%' });
+        $(svg).css({ height: '72px'});
+
         if (animate) {
           $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
         }
 
-        var overlay = $(svg).find('.selection-overlay').get(0);
-        overlay.classList.add('active');
-
-//        view.contextMenu.update();
-//        $(svg).find('.result').each(function () {
-//          this.classList.add('blue');
-//        });
+        if (view.active) {
+          svg.classList.add('active');
+        }
 
         deferred.resolve(svg);
       });

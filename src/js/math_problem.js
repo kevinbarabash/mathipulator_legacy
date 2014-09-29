@@ -10,8 +10,6 @@ define(function (require) {
 
     initialize: function () {
       this.set('position', -1);
-      this.steps.problem = this;
-
       this.on('change:position', this.positionChanged);
     },
 
@@ -34,6 +32,11 @@ define(function (require) {
       if (this.get('canRedo')) {
         this.set('position', this.get('position') + 1);
       }
+    },
+
+    reset: function () {
+      this.steps.set(this.steps.slice(0,1));
+      this.set('position', 0);
     },
 
     positionChanged: function (model, position) {
