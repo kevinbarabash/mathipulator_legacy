@@ -59,6 +59,12 @@ define(function (require) {
           return transform.canTransform(node);
         });
 
+        // TODO: add a delegate system should that app_view can tell math_view whether to
+        // select a node or not
+        if (list.length === 0) {
+          return;
+        }
+
         this.contextMenu = new ContextMenu({
           model: this.model,
           problem: this.problem,
@@ -66,8 +72,21 @@ define(function (require) {
           mid: mid
         });
 
+        var selElem = this.view.elementForModelId(mid);
+        var rect = selElem.getBoundingClientRect();
+        var x = (rect.left + rect.right) / 2;
+        var y = rect.top;
         var $el = this.contextMenu.render().$el;
-        $('#context-menu').append($el);
+        $(document.body).append($el);
+
+        $el.css({
+          left: x,
+          top: y,
+          position: 'absolute',
+          transform: 'translate(-50%,-100%)',
+          'text-align': 'center',
+          margin: 0
+        });
       }
     }
   });

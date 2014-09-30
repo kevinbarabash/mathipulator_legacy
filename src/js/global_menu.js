@@ -41,6 +41,8 @@ define(function (require) {
     },
 
     simplify: function () {
+      // TODO: add a method to determine if something can be simplified or not
+      // TODO: activate the menu item only when it's possible to simplify
       var model = this.problem.get('current');
       this.problem.push(model.simplify());
     },

@@ -91,18 +91,21 @@ define(function (require) {
       this.overlay = selectionGroup;
     },
 
+    elementForModelId: function (mid) {
+      var sid = this.modelToViewMap[mid].replace('v','s');
+      return $(this.svg).find('#' + sid).get(0);
+    },
+
     selectNode: function (mid) {
       if (this.active) {
-        var sid = this.modelToViewMap[mid].replace('v','s');
-        var elem = $(this.svg).find('#' + sid).get(0);
+        var elem = this.elementForModelId(mid);
         elem.classList.add('selected');
       }
     },
 
     deselectNode: function(mid) {
       if (this.active) {
-        var sid = this.modelToViewMap[mid].replace('v','s');
-        var elem = $(this.svg).find('#' + sid).get(0);
+        var elem = this.elementForModelId(mid);
         elem.classList.remove('selected');
       }
     },
