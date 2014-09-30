@@ -15,7 +15,7 @@ define(function (require) {
   }
 
   var namespace = 'http://www.w3.org/1998/Math/MathML';
-  var tokenRegex = /([a-z])|([\(\)\+\-\/\*\^])|(\d*\.\d+|\d+\.\d*|\d+)/g;
+  var tokenRegex = /([a-z])|([\(\)\+\-\/\*\^\=])|(\d*\.\d+|\d+\.\d*|\d+)/g;
 
   function SimpleMathMLParser () {}
 
@@ -25,9 +25,23 @@ define(function (require) {
     this.tokens = input.match(tokenRegex);
 
     var math = $('<math>').attr('xmlns', namespace);
-    math.append(this.expression());
+    math.append(this.equation());
 
     return math.get(0);
+  };
+
+  SimpleMathMLParser.prototype.equation = function () {
+    var lhs = this.expression();
+    var token = this.tokens[this.i++];
+    if (token === '=') {
+      var rhs = this.expression();
+      var mrow = $('<mrow>');
+      mrow.append(lhs);
+      mrow.append('<mo>=</mo>');
+      mrow.append(rhs);
+      return mrow;
+    }
+    return lhs;
   };
 
   SimpleMathMLParser.prototype.expression = function() {

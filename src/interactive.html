@@ -26,6 +26,9 @@
       <div class="global-menu">
         <ul>
           <li id="modify">Modify...</li>
+          <li id="input" style="background: rgb(0, 128, 128);">
+            <input type="text">
+          </li>
           <li id="simplify">Simplify</li>
           <li id="undo">Undo</li>
           <li id="redo">Redo</li>
@@ -62,7 +65,8 @@
       if (getParameterByName('format') === 'arithmetic') {
         model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
       } else {
-        model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
+//        model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
+        model = ExpressionModel.fromASCII('2x + 7 = 12');
       }
 
       options = {

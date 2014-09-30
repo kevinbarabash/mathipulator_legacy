@@ -31,6 +31,14 @@ define(function (require) {
       $(mrow).append('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
     } else if ($(mrow).hasMulOps()) {
       $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
+    } else if ($(mrow).hasEqualSign()) {
+      $(mrow).children().each(function () {
+        if ($(this).is('mrow')) {
+          subtract(this, term);
+        } else if ($(this).is('mn')) {
+          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">-</mo>' + term.outerHTML + '</mrow>');
+        }
+      });
     } else {
       throw 'can\'t subtract a power, root, or function yet';
     }
@@ -43,6 +51,14 @@ define(function (require) {
       $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
     } else if ($(mrow).hasMulOps()) {
       $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
+    } else if ($(mrow).hasEqualSign()) {
+      $(mrow).children().each(function () {
+        if ($(this).is('mrow')) {
+          multiply(this, term);
+        } else if ($(this).is('mn')) {
+          $(this).replaceWith('<mrow>' + term.outerHTML + '<mo class="op" id="' + id + '">*</mo>' + this.outerHTML + '</mrow>');
+        }
+      });
     } else {
       throw 'can\'t multiple a power, root, or function yet';
     }
@@ -55,6 +71,14 @@ define(function (require) {
       $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
     } else if ($(mrow).hasMulOps()) {
       $(mrow).append('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
+    } else if ($(mrow).hasEqualSign()) {
+      $(mrow).children().each(function () {
+        if ($(this).is('mrow')) {
+          divide(this, term);
+        } else if ($(this).is('mn')) {
+          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">/</mo>' + term.outerHTML + '</mrow>');
+        }
+      });
     } else {
       throw 'we can\'t divide a power, root, or function yet';
     }

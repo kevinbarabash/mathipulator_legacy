@@ -18,9 +18,13 @@ define(function (require) {
 
   return Backbone.View.extend({
 
-    initialize: function () {
+    initialize: function (options) {
+      this.format = options.format;
+
       this.problem = new MathProblem();
-      this.historyView = new HistoryView();
+      this.historyView = new HistoryView({
+        format: this.format
+      });
 
       this.globalMenu = new GlobalMenu({
         problem: this.problem,
@@ -42,7 +46,7 @@ define(function (require) {
       this.model = model;
       this.view = new MathView({
         model: model,
-        options: { format: 'arithmetic' }
+        options: { format: this.format }
       });
 
       this.listenTo(this.view.selection, 'change:mid', this.handleSelectionChange);

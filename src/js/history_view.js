@@ -11,7 +11,8 @@ define(function (require) {
   return Backbone.View.extend({
     el: '#history-view',
 
-    initialize: function () {
+    initialize: function (options) {
+      this.format = options.format;
       this.hide();
       this.views = [];
       this.table = document.createElement('table');
@@ -21,7 +22,7 @@ define(function (require) {
     modelAdded: function (model) {
       var view = new MathView({
         model: model,
-        options: { format: 'arithmetic' },
+        options: { format: this.format },
         active: false
       });
 

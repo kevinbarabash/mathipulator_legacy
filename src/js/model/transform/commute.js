@@ -11,7 +11,7 @@ define(function (require) {
     name: 'commute',
 
     canTransform: function (node) {
-      if ($(node).isOp('+') || $(node).isOp('*')) {
+      if ($(node).isOp('+') || $(node).isOp('*') || $(node).isOp('=')) {
         var op = $(node).text();
         var prevOp = $(node).prev().prev().get(0);
         if (prevOp) {

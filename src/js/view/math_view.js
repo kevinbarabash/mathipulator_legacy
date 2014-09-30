@@ -180,7 +180,7 @@ define(function (require) {
         view.createSelectionOverlay(svg);
         view.svg = svg;
         SVGUtils.correctBBox(svg);
-        $(svg).css({ height: '72px'});
+//        $(svg).css({ height: '72px'});
 
         if (animate) {
           $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });

@@ -31,6 +31,18 @@ define(function (require) {
       return result;
     },
 
+    hasEqualSign: function () {
+      var result = false;
+      this.children().each(function () {
+        if ($(this).is('mo')) {
+          if ($(this).text() === '=') {
+            result = true;
+          }
+        }
+      });
+      return result;
+    },
+
     findOp: function (op) {
       return this.find('mo').filter(function () {
         return $(this).text() === op;

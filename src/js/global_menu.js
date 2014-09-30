@@ -4,8 +4,8 @@
 
 define(function (require) {
   var Backbone = require('backbone');
+  var ExpressionModel = require('model/expression_model');
   var $ = require('jquery');
-//  var ExpressionModel = require('model/expression_model');
 
   return Backbone.View.extend({
     el: '.global-menu',
@@ -26,18 +26,18 @@ define(function (require) {
       this.historyView = options.historyView;
     },
 
-    // TODO: figure out where to put the text box to enter a new expression/modification
     modify: function () {
-//      var mathInput$ = $('#inputMath');
-//      var input = mathInput$.val();
-//
-//      var operator = input[0];
-//      var expr = ExpressionModel.fromASCII(input.substring(1));
-//      var model = this.undoManager.current.value;
-//
-//      this.addExpression(model.modify(operator, expr));
-//
-//      mathInput$.val('');
+      $('#input').show();
+      var problem = this.problem;
+
+      $('#input input').on('change', function () {
+        var input = $(this).val();
+
+        var operator = input[0];
+        var expr = ExpressionModel.fromASCII(input.substring(1));
+        var model = problem.get('current');
+        problem.push(model.modify(operator, expr));
+      });
     },
 
     simplify: function () {
