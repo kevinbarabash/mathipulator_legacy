@@ -6,17 +6,13 @@ define(function (require) {
   var Backbone = require('backbone');
   var Parser = require('model/parser');
   var parser = new Parser();
+  var genId = require('uuid');
   var $ = require('jquery');
 
   require('jquery_extensions');
 
   var simplify = require('model/transform/simplify');
   var modify = require('model/transform/modify');
-
-  var id = 0;
-  function genId() {
-    return 'mid-' + (id++);
-  }
 
   var ExpressionModel = Backbone.Model.extend({
     initialize: function (attributes) {

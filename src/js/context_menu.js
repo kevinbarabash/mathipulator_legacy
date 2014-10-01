@@ -40,13 +40,13 @@ define(function (require) {
     },
 
     render: function() {
-      var html = '<ul class="menu-container" style="background-color: rgba(0,0,0,0.5);margin:0;text-align:left;">';
+      var html = '<ul class="menu-container" style="margin:0;text-align:left;">';
       this.transformList.forEach(function (transform) {
         html += '<li id="' + transform.name + '">' + transform.name + '</li>';
       });
       html += '</ul>';
       html += '<svg xmlns="http://www.w3.org/2000/svg" width="40px" height="20px" viewBox="0 0 40 20">' +
-        '<polyline stroke="none" fill="rgba(0,0,0,0.5)" points="0,0 20,20 40,0"></polyline>' +
+        '<polyline stroke="none" fill="rgba(64,64,64,0.75)" points="0,0 20,20 40,0"></polyline>' +
       '</svg>';
 
       this.$el.html(html);

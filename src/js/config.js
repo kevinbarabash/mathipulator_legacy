@@ -8,6 +8,6 @@ require.config({
     backbone: '../../bower_components/backbone/backbone',
     jquery: '../../bower_components/jquery/dist/jquery.min',
     'jquery.transit': '../../bower_components/jquery.transit/jquery.transit',
-    underscore: '../../bower_components/underscore/underscore-min'
+    underscore: '../../bower_components/lodash/dist/lodash.min'
   }
 });

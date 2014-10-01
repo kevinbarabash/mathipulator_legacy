@@ -89,7 +89,16 @@ define(function (require) {
   Formatter.createFractions = function (xml) {
     $(xml).find('mo').each(function () {
       if ($(this).text() === '/') {
-        var frac = $('<mfrac>').append($(this).prev(), $(this).next());
+        var frac;
+
+        if ($(this).prev().prev().isOp('*')) {
+          var mrow = $('<mrow></mrow>').append($(this).prev().prev().prev())
+            .append($(this).prev().prev())
+            .append($(this).prev());
+          frac = $('<mfrac>').append(mrow, $(this).next());
+        } else {
+          frac = $('<mfrac>').append($(this).prev(), $(this).next());
+        }
         $(this).replaceWith(frac);
         $(frac).findOp('(').attr('stretchy', false);
         $(frac).findOp(')').attr('stretchy', false);

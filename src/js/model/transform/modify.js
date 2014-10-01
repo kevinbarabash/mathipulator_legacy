@@ -5,90 +5,99 @@
 define(function (require) {
 
   var $ = require('jquery');
-  var uuid = require('uuid');
+  var genId = require('uuid');
 
   require('jquery_extensions');
 
-  // TODO: need to give these guys IDs
-  // TODO: switch to UUID
+  function add (node, term) {
+    term = $(term).clone().get(0);
+    $(term).attr('id', genId());
 
-  function add (mrow, term) {
-    var id = uuid();
-
-    if ($(mrow).hasAddOps()) {
-      $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">+</mo>');
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">+</mo>');
+    if ($(node).is('mrow')) {
+      if ($(node).hasAddOps()) {
+        $(node).prepend(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
+      } else if ($(node).hasMulOps()) {
+        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
+      } else if ($(node).hasEqualSign()) {
+        add(node.firstElementChild, term);
+        add(node.lastElementChild, term);
+      } else {
+        throw 'can\'t add';
+      }
+    } else if ($(node).is('mn') || $(node).is('mi')) {
+      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
     } else {
-      throw 'we can\'t add to a power, root, or function yet';
+      throw 'can\'t add';
     }
   }
 
-  function subtract (mrow, term) {
-    var id = uuid();
+  function subtract (node, term) {
+    term = $(term).clone().get(0);
+    $(term).attr('id', genId());
 
-    if ($(mrow).hasAddOps()) {
-      $(mrow).append('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">-</mo>' + term.outerHTML);
-    } else if ($(mrow).hasEqualSign()) {
-      $(mrow).children().each(function () {
-        if ($(this).is('mrow')) {
-          subtract(this, term);
-        } else if ($(this).is('mn')) {
-          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">-</mo>' + term.outerHTML + '</mrow>');
-        }
-      });
+    if ($(node).is('mrow')) {
+      if ($(node).hasAddOps()) {
+        $(node).append('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
+      } else if ($(node).hasMulOps()) {
+        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
+      } else if ($(node).hasEqualSign()) {
+        subtract(node.firstElementChild, term);
+        subtract(node.lastElementChild, term);
+      } else {
+        throw 'can\'t divide';
+      }
+    } else if ($(node).is('mn') || $(node).is('mi')) {
+      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
     } else {
-      throw 'can\'t subtract a power, root, or function yet';
+      throw 'can\'t divide';
     }
   }
 
-  function multiply (mrow, term) {
-    var id = uuid();
+  function multiply(node, term) {
+    term = $(term).clone().get(0);
+    $(term).attr('id', genId());
 
-    if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).prepend(term.outerHTML + '<mo class="op" id="' + id + '">*</mo>');
-    } else if ($(mrow).hasEqualSign()) {
-      $(mrow).children().each(function () {
-        if ($(this).is('mrow')) {
-          multiply(this, term);
-        } else if ($(this).is('mn')) {
-          $(this).replaceWith('<mrow>' + term.outerHTML + '<mo class="op" id="' + id + '">*</mo>' + this.outerHTML + '</mrow>');
-        }
-      });
+    if ($(node).is('mrow')) {
+      if ($(node).hasAddOps()) {
+        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
+      } else if ($(node).hasMulOps()) {
+        $(node).prepend(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
+      } else if ($(node).hasEqualSign()) {
+        multiply(node.firstElementChild, term);
+        multiply(node.lastElementChild, term);
+      } else {
+        throw 'can\'t multiply';
+      }
+    } else if ($(node).is('mn') || $(node).is('mi')) {
+      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
     } else {
-      throw 'can\'t multiple a power, root, or function yet';
+      throw 'can\'t multiply';
     }
   }
 
-  function divide (mrow, term) {
-    var id = uuid();
+  function divide (node, term) {
+    term = $(term).clone().get(0);
+    $(term).attr('id', genId());
 
-    if ($(mrow).hasAddOps()) {
-      $(mrow).wrap('<mrow></mrow>').after('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
-    } else if ($(mrow).hasMulOps()) {
-      $(mrow).append('<mo class="op" id="' + id + '">/</mo>' + term.outerHTML);
-    } else if ($(mrow).hasEqualSign()) {
-      $(mrow).children().each(function () {
-        if ($(this).is('mrow')) {
-          divide(this, term);
-        } else if ($(this).is('mn')) {
-          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">/</mo>' + term.outerHTML + '</mrow>');
-        }
-      });
+    if ($(node).is('mrow')) {
+      if ($(node).hasAddOps()) {
+        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
+      } else if ($(node).hasMulOps()) {
+        $(node).append('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
+      } else if ($(node).hasEqualSign()) {
+        divide(node.firstElementChild, term);
+        divide(node.lastElementChild, term);
+      } else {
+        throw 'can\'t divide';
+      }
+    } else if ($(node).is('mn') || $(node).is('mi')) {
+      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
     } else {
-      throw 'we can\'t divide a power, root, or function yet';
+      throw 'can\'t divide';
     }
   }
 
   return function (node, operator, expr) {
-    if (!$(node).is('mrow')) {
-      return;
-    }
-
     if (/[\+\-\/\*\^]/.test(operator)) {
       switch (operator) {
         case '+':
@@ -105,7 +114,6 @@ define(function (require) {
           break;
         default:
           throw 'we don\'t handle that operator yet, try again later';
-//          break;
       }
     }
   };
