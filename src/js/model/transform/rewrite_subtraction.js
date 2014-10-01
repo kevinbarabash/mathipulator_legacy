@@ -31,8 +31,13 @@ define(function (require) {
           // e.g. <msup><msup><mi>x</mi><mn>2</mn</msup><mn>2</mn></msup>
           // TODO: create a function that returns the base node of any msup
         } else if (next.is('mrow')) {
-          // TODO: figure out what to do for this case
-          throw 'we don\'t handle rewriting subtraction in this situation, yet';
+          var firstChild = next.children().first();
+          if (firstChild.is('mn') || firstChild.is('mo')) {
+            if (firstChild.text().indexOf('-') === 0) {
+              throw "we can't rewrite subtract where the operand is negative"
+            }
+            firstChild.text('-' + firstChild.text());
+          }
         } else {
           throw 'we don\'t handle rewriting subtraction in this situation, yet';
         }
