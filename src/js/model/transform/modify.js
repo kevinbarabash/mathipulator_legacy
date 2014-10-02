@@ -44,12 +44,12 @@ define(function (require) {
         subtract(node.firstElementChild, term);
         subtract(node.lastElementChild, term);
       } else {
-        throw 'can\'t divide';
+        throw 'can\'t subtract';
       }
     } else if ($(node).is('mn') || $(node).is('mi')) {
       $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
     } else {
-      throw 'can\'t divide';
+      throw 'can\'t subtract';
     }
   }
 

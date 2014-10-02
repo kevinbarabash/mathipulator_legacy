@@ -40,6 +40,12 @@ define(function (require) {
 
     $(xml).find('mfrac').each(function () {
       $(this).children().last().removeAttr('parens');
+      if ($(this).prev().isOp('*')) {
+        $(this).attr({
+          parens: 'true',
+          stretchy: 'true'
+        });
+      }
     });
 
     this.fixNegativeNumbers(xml);

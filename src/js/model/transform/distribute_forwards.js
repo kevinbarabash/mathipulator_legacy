@@ -39,7 +39,7 @@ define(function (require) {
 
       var next = $(node).next();
 
-      return next.isOp('*') && next.next().is('mrow');
+      return next.isOp('*') && next.next().is('mrow') && next.next().hasAddOps();
     },
     transform: function (node) {
       if (this.canTransform(node)) {

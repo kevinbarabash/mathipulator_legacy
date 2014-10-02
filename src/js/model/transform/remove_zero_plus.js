@@ -8,9 +8,9 @@ define(function (require) {
   require('jquery_extensions');
 
   return {
-    name: 'remove_plus_0',
+    name: 'remove_0_plus',
     canTransform: function (node) {
-      return ($(node).isOp('+') || $(node).isOp('-')) && $(node).next().number() === 0;
+      return $(node).number() === 0 && ($(node).next().isOp('+') || $(node).next().isOp('-')) ;
     },
     transform: function (node) {
       if (this.canTransform(node)) {

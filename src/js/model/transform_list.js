@@ -19,6 +19,7 @@ define(function (require) {
     require('model/transform/rewrite_division'),
     require('model/transform/write_as_subtraction'),
     require('model/transform/remove_plus_0'),
-    require('model/transform/collect_like_terms')
+    require('model/transform/collect_like_terms'),
+    require('model/transform/replace_mult_0')
   ];
 });

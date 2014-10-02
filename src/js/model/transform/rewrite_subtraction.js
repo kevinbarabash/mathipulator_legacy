@@ -34,9 +34,10 @@ define(function (require) {
           var firstChild = next.children().first();
           if (firstChild.is('mn') || firstChild.is('mo')) {
             if (firstChild.text().indexOf('-') === 0) {
-              throw "we can't rewrite subtract where the operand is negative"
+              firstChild.text(firstChild.text().substring(1));
+            } else {
+              firstChild.text('-' + firstChild.text());
             }
-            firstChild.text('-' + firstChild.text());
           }
         } else {
           throw 'we don\'t handle rewriting subtraction in this situation, yet';

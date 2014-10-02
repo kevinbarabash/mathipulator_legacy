@@ -6,6 +6,7 @@ define(function (require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
+  var genId = require('uuid');
   require('jquery_extensions');
 
   return {
@@ -71,7 +72,10 @@ define(function (require) {
         }
 
         // TODO: give everything an id
-        term = '<mrow><mn class="num">' + coeff + '</mn><mo class="op">*</mo>' + term.join('<mo>*</mo>') + '</mrow>';
+        term = $('<mrow><mn class="num">' + coeff + '</mn><mo class="op">*</mo>' + term.join('<mo>*</mo>') + '</mrow>');
+        term.find('mn,mo,mi').each(function () {
+          $(this).attr('id', genId());
+        });
 
         $(node).next().remove();
         $(node).prev().remove();

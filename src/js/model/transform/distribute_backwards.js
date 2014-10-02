@@ -4,6 +4,7 @@
 
 define(function (require) {
 
+  var genId = require('uuid');
   var $ = require('jquery');
   var uuid = require('uuid');
 
@@ -15,8 +16,9 @@ define(function (require) {
     if (mrow.hasAddOps()) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
-          var id = uuid();
-          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + id + '">' + op + '</mo>' + expr.outerHTML + '</mrow>');
+          var node = $(expr).clone().get(0);
+          $(node).attr('id', genId());
+          $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + uuid() + '">' + op + '</mo>' + node.outerHTML + '</mrow>');
         }
       });
 
@@ -37,7 +39,7 @@ define(function (require) {
       }
 
       var prev = $(node).prev();
-      return (prev.isOp('*') || prev.isOp('/')) && prev.prev().is('mrow');
+      return (prev.isOp('*') || prev.isOp('/')) && prev.prev().is('mrow') && prev.prev().hasAddOps();
     },
     transform: function (node) {
       if (this.canTransform(node)) {
