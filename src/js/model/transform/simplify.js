@@ -62,5 +62,6 @@ define(function (require) {
   return function (root) {
     simplifyMultiplication(root);
     simplifyDivision(root);
+    $(root).removeExtra('mrow');
   };
 });

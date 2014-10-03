@@ -1,5 +1,5 @@
 /**
- * Created by kevin on 2014-10-01.
+ * Created by kevin on 2014-10-03.
  */
 
 define(function (require) {
@@ -8,16 +8,15 @@ define(function (require) {
   require('jquery_extensions');
 
   return {
-    name: 'remove_plus_0',
+    name: 'simplify_multi_one',
     canTransform: function (node) {
-      return ($(node).isOp('+') || $(node).isOp('-')) && $(node).next().number() === 0;
+      return $(node).number() === 1 && $(node).next().isOp('*');
     },
     transform: function (node) {
       if (this.canTransform(node)) {
-        var prev = $(node).prev();
-        $(node).next().remove();
+        var root = $(node).closest('math');
         $(node).remove();
-        $(prev).closest('math').removeExtra('mrow');
+        root.removeExtra('mrow');
       }
     }
   };
