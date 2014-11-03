@@ -42,7 +42,13 @@ define(function (require) {
       options: options
     });
 
-    view.render(document.body);
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+    view.render(div);
+    $(div).css({
+      'font-size': '200%',
+      padding: 10
+    });
   });
 
   // Arithmetic

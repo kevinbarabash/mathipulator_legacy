@@ -54,7 +54,7 @@
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
             results = regex.exec(location.search);
-    return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results == null ? '' : decodeURIComponent(results[1]);
   }
 
   require(['app_view', 'model/expression_model'],
@@ -62,22 +62,17 @@
 
       var model, options;
 
-      if (getParameterByName('format') === 'arithmetic') {
-        model = ExpressionModel.fromASCII('5 - 1 + 2 * (3 - 4)');
-      } else {
-//        model = ExpressionModel.fromASCII('3x^2 + -2x + -5');
-        model = ExpressionModel.fromASCII('2x + 7 = 12');
-//        model = ExpressionModel.fromASCII('2x + 3y - 4x - -5y = 12');
-      }
+      var style = getParameterByName('style');
+      var math = getParameterByName('math');
+      
+      style = style || 'arithmetic';
+      math = math || '1 + 2 + 3';
+
+      model = ExpressionModel.fromASCII(math);
 
       options = {
-        format: 'algebra',
-        fontSize: '300%'
+        format: style
       };
-
-      if (getParameterByName('format')) {
-        options.format = getParameterByName('format');
-      }
 
       // TODO: update MathProblem to require an initial value (starting step)
       var controller = new AppView(options);
