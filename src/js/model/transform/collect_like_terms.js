@@ -14,25 +14,11 @@ define(function (require) {
 
     canTransform: function (node) {
       if ($(node).isOp('+') || $(node).isOp('-')) {
-        if ($(node).prev().hasMulOps() && $(node).next().hasMulOps()) {
+        var prevFactors = $(node).prev().getVariableFactors();
+        var nextFactors = $(node).next().getVariableFactors();
 
-          var prevFactors = [];
-          $(node).prev().children().each(function () {
-            if ($(this).is('mi')) {
-              prevFactors.push($(this).text());
-            }
-          });
-
-          var nextFactors = [];
-          $(node).next().children().each(function () {
-            if ($(this).is('mi')) {
-              nextFactors.push($(this).text());
-            }
-          });
-
-         if (_.isEqual(prevFactors, nextFactors)) {
-           return true;
-         }
+        if (_.isEqual(prevFactors, nextFactors)) {
+         return true;
         }
       }
       return false;
@@ -41,34 +27,22 @@ define(function (require) {
     // TODO: all transform must return a mapping which shows which nodes map to which
     transform: function (node) {
       if (this.canTransform(node)) {
-
-        var prevFactors = [];
-        $(node).prev().children().each(function () {
-          if ($(this).is('mn')) {
-            prevFactors.push($(this).number());
-          }
-        });
-
-        var nextFactors = [];
-        $(node).next().children().each(function () {
-          if ($(this).is('mn')) {
-            nextFactors.push($(this).number());
-          }
-        });
-
-        var term = [];
-        $(node).next().children().each(function () {
-          if ($(this).is('mi')) { // TODO: handle powers
-            term.push('<mi>' + $(this).text() + '</mi>');
-          }
+        var term = $(node).next().getVariableFactors().map(function (name) {
+          return '<mi>' + name + '</mi>';
         });
 
         // TODO: don't forget about order-of-operations
-        var coeff = prevFactors[0];
+        var coeff = $(node).prev().getNumericFactors().reduce(function (result, value) {
+          return result * value;
+        }, 1);
         if ($(node).isOp('+')) {
-          coeff += nextFactors[0];
+          coeff += $(node).next().getNumericFactors().reduce(function (result, value) {
+            return result * value;
+          }, 1);
         } else if ($(node).isOp('-')) {
-          coeff -= nextFactors[0];
+          coeff -= $(node).next().getNumericFactors().reduce(function (result, value) {
+            return result * value;
+          }, 1);
         }
 
         // TODO: give everything an id
@@ -81,7 +55,7 @@ define(function (require) {
         $(node).prev().remove();
         $(node).replaceWith(term);
 
-        $(node).closest('math').removeExtra('mrow');
+        $(term).closest('math').removeExtra('mrow');
       }
     }
   };

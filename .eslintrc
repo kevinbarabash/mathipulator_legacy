@@ -5,7 +5,7 @@
     "jasmine": true
   },
   "rules": {
-    "quotes": [2, "single"],
+    "quotes": false,
     "new-cap": 0,
     "complexity": [1, 10],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],

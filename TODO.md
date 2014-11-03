@@ -2,7 +2,7 @@
 
 ## tests ##
 - write tests for existing transforms
-    - collect_like_terms
+    - collect_like_terms [done]
     - commute [done]
     - distribute (forwards/backwards) [done]
     - evaluate [done]
@@ -14,6 +14,7 @@
     - simplify
     - simplify_mult_one
     - write_as_substraction
+- write fraction tests
 
 ## ui ##
 - create a landing page that users can choose from pre-canned examples [done]
@@ -32,6 +33,10 @@
 ## rendering ##
 - fix parentheses around fractions
 - list of equations separate by commas
+
+## history ##
+- track which operations were done
+- track which operands were involved in the operations
 
 ## future ##
 - workflows

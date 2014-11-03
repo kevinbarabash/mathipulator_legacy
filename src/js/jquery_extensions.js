@@ -43,15 +43,59 @@ define(function (require) {
       return result;
     },
 
+    hasVariableFactors: function () {
+      if ($(this).is('mi')) {
+        return true;
+      } else if ($(this).hasMulOps()) {
+        var result = false;
+        $(this).children().each(function () {
+          if ($(this).is('mi')) {
+            result = true;
+          }
+        });
+        return result;
+      }
+      return false;
+    },
+
+    // TODO: figure out what to do with factors that are powers
+    getVariableFactors: function () {
+      var result = [];
+      if ($(this).is('mi')) {
+        result.push($(this).text());
+      } else if ($(this).hasMulOps()) {
+        $(this).children().each(function () {
+          if ($(this).is('mi')) {
+            result.push($(this).text());
+          }
+        });
+      }
+      return result;
+    },
+
+    getNumericFactors: function () {
+      var result = [];
+      if ($(this).is('mn')) {
+        result.push($(this).text());
+      } else if ($(this).hasMulOps()) {
+        $(this).children().each(function () {
+          if ($(this).is('mn')) {
+            result.push($(this).text());
+          }
+        });
+      }
+      return result;
+    },
+
     findOp: function (op) {
       return this.find('mo').filter(function () {
         return $(this).text() === op;
       });
     },
-    
+
     findVar: function (v) {
       return this.find('mi').filter(function () {
-        return $(this).text() === v
+        return $(this).text() === v;
       });
     },
 
