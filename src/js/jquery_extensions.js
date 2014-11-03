@@ -48,6 +48,12 @@ define(function (require) {
         return $(this).text() === op;
       });
     },
+    
+    findVar: function (v) {
+      return this.find('mi').filter(function () {
+        return $(this).text() === v
+      });
+    },
 
     isOp: function (op) {
       return this.is('mo') && this.text() === op;

@@ -2,6 +2,18 @@
 
 ## tests ##
 - write tests for existing transforms
+    - collect_like_terms
+    - commute [done]
+    - distribute (forwards/backwards) [done]
+    - evaluate [done]
+    - modify
+    - rewrite_zero
+    - rewrite_mult_0
+    - rewrite_division
+    - rewrite_subtraction
+    - simplify
+    - simplify_mult_one
+    - write_as_substraction
 
 ## ui ##
 - create a landing page that users can choose from pre-canned examples [done]
@@ -12,7 +24,7 @@
 - rewrite with a select with an equivalent expression
 - support simplifying individual expressions, e.g. fractions
 - prime factorization
-- fix distribution so that the extra <mrow> is removed after distribution
+- fix distribution so that the extra <mrow> is removed after distribution [done]
 - substitution (useful for system of equations)
 - splitting (useful for quadratics)
 - collect like terms... 3x + 2x -> 5x

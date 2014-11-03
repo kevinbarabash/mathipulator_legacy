@@ -28,6 +28,9 @@ define(function (require) {
 
       $(mrow).removeAttr('parens');
       $(mrow).closest('math').removeExtra('mrow');
+      if ($(mrow).parent().hasAddOps()) {
+        $(mrow).replaceWith($(mrow).children());
+      }
     }
   }
 
