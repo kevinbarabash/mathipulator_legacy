@@ -25,10 +25,6 @@
     <div class="menus">
       <div class="global-menu">
         <ul>
-          <li id="modify">Modify...</li>
-          <li id="input" style="background: rgb(0, 128, 128);">
-            <input type="text">
-          </li>
           <li id="simplify">Simplify</li>
           <li id="undo">Undo</li>
           <li id="redo">Redo</li>
@@ -40,8 +36,16 @@
 
     <div class="math-content">
       <div class="content-container" id="history-view"></div>
-      <div class="content-container" id="bg"></div>
-      <div class="content-container" id="fg"></div>
+      <div class="content-container">
+        <div class="top inner-container"></div>
+        <div class="middle inner-container" style="position: relative;">
+          <div class="content-container" id="bg"></div>
+          <div class="content-container" id="fg"></div>
+        </div>
+        <div class="bottom inner-container" style="display: flex;align-items: center;justify-content: flex-start; flex-direction: column;">
+          <input id="modifyTextField" type="text" style="border: solid 1px #CCC;width:100px; font-size:32px; pointer-events: all;">
+        </div>
+      </div>
     </div>
 
   </div>

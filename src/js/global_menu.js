@@ -12,7 +12,6 @@ define(function (require) {
 
     // TODO: change to 'click #undo.active'
     events: {
-      'click #modify': 'modify',
       'click #simplify': 'simplify',
       'click #undo': 'undo',
       'click #redo': 'redo',
@@ -24,20 +23,6 @@ define(function (require) {
       this.delegateEvents(this.events);
       this.problem = options.problem;
       this.historyView = options.historyView;
-    },
-
-    modify: function () {
-      $('#input').show();
-      var problem = this.problem;
-
-      $('#input input').on('change', function () {
-        var input = $(this).val();
-
-        var operator = input[0];
-        var expr = ExpressionModel.fromASCII(input.substring(1));
-        var model = problem.get('current');
-        problem.push(model.modify(operator, expr));
-      });
     },
 
     simplify: function () {

@@ -37,6 +37,7 @@
 ## history ##
 - track which operations were done
 - track which operands were involved in the operations
+- line up equal signs when working with equations
 
 ## future ##
 - workflows

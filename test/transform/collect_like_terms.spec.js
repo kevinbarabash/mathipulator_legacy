@@ -9,7 +9,7 @@ define(function (require) {
   var $ = require('jquery');
   require('jquery_extensions');
 
-  describe('Collect Like Terms', function () {
+  describe.only('Collect Like Terms', function () {
     var parser;
 
     beforeEach(function () {
@@ -58,6 +58,21 @@ define(function (require) {
 
       var expecteXml = '<mrow><mn>2</mn><mo>*</mo><mi>y</mi></mrow>';
       assert.equal(xml.innerHTML, expecteXml);
+    });
+
+    it("should work with terms that have multiple variable factors: 2xy + 3xy -> 5xy", function () {
+      var xml = parser.parse('2xy + 3xy');
+      var node = $(xml).findOp('+').get(0);
+      CollectLikeTerms.transform(node);
+
+      $(xml).find('*').removeAttr('class').removeAttr('id');
+
+      var expecteXml = '<mrow><mn>5</mn><mo>*</mo><mi>x</mi><mo>*</mo><mi>y</mi></mrow>';
+      assert.equal(xml.innerHTML, expecteXml);
+    });
+
+    it.skip("should work with terms who's coefficients match but aren't in the same order", function () {
+      // TODO: write this test
     });
   });
 });

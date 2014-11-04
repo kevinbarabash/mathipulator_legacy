@@ -12,11 +12,16 @@ define(function (require) {
   var GlobalMenu = require('global_menu');
   var ContextMenu = require('context_menu');
   var TransformList = require('model/transform_list');
+  var ExpressionModel = require('model/expression_model');
 
   var $ = require('jquery');
   require('jquery.transit');
 
   return Backbone.View.extend({
+    el: '.main',
+    events: {
+      'change #modifyTextField': 'modify'
+    },
 
     initialize: function (options) {
       this.format = options.format;
@@ -92,6 +97,17 @@ define(function (require) {
           margin: 0
         });
       }
+    },
+
+    modify: function (e) {
+      var input = $(e.target).val();
+
+      var operator = input[0];
+      var expr = ExpressionModel.fromASCII(input.substring(1));
+      var model = this.problem.get('current');
+      this.problem.push(model.modify(operator, expr));
+
+      $(e.target).val('');
     }
   });
 });
