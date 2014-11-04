@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-  var genId = require('uuid');
+  var uuid = require('util/uuid');
   var $ = require('jquery');
   require('jquery_extensions');
 
@@ -20,7 +20,7 @@ define(function (require) {
         var opNode = $(node).prev();
         var newNode = $('<mrow><mn>1</mn><mo>/</mo>' + node.outerHTML + '</mrow>');
         $(newNode).find('mn,mo,mi').each(function () {
-          $(this).attr('id', genId());
+          $(this).attr('id', uuid());
         });
         $(node).replaceWith(newNode);
         opNode.text('*');

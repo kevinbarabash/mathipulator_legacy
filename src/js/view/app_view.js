@@ -6,11 +6,17 @@ define(function (require) {
   'use strict';
 
   var Backbone = require('backbone');
-  var MathProblem = require('math_problem');
+
+  // views
   var MathView = require('view/math_view');
-  var HistoryView = require('history_view');
-  var GlobalMenu = require('global_menu');
-  var ContextMenu = require('context_menu');
+  var HistoryView = require('view/history_view');
+
+  // menus
+  var GlobalMenu = require('menu/global_menu');
+  var ContextMenu = require('menu/context_menu');
+
+  // models
+  var MathProblem = require('model/math_problem');
   var TransformList = require('model/transform_list');
   var ExpressionModel = require('model/expression_model');
 

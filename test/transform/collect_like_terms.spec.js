@@ -4,12 +4,12 @@
 
 define(function (require) {
 
-  var CollectLikeTerms = require('model/transform/collect_like_terms');
-  var Parser = require('model/parser');
+  var CollectLikeTerms = require('transform/collect_like_terms');
+  var Parser = require('math/parser');
   var $ = require('jquery');
   require('jquery_extensions');
 
-  describe.only('Collect Like Terms', function () {
+  describe('Collect Like Terms', function () {
     var parser;
 
     beforeEach(function () {

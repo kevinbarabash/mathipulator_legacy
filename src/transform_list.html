@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Transform List</title>
+  <style>
+    body {
+      margin: 20px;
+      font-family: sans-serif;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .container > div {
+      margin-right: 10px;
+      padding: 0 10px;
+      width: 300px;
+    }
+
+    #transforms {
+      background-color: #00c670;
+    }
+    
+    h3 {
+      margin-top: 0;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    a {
+      font-size: 20px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    li {
+      font-size: 20px;
+      margin: 0;
+      background-color: rgba(255,255,255,0.5);
+      padding: 10px;
+      border: solid 1px rgba(255,255,255,0.3);
+      margin-top: -1px;
+    }
+
+    li:hover {
+      background-color: rgba(255,255,255,0.8);
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+<h1>Transform List</h1>
+<div class="container">
+  <div id="transforms">
+    <ul>
+      <li>
+        <!-- TODO: build this using a model -->
+        <h3>commute</h3>
+        2 &times; 3 &rightarrow; 3 &times; 2<br>
+        1 + 2 &rightarrow; 2 + 1
+      </li>
+      <li>
+        <h3>evaluate</h3>
+        1 + 2 &rightarrow; 3<br>
+        2 &times; 3 &rightarrow; 6<br>
+        5 &minus; 7 &rightarrow; &minus;1<br>
+        3 &div; 2 &rightarrow; 1.5
+      </li>
+      <li>distribute_forwards</li>
+      <li>distribute_backwards</li>
+      <li>rewrite_subtraction</li>
+      <li>rewrite_division</li>
+      <li>write_as_subtraction</li>
+      <li>remove_zero</li>
+      <li>collect_like_terms</li>
+      <li>replace_mult_0</li>
+      <li>reduce_coeffs</li>
+      <li>simplify_mult_one</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

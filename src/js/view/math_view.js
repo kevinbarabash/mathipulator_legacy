@@ -6,8 +6,8 @@ define(function (require) {
   /*global MathJax */
 
   var Backbone = require('backbone');
-  var Formatter = require('view/formatter');
-  var SVGUtils = require('view/svg_utils');
+  var Formatter = require('math/formatter');
+  var SVGUtils = require('util/svg_utils');
   var $ = require('jquery');
 
   require('jquery.transit');

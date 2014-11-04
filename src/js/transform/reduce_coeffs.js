@@ -3,7 +3,7 @@
  */
 
 define(function (require) {
-  var genId = require('uuid');
+  var uuid = require('util/uuid');
   var $ = require('jquery');
   require('jquery_extensions');
 
@@ -50,9 +50,9 @@ define(function (require) {
             });
             coeff /= $(denom).number();
 
-            var newNumer = '<mrow><mn class="num" id="' + genId() + '">' + coeff + '</mn>';
+            var newNumer = '<mrow><mn class="num" id="' + uuid() + '">' + coeff + '</mn>';
             varFactors.forEach(function (factor) {
-              newNumer += '<mo class="op" id="' + genId() + '">*</mo>';
+              newNumer += '<mo class="op" id="' + uuid() + '">*</mo>';
               newNumer += factor.outerHTML;
             });
             newNumer += '</mrow>';

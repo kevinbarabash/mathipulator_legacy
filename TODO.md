@@ -64,3 +64,5 @@
         - write a generator for these
     - circles
         - write a generator for these
+- list transforms
+    - examples of each

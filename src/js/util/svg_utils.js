@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-  var MathSymbols = require('view/math_symbols');
+  var MathSymbols = require('math/math_symbols');
   var $ = require('jquery');
 
   var svgNS = 'http://www.w3.org/2000/svg';

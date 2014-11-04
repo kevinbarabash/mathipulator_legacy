@@ -15,6 +15,7 @@
   require.config({
     baseUrl: '../src/js',
     paths: {
+      backbone: '../../bower_components/backbone/backbone',
       jquery: '../../bower_components/jquery/dist/jquery.min',
       underscore: '../../bower_components/lodash/dist/lodash',
       test: '../../test'
@@ -22,13 +23,13 @@
   });
 
   var specs = [
-    'test/parser.spec',
-//    'test/expression_model.spec',
-
     'test/datastruct/linked_list.spec',
     'test/datastruct/stack.spec',
 
-    'test/formatter.spec',
+    'test/math/formatter.spec',
+    'test/math/parser.spec',
+      
+    'test/model/expression_model.spec',
 
     'test/transform/collect_like_terms.spec',  
     'test/transform/commute.spec',

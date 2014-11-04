@@ -6,7 +6,7 @@ define(function (require) {
 
   var $ = require('jquery');
   var _ = require('underscore');
-  var genId = require('uuid');
+  var genId = require('util/uuid');
   require('jquery_extensions');
 
   return {

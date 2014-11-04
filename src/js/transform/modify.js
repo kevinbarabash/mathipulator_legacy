@@ -5,19 +5,19 @@
 define(function (require) {
 
   var $ = require('jquery');
-  var genId = require('uuid');
+  var uuid = require('util/uuid');
 
   require('jquery_extensions');
 
   function add (node, term) {
     term = $(term).clone().get(0);
-    $(term).attr('id', genId());
+    $(term).attr('id', uuid());
 
     if ($(node).is('mrow')) {
       if ($(node).hasAddOps()) {
-        $(node).prepend(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
+        $(node).prepend(term.outerHTML + '<mo class="op" id="' + uuid() + '">+</mo>');
       } else if ($(node).hasMulOps()) {
-        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
+        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + uuid() + '">+</mo>');
       } else if ($(node).hasEqualSign()) {
         add(node.firstElementChild, term);
         add(node.lastElementChild, term);
@@ -25,7 +25,7 @@ define(function (require) {
         throw 'can\'t add';
       }
     } else if ($(node).is('mn') || $(node).is('mi')) {
-      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">+</mo>');
+      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + uuid() + '">+</mo>');
     } else {
       throw 'can\'t add';
     }
@@ -33,13 +33,13 @@ define(function (require) {
 
   function subtract (node, term) {
     term = $(term).clone().get(0);
-    $(term).attr('id', genId());
+    $(term).attr('id', uuid());
 
     if ($(node).is('mrow')) {
       if ($(node).hasAddOps()) {
-        $(node).append('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
+        $(node).append('<mo class="op" id="' + uuid() + '">-</mo>' + term.outerHTML);
       } else if ($(node).hasMulOps()) {
-        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
+        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + uuid() + '">-</mo>' + term.outerHTML);
       } else if ($(node).hasEqualSign()) {
         subtract(node.firstElementChild, term);
         subtract(node.lastElementChild, term);
@@ -47,7 +47,7 @@ define(function (require) {
         throw 'can\'t subtract';
       }
     } else if ($(node).is('mn') || $(node).is('mi')) {
-      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">-</mo>' + term.outerHTML);
+      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + uuid() + '">-</mo>' + term.outerHTML);
     } else {
       throw 'can\'t subtract';
     }
@@ -55,13 +55,13 @@ define(function (require) {
 
   function multiply(node, term) {
     term = $(term).clone().get(0);
-    $(term).attr('id', genId());
+    $(term).attr('id', uuid());
 
     if ($(node).is('mrow')) {
       if ($(node).hasAddOps()) {
-        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
+        $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
       } else if ($(node).hasMulOps()) {
-        $(node).prepend(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
+        $(node).prepend(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
       } else if ($(node).hasEqualSign()) {
         multiply(node.firstElementChild, term);
         multiply(node.lastElementChild, term);
@@ -69,7 +69,7 @@ define(function (require) {
         throw 'can\'t multiply';
       }
     } else if ($(node).is('mn') || $(node).is('mi')) {
-      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + genId() + '">*</mo>');
+      $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
     } else {
       throw 'can\'t multiply';
     }
@@ -77,13 +77,13 @@ define(function (require) {
 
   function divide (node, term) {
     term = $(term).clone().get(0);
-    $(term).attr('id', genId());
+    $(term).attr('id', uuid());
 
     if ($(node).is('mrow')) {
       if ($(node).hasAddOps()) {
-        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
+        $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + uuid() + '">/</mo>' + term.outerHTML);
       } else if ($(node).hasMulOps()) {
-        $(node).append('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
+        $(node).append('<mo class="op" id="' + uuid() + '">/</mo>' + term.outerHTML);
       } else if ($(node).hasEqualSign()) {
         divide(node.firstElementChild, term);
         divide(node.lastElementChild, term);
@@ -91,7 +91,7 @@ define(function (require) {
         throw 'can\'t divide';
       }
     } else if ($(node).is('mn') || $(node).is('mi')) {
-      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + genId() + '">/</mo>' + term.outerHTML);
+      $(node).wrap('<mrow></mrow>').after('<mo class="op" id="' + uuid() + '">/</mo>' + term.outerHTML);
     } else {
       throw 'can\'t divide';
     }

@@ -4,9 +4,9 @@
 
 define(function (require) {
 
-  var DistributeForwards = require('model/transform/distribute_forwards');
-  var DistributeBackwards = require('model/transform/distribute_backwards');
-  var Parser = require('model/parser');
+  var DistributeForwards = require('transform/distribute_forwards');
+  var DistributeBackwards = require('transform/distribute_backwards');
+  var Parser = require('math/parser');
   var $ = require('jquery');
 
   require('jquery_extensions');

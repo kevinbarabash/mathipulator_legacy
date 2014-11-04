@@ -4,8 +4,8 @@
 
 define(function (require) {
 
-  var Commute = require('model/transform/commute');
-  var Parser = require('model/parser');
+  var Commute = require('transform/commute');
+  var Parser = require('math/parser');
   var $ = require('jquery');
   require('jquery_extensions');
 

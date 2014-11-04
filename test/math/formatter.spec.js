@@ -4,8 +4,8 @@
 
 define(function (require) {
 
-  var Formatter = require('view/formatter');
-  var Parser = require('model/parser');
+  var Formatter = require('math/formatter');
+  var Parser = require('math/parser');
   var $ = require('jquery');
 
   describe('Formatter', function () {

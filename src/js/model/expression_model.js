@@ -4,15 +4,16 @@
 
 define(function (require) {
   var Backbone = require('backbone');
-  var Parser = require('model/parser');
-  var parser = new Parser();
-  var genId = require('uuid');
+  var Parser = require('math/parser');
+  var uuid = require('util/uuid');
   var $ = require('jquery');
+
+  var parser = new Parser();
 
   require('jquery_extensions');
 
-  var simplify = require('model/transform/simplify');
-  var modify = require('model/transform/modify');
+  var simplify = require('transform/simplify');
+  var modify = require('transform/modify');
 
   var ExpressionModel = Backbone.Model.extend({
     initialize: function (attributes) {
@@ -25,7 +26,7 @@ define(function (require) {
 
     addIds: function () {
       $(this.xml).find('mrow,msup,mn,mi,mo').each(function () {
-        $(this).attr('id', genId());
+        $(this).attr('id', uuid());
       });
     },
 

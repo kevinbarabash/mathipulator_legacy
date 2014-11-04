@@ -4,7 +4,7 @@
 
 define(function (require) {
   var $ = require('jquery');
-  var uuid = require('uuid');
+  var uuid = require('util/uuid');
 
   require('jquery_extensions');
 

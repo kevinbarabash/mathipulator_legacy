@@ -4,8 +4,8 @@
 
 define(function (require) {
 
-  var Evaluate = require('model/transform/evaluate');
-  var Parser = require('model/parser');
+  var Evaluate = require('transform/evaluate');
+  var Parser = require('math/parser');
   var $ = require('jquery');
   require('jquery_extensions');
 

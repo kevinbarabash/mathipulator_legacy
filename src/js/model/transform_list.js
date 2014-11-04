@@ -11,17 +11,17 @@ define(function (require) {
    */
 
   return [
-    require('model/transform/commute'),
-    require('model/transform/evaluate'),
-    require('model/transform/distribute_forwards'),
-    require('model/transform/distribute_backwards'),
-    require('model/transform/rewrite_subtraction'),
-    require('model/transform/rewrite_division'),
-    require('model/transform/write_as_subtraction'),
-    require('model/transform/remove_zero'),
-    require('model/transform/collect_like_terms'),
-    require('model/transform/replace_mult_0'),
-    require('model/transform/reduce_coeffs'),
-    require('model/transform/simplify_mult_one')
+    require('transform/commute'),
+    require('transform/evaluate'),
+    require('transform/distribute_forwards'),
+    require('transform/distribute_backwards'),
+    require('transform/rewrite_subtraction'),
+    require('transform/rewrite_division'),
+    require('transform/write_as_subtraction'),
+    require('transform/remove_zero'),
+    require('transform/collect_like_terms'),
+    require('transform/replace_mult_0'),
+    require('transform/reduce_coeffs'),
+    require('transform/simplify_mult_one')
   ];
 });

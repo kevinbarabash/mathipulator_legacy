@@ -4,7 +4,7 @@
 
 define(function (require) {
 
-  var Parser = require('model/parser');
+  var Parser = require('math/parser');
   var $ = require('jquery');
 
   describe('Parser', function () {

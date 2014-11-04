@@ -4,9 +4,8 @@
 
 define(function (require) {
 
-  var genId = require('uuid');
   var $ = require('jquery');
-  var uuid = require('uuid');
+  var uuid = require('util/uuid');
 
   require('jquery_extensions');
 
@@ -17,7 +16,7 @@ define(function (require) {
       mrow.children().each(function () {
         if (!$(this).is('mo')) {
           var node = $(expr).clone().get(0);
-          $(node).attr('id', genId());
+          $(node).attr('id', uuid());
           $(this).replaceWith('<mrow>' + this.outerHTML + '<mo class="op" id="' + uuid() + '">' + op + '</mo>' + node.outerHTML + '</mrow>');
         }
       });
