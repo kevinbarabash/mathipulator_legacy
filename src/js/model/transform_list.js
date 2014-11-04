@@ -22,6 +22,7 @@ define(function (require) {
     require('transform/collect_like_terms'),
     require('transform/replace_mult_0'),
     require('transform/reduce_coeffs'),
-    require('transform/simplify_mult_one')
+    require('transform/simplify_mult_one'),
+    require('transform/reduce')
   ];
 });

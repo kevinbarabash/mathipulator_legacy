@@ -17,11 +17,6 @@ define(function (require) {
     this.removeUnnecessaryParentheses(xml);
     this.removeUnnecessaryRows(xml);
 
-    $(xml).find('[parens="true"]').each(function () {
-      $(this).before('<mo>(</mo>');
-      $(this).after('<mo>)</mo>');
-    });
-
     $(xml).findOp('*').each(function () {
       var next = $(this).next();
       if (next.is('mrow') && next.hasAddOps()) {
@@ -96,6 +91,7 @@ define(function (require) {
     $(xml).find('mo').each(function () {
       if ($(this).text() === '/') {
         var frac;
+        var id = $(this).attr('id');
 
         if ($(this).prev().prev().isOp('*')) {
           var mrow = $('<mrow></mrow>').append($(this).prev().prev().prev())
@@ -108,6 +104,7 @@ define(function (require) {
         $(this).replaceWith(frac);
         $(frac).findOp('(').attr('stretchy', false);
         $(frac).findOp(')').attr('stretchy', false);
+        $(frac).addClass('frac').attr('id', id);
       }
     });
     // TODO: clean this up a bit

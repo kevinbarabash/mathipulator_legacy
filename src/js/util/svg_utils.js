@@ -75,12 +75,17 @@ define(function (require) {
       return rect;
     },
 
-    createRoundedRectangleAroundNode: function (node) {
+    createRoundedRectangleAroundNode: function (node, radius, padding) {
       var translate = accumTranslate(node);
       var bbox = node.getBBox();
+      padding = padding || 0;
+      bbox.x -= padding;
+      bbox.y -= padding;
+      bbox.width += 2 * padding;
+      bbox.height += 2 * padding;
 
       var path = document.createElementNS(svgNS, 'path');
-      var radius = 300;
+      radius = radius || 300;
 
       var x = translate.tx + bbox.x - radius / 2;
       var y = translate.ty + bbox.y - radius / 2;

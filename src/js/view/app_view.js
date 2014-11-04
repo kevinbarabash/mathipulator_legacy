@@ -109,9 +109,30 @@ define(function (require) {
       var input = $(e.target).val();
 
       var operator = input[0];
-      var expr = ExpressionModel.fromASCII(input.substring(1));
-      var model = this.problem.get('current');
-      this.problem.push(model.modify(operator, expr));
+      if ('+-*/'.indexOf(operator) !== -1) {
+        var expr = ExpressionModel.fromASCII(input.substring(1));
+        var model = this.problem.get('current');
+        this.problem.push(model.modify(operator, expr));
+      } else {
+        model = ExpressionModel.fromASCII(input);
+        this.problem.push(model);
+      }
+
+      var query = {
+        math: input,
+        style: this.format
+      };
+      var queryString = Object.keys(query).map(function (key) {
+        return key + "=" + query[key];
+      }).join("&");
+
+      $('#permalink').attr({
+        href: 'interactive.html?' + queryString
+      }).css({
+        'pointer-events': 'all',
+        'font-size': '18px',
+        'font-family': 'sans-serif'
+      }).text('permalink');
 
       $(e.target).val('');
     }

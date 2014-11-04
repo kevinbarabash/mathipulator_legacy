@@ -52,6 +52,9 @@ define(function (require) {
         if ($(e.target).parents('svg').length === 0) {
           $('.selected').each(function () {
             this.classList.remove('selected');
+            if ($(this).attr('deselect-action') === 'remove') {
+              $(this).remove();
+            }
           });
           selection.unset('mid');
         }
@@ -87,6 +90,7 @@ define(function (require) {
 
       this.addCircles(svg, selectionGroup);
       this.addNumberHighlights(svg, selectionGroup);
+      this.addFractionBars(svg, selectionGroup);
 
       this.overlay = selectionGroup;
     },
@@ -99,14 +103,21 @@ define(function (require) {
     selectNode: function (mid) {
       if (this.active) {
         var elem = this.elementForModelId(mid);
-        elem.classList.add('selected');
+        if (elem) {
+          elem.classList.add('selected');
+        }
       }
     },
 
     deselectNode: function(mid) {
       if (this.active) {
         var elem = this.elementForModelId(mid);
-        elem.classList.remove('selected');
+        if (elem) {
+          elem.classList.remove('selected');
+          if ($(elem).attr('deselect-action') === 'remove') {
+            $(elem).remove();
+          }
+        }
       }
     },
 
@@ -148,6 +159,30 @@ define(function (require) {
       });
     },
 
+    addFractionBars: function (svg, selectionGroup) {
+      var view = this;
+
+      $(svg).find('.frac > g > rect').each(function () {
+        var fracBar = this;
+        var rect = SVGUtils.createRoundedRectangleAroundNode(fracBar, 100, 100);
+        var frac = this.parentElement.parentElement;
+
+        var id = frac.id.replace('s', 'v');
+
+        var fracRect = SVGUtils.createRoundedRectangleAroundNode(frac);
+        $(fracRect).attr('deselect-action', 'remove');
+
+        $(rect).click(function () {
+          $(fracRect).appendTo(selectionGroup);
+          view.updateSelection(id);
+        }).appendTo(selectionGroup);
+
+        rect.addEventListener('touchstart', function () {
+          view.updateSelection(id);
+        });
+      });
+    },
+
     updateSelection: function (vid) {
       if (this.selection.get('mid')) {
         this.deselectNode(this.selection.get('mid'));
@@ -180,7 +215,6 @@ define(function (require) {
         view.createSelectionOverlay(svg);
         view.svg = svg;
         SVGUtils.correctBBox(svg);
-//        $(svg).css({ height: '72px'});
 
         if (animate) {
           $(svg).css({ opacity: 0.0 }).animate({ opacity: 1.0 });
