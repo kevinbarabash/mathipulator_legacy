@@ -49,6 +49,10 @@ define(function (require) {
 
       var selection = this.selection;
       $(document.body).click(function (e) {
+        if (e.target.id === "modifyTextField") {
+          return;
+        }
+
         if ($(e.target).parents('svg').length === 0) {
           $('.selected').each(function () {
             this.classList.remove('selected');

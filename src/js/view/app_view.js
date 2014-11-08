@@ -109,6 +109,9 @@ define(function (require) {
       var input = $(e.target).val();
 
       var operator = input[0];
+      var modify = TransformList.modify;
+      var selection = this.view.selection;
+
       if ('+-*/'.indexOf(operator) !== -1) {
         var expr = ExpressionModel.fromASCII(input.substring(1));
         var model = this.problem.get('current');

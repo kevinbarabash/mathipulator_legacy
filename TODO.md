@@ -19,7 +19,8 @@
 ## ui ##
 - create a landing page that users can choose from pre-canned examples [done]
 - grow selection by tapping the node more than once (tap outside to deselect)
-- move the modify text box so it's below the equation/expression
+    - tap fraction bar to select fraction [done]
+- move the modify text box so it's below the equation/expression [done]
 
 ## transforms ##
 - rewrite with a select with an equivalent expression
@@ -28,7 +29,7 @@
 - fix distribution so that the extra <mrow> is removed after distribution [done]
 - substitution (useful for system of equations)
 - splitting (useful for quadratics)
-- collect like terms... 3x + 2x -> 5x
+- collect like terms... 3x + 2x -> 5x [done]
 
 ## rendering ##
 - fix parentheses around fractions

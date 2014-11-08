@@ -9,7 +9,7 @@
 define(function (require) {
 
   var $ = require('jquery');
-//  var uuid = require('util/uuid');
+  var uuid = require('util/uuid');
   require('jquery_extensions');
 
   function primeFactorization(num){
@@ -39,8 +39,12 @@ define(function (require) {
     name: 'reduce',
 
     canTransform: function (node) {
-      if ($(node).isOp('/') && !$(node).next().hasAddOps() && !$(node).prev().hasAddOps()) {
-        return true;
+      if ($(node).is('mrow') && $(node).children().length === 3) {
+        if ($(node).find(':nth-child(2)').isOp('/')) {
+          var numer = $(node).children().first();
+          var denom = $(node).children().last();
+          return (denom.hasMulOps() || denom.is('mn')) && (numer.hasMulOps() || numer.is('mn'));
+        }
       }
       return false;
     },
@@ -49,8 +53,8 @@ define(function (require) {
     transform: function (node) {
       if (this.canTransform(node)) {
 
-        var prevNumFacts = $(node).prev().getNumericFactors();
-        var nextNumFacts = $(node).next().getNumericFactors();
+        var prevNumFacts = $(node).children().first().getNumericFactors();
+        var nextNumFacts = $(node).children().last().getNumericFactors();
 
         var numeratorCoefficient = prevNumFacts.reduce(function (result, value) {
           return result * value;
@@ -64,19 +68,19 @@ define(function (require) {
         numeratorCoefficient /= factor;
         denominatorCoefficient /= factor;
 
-        var numerator = '<mn>' + numeratorCoefficient + '</mn>' +
+        var numerator = '<mn class="num" id="' + uuid() + '">' + numeratorCoefficient + '</mn>' +
           $(node).prev().getVariableFactors().map(function (name) {
             return '<mi>' + name + '</mi>';
-          }).join('<mo>*</mo>');
-        var denominator = '<mn>' + denominatorCoefficient + '</mn>' +
+          }).join('<mo class="op" id="' + uuid() + '">*</mo>');
+        var denominator = '<mn class="num" id="' + uuid() + '">' + denominatorCoefficient + '</mn>' +
           $(node).next().getVariableFactors().map(function (name) {
             return '<mi>' + name + '</mi>';
-          }).join('<mo>*</mo>');
+          }).join('<mo class="op" id="' + uuid() + '">*</mo>');
 
 //        $(node).prev().replaceWith('<mrow>' + numerator + '</mrow>');
 //        $(node).next().replaceWith('<mrow>' + denominator + '</mrow>');
-        $(node).prev().replaceWith(numerator);
-        $(node).next().replaceWith(denominator);
+        $(node).children().first().replaceWith(numerator);
+        $(node).children().last().replaceWith(denominator);
       }
     }
   };
