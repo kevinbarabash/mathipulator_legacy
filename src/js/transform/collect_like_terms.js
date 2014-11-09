@@ -14,6 +14,9 @@ define(function (require) {
 
     canTransform: function (node) {
       if ($(node).isOp('+') || $(node).isOp('-')) {
+        if ($(node).prev().isFraction() || $(node).next().isFraction()) {
+          return false;
+        }
         var prevFactors = $(node).prev().getVariableFactors();
         var nextFactors = $(node).next().getVariableFactors();
 

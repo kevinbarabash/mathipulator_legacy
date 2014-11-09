@@ -31,6 +31,10 @@ define(function (require) {
       return result;
     },
 
+    isFraction: function () {
+      return this.children().length === 3 && this.find(':nth-child(2)').isOp('/');
+    },
+
     hasEqualSign: function () {
       var result = false;
       this.children().each(function () {

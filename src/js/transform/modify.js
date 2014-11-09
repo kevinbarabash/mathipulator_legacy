@@ -61,7 +61,19 @@ define(function (require) {
       if ($(node).hasAddOps()) {
         $(node).wrap('<mrow></mrow>').before(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
       } else if ($(node).hasMulOps()) {
-        $(node).prepend(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
+        if ($(node).isFraction()) {
+          if ($(node).parent().hasAddOps()) {
+            var mrow = $('<mrow></mrow>').attr('id', uuid());
+            $(node).replaceWith(mrow);
+            mrow.append(term.outerHTML)
+              .append($('<mo>*</mo>').attr('id', uuid()).addClass('op'))
+              .append(node);
+          } else {
+            $(node).before(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
+          }
+        } else {
+          $(node).prepend(term.outerHTML + '<mo class="op" id="' + uuid() + '">*</mo>');
+        }
       } else if ($(node).hasEqualSign()) {
         multiply(node.firstElementChild, term);
         multiply(node.lastElementChild, term);

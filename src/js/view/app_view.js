@@ -20,6 +20,8 @@ define(function (require) {
   var TransformList = require('model/transform_list');
   var ExpressionModel = require('model/expression_model');
 
+  var modify = require('transform/modify');
+
   var $ = require('jquery');
   require('jquery.transit');
 
@@ -106,36 +108,49 @@ define(function (require) {
     },
 
     modify: function (e) {
+      var model, expr;
       var input = $(e.target).val();
 
       var operator = input[0];
-      var modify = TransformList.modify;
       var selection = this.view.selection;
 
-      if ('+-*/'.indexOf(operator) !== -1) {
-        var expr = ExpressionModel.fromASCII(input.substring(1));
-        var model = this.problem.get('current');
-        this.problem.push(model.modify(operator, expr));
+      if (selection.get('mid')) {
+        var mid = selection.get('mid');
+        model = this.problem.get('current');
+        var clone = model.clone();
+        var elem = clone.getNode(mid);
+
+        if ('+-*/'.indexOf(operator) !== -1) {
+          expr = ExpressionModel.fromASCII(input.substring(1));
+          modify(elem, operator, expr.xml.firstElementChild);
+          this.problem.push(clone);
+        }
       } else {
-        model = ExpressionModel.fromASCII(input);
-        this.problem.push(model);
+        if ('+-*/'.indexOf(operator) !== -1) {
+          expr = ExpressionModel.fromASCII(input.substring(1));
+          model = this.problem.get('current');
+          this.problem.push(model.modify(operator, expr));
+        } else {
+          model = ExpressionModel.fromASCII(input);
+          this.problem.push(model);
+        }
+
+        var query = {
+          math: input,
+          style: this.format
+        };
+        var queryString = Object.keys(query).map(function (key) {
+          return key + "=" + query[key];
+        }).join("&");
+
+        $('#permalink').attr({
+          href: 'interactive.html?' + queryString
+        }).css({
+          'pointer-events': 'all',
+          'font-size': '18px',
+          'font-family': 'sans-serif'
+        }).text('permalink');
       }
-
-      var query = {
-        math: input,
-        style: this.format
-      };
-      var queryString = Object.keys(query).map(function (key) {
-        return key + "=" + query[key];
-      }).join("&");
-
-      $('#permalink').attr({
-        href: 'interactive.html?' + queryString
-      }).css({
-        'pointer-events': 'all',
-        'font-size': '18px',
-        'font-family': 'sans-serif'
-      }).text('permalink');
 
       $(e.target).val('');
     }

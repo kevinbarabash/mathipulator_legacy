@@ -2,16 +2,13 @@
  * Created by kevin on 2014-11-04.
  */
 
-/**
- * Created by kevin on 2014-10-01.
- */
-
 define(function (require) {
 
   var $ = require('jquery');
   var uuid = require('util/uuid');
   require('jquery_extensions');
 
+  // TODO: move to math module
   function primeFactorization(num){
     var root = Math.sqrt(num),
       result = arguments[1] || [],  //get unnamed paremeter from recursive calls
@@ -28,6 +25,7 @@ define(function (require) {
     return (x === num) ? result : primeFactorization(num / x, result) ;
   }
 
+  // TODO: move to math module
   function gcd(number1, number2) {
     if(number2 === 0){
       return number1;

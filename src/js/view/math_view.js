@@ -53,15 +53,16 @@ define(function (require) {
           return;
         }
 
-        if ($(e.target).parents('svg').length === 0) {
-          $('.selected').each(function () {
-            this.classList.remove('selected');
-            if ($(this).attr('deselect-action') === 'remove') {
-              $(this).remove();
-            }
-          });
-          selection.unset('mid');
-        }
+        // TODO: fix deselection
+//        if ($(e.target).parents('svg').length === 0) {
+//          $('.selected').each(function () {
+//            this.classList.remove('selected');
+//            if ($(this).attr('deselect-action') === 'remove') {
+//              $(this).remove();
+//            }
+//          });
+//          selection.unset('mid');
+//        }
       });
 
       if (opts.active !== undefined) {
@@ -114,7 +115,7 @@ define(function (require) {
     },
 
     deselectNode: function(mid) {
-      if (this.active) {
+      if (mid && this.active) {
         var elem = this.elementForModelId(mid);
         if (elem) {
           elem.classList.remove('selected');
@@ -123,6 +124,44 @@ define(function (require) {
           }
         }
       }
+    },
+
+    updateSelection: function (vid) {
+      var mid = this.viewToModelMap[vid];
+
+      if (this.selection.get('mid') !== mid) {
+        this.deselectNode(this.selection.get('mid'));
+        this.selection.set('mid', mid);
+        this.selectNode(mid);
+      } else {
+        // grow selection
+        this.deselectNode(this.selection.get('mid'));
+        mid = $(this.model.xml).find('#' + mid).parent().attr('id');
+
+        vid = this.modelToViewMap[mid];
+        var elem = this.$el.find('#' + vid).get(0);
+        var rect = SVGUtils.createRoundedRectangleAroundNode(elem);
+        $(rect).attr('deselect-action', 'remove');
+
+        var view = this;
+        $(rect).click(function () {
+          view.updateSelection(vid);
+        }).appendTo($('.selection-overlay'));
+
+        rect.addEventListener('touchstart', function () {
+          view.updateSelection(vid);
+        });
+
+        this.selection.set('mid', mid);
+        this.selectNode(mid);
+      }
+
+//      if (mid !== this.selection.get('mid')) {
+//        this.selection.set('mid', mid);
+//        this.selectNode(mid);
+//      } else {
+//        this.selection.unset('mid');
+//      }
     },
 
     addCircles: function (svg, selectionGroup) {
@@ -185,20 +224,6 @@ define(function (require) {
           view.updateSelection(id);
         });
       });
-    },
-
-    updateSelection: function (vid) {
-      if (this.selection.get('mid')) {
-        this.deselectNode(this.selection.get('mid'));
-      }
-
-      var mid = this.viewToModelMap[vid];
-      if (mid !== this.selection.get('mid')) {
-        this.selection.set('mid', mid);
-        this.selectNode(mid);
-      } else {
-        this.selection.unset('mid');
-      }
     },
 
     render: function (container, animate) {
