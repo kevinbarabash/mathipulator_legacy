@@ -132,6 +132,7 @@ define(function (require) {
           this.problem.push(model.modify(operator, expr));
         } else {
           model = ExpressionModel.fromASCII(input);
+          // TODO: add classes to the XML
           this.problem.push(model);
         }
 

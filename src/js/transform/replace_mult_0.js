@@ -17,6 +17,7 @@ define(function (require) {
         while ($(node).next().is('*')) {
           $(node).next().remove();
         }
+        // cleanup
         $(node).closest('math').removeExtra('mrow');
       }
     }
