@@ -47,6 +47,8 @@ define(function (require) {
         $node.next().remove();
 
         $node.replaceWith(frac);
+
+        $(frac).closest('math').removeExtra('mrow');
       }
     }
   };

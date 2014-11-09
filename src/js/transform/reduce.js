@@ -6,77 +6,72 @@ define(function (require) {
 
   var $ = require('jquery');
   var uuid = require('util/uuid');
+
   require('jquery_extensions');
-
-  // TODO: move to math module
-  function primeFactorization(num){
-    var root = Math.sqrt(num),
-      result = arguments[1] || [],  //get unnamed paremeter from recursive calls
-      x = 2;
-
-    if (num % x) {
-      x = 3;
-      while ((num % x) && ((x = x + 2) < root)) { }
-    }
-
-    x = (x <= root) ? x : num;
-    result.push(x);
-
-    return (x === num) ? result : primeFactorization(num / x, result) ;
-  }
-
-  // TODO: move to math module
-  function gcd(number1, number2) {
-    if(number2 === 0){
-      return number1;
-    }
-    return gcd(number2, number1 % number2);
-  }
+  require('math/math_extensions');
 
   return {
     name: 'reduce',
 
     canTransform: function (node) {
-      if ($(node).is('mrow') && $(node).children().length === 3) {
-        if ($(node).find(':nth-child(2)').isOp('/')) {
-          var numer = $(node).children().first();
-          var denom = $(node).children().last();
-          return (denom.hasMulOps() || denom.is('mn')) && (numer.hasMulOps() || numer.is('mn'));
+      if ($(node).isFraction()) {
+        var numerator = $(node).numerator();
+        var denominator = $(node).denominator();
+
+        if (numerator.isTerm() && denominator.isTerm()) {
+          var numeratorCoefficient = numerator.getCoefficient();
+          var denominatorCoefficient = denominator.getCoefficient();
+
+          var factor = Math.gcf(numeratorCoefficient, denominatorCoefficient);
+
+          var numeratorFactors = $(node).numerator().getVariableFactors();
+          var denominatorFactors = $(node).denominator().getVariableFactors();
+
+          // TODO: handle rational expressions
+          if (factor !== 1 || numeratorFactors.length > 0 || denominatorFactors.length > 0) {
+            return true;
+          }
         }
       }
+
       return false;
     },
 
     // TODO: all transform must return a mapping which shows which nodes map to which
     transform: function (node) {
       if (this.canTransform(node)) {
+        var i, factor;
 
-        var prevNumFacts = $(node).children().first().getNumericFactors();
-        var nextNumFacts = $(node).children().last().getNumericFactors();
+        var numeratorCoefficient = $(node).numerator().getCoefficient();
+        var denominatorCoefficient = $(node).denominator().getCoefficient();
 
-        var numeratorCoefficient = prevNumFacts.reduce(function (result, value) {
-          return result * value;
-        }, 1);
-        var denominatorCoefficient = nextNumFacts.reduce(function (result, value) {
-          return result * value;
-        }, 1);
+        var gcf = Math.gcf(numeratorCoefficient, denominatorCoefficient);
 
-        var factor = gcd(numeratorCoefficient, denominatorCoefficient);
+        numeratorCoefficient /= gcf;
+        denominatorCoefficient /= gcf;
 
-        numeratorCoefficient /= factor;
-        denominatorCoefficient /= factor;
+        var numerator = '<mn class="num" id="' + uuid() + '">' + numeratorCoefficient + '</mn>';
 
-        var numerator = '<mn class="num" id="' + uuid() + '">' + numeratorCoefficient + '</mn>' +
-          $(node).prev().getVariableFactors().map(function (name) {
-            return '<mi>' + name + '</mi>';
-          }).join('<mo class="op" id="' + uuid() + '">*</mo>');
-        var denominator = '<mn class="num" id="' + uuid() + '">' + denominatorCoefficient + '</mn>' +
-          $(node).next().getVariableFactors().map(function (name) {
-            return '<mi>' + name + '</mi>';
-          }).join('<mo class="op" id="' + uuid() + '">*</mo>');
+        var numeratorFactors = $(node).numerator().getVariableFactors();
+        if (numeratorFactors.length > 0) {
+          for (i = 0; i < numeratorFactors.length; i++) {
+            factor = numeratorFactors[i];
+            numerator += '<mo class="op" id="' + uuid() + '">*</mo>' + '<mi>' + factor + '</mi>';
+          }
+          numerator = $('<mrow></mrow>').attr('id', uuid()).append(numerator);
+        }
 
-//        $(node).prev().replaceWith('<mrow>' + numerator + '</mrow>');
-//        $(node).next().replaceWith('<mrow>' + denominator + '</mrow>');
+        var denominator = '<mn class="num" id="' + uuid() + '">' + denominatorCoefficient + '</mn>';
+
+        var denominatorFactors = $(node).denominator().getVariableFactors();
+        if (denominatorFactors.length > 0) {
+          for (i = 0; i < denominatorFactors.length; i++) {
+            factor = denominatorFactors[i];
+            denominator += '<mo class="op" id="' + uuid() + '">*</mo>' + '<mi>' + factor + '</mi>';
+          }
+          denominator = $('<mrow></mrow>').attr('id', uuid()).append(denominator);
+        }
+
         $(node).children().first().replaceWith(numerator);
         $(node).children().last().replaceWith(denominator);
       }

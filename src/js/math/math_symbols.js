@@ -6,7 +6,8 @@ define(function () {
   return {
     // operators
     minus: '\u2212',
-    times: '\xD7',
+//    times: '\xD7',
+    times: '\u22C5',
     division: '\xF7',
 
     // greek letters uppercase

@@ -5,6 +5,7 @@
 define(function (require) {
 
   var $ = require('jquery');
+  var uuid = require('util/uuid');
 
   $.fn.extend({
     hasAddOps: function () {
@@ -32,7 +33,7 @@ define(function (require) {
     },
 
     isFraction: function () {
-      return this.children().length === 3 && this.find(':nth-child(2)').isOp('/');
+      return this.children().length === 3 && this.children(':nth-child(2)').isOp('/');
     },
 
     hasEqualSign: function () {
@@ -65,9 +66,9 @@ define(function (require) {
     // TODO: figure out what to do with factors that are powers
     getVariableFactors: function () {
       var result = [];
-      if ($(this).is('mi')) {
-        result.push($(this).text());
-      } else if ($(this).hasMulOps()) {
+      if (this.is('mi')) {
+        result.push(this.text());
+      } else if (this.hasMulOps()) {
         $(this).children().each(function () {
           if ($(this).is('mi')) {
             result.push($(this).text());
@@ -77,11 +78,21 @@ define(function (require) {
       return result;
     },
 
+    getVariables: function () {
+      return this.getVariableFactors().map(function (name, index) {
+        if (index > 0) {
+          return '<mo class="op" id="' + uuid() + '">*</mo>' + '<mi>' + name + '</mi>';
+        } else {
+          return '<mi>' + name + '</mi>';
+        }
+      }).join('');
+    },
+
     getNumericFactors: function () {
       var result = [];
-      if ($(this).is('mn')) {
-        result.push($(this).text());
-      } else if ($(this).hasMulOps()) {
+      if (this.is('mn')) {
+        result.push(this.text());
+      } else if (this.hasMulOps()) {
         $(this).children().each(function () {
           if ($(this).is('mn')) {
             result.push($(this).text());
@@ -89,6 +100,29 @@ define(function (require) {
         });
       }
       return result;
+    },
+
+    getCoefficient: function () {
+      return this.getNumericFactors().reduce(function (result, value) {
+        return value * result;
+      }, 1);
+    },
+
+    numerator: function () {
+      if (this.isFraction()) {
+        return this.children().first();
+      }
+    },
+
+    denominator: function () {
+      if (this.isFraction()) {
+        return this.children().last();
+      }
+      return [];
+    },
+
+    isTerm: function () {
+      return this.hasMulOps() || this.is('mn') || this.is('mi');
     },
 
     findOp: function (op) {

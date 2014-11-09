@@ -15,6 +15,7 @@ define(function (require) {
     transform: function (node) {
       if (this.canTransform(node)) {
         var root = $(node).closest('math');
+        $(node).next().remove();
         $(node).remove();
         root.removeExtra('mrow');
       }

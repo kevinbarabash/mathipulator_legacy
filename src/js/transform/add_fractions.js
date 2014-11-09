@@ -23,6 +23,7 @@ define(function (require) {
           return true;
         }
       }
+      return false;
     },
 
     // TODO: all transform must return a mapping which shows which nodes map to which
