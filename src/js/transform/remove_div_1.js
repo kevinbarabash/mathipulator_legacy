@@ -8,24 +8,19 @@ define(function (require) {
   require('jquery_extensions');
 
   return {
-    name: 'replace_div_1',
+    name: 'remove_div_1',
     canTransform: function (node) {
       return $(node).number() === 1 && $(node).prev().isOp('/');
     },
     transform: function (node) {
       if (this.canTransform(node)) {
-        var root = $(node).closest('math').get(0);
+        var $root = $(node).closest('math');
 
         $(node).prev().remove();
         $(node).remove();
 
         // cleanup
-        $(node).closest('math').removeExtra('mrow');
-
-        var $mrow = $(root).find('mrow');
-        $mrow.replaceWith($mrow.children().first());
-
-        console.log(root);
+        $root.removeExtra('mrow');
       }
     }
   };
