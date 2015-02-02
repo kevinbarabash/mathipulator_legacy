@@ -1,0 +1,23 @@
+svg g {
+  fill: #404040;
+  pointer-events: none;
+}
+svg.active g.selection-overlay circle,
+svg.active g.selection-overlay rect {
+  fill: transparent;
+}
+svg.active g.selection-overlay circle:hover,
+svg.active g.selection-overlay circle.selected {
+  fill: rgba(255,255,0,0.5);
+}
+svg.active g.selection-overlay rect:hover,
+svg.active g.selection-overlay rect.selected {
+  fill: rgba(255,255,0,0.5);
+}
+svg.active g.selection-overlay path:hover,
+svg.active g.selection-overlay path.selected {
+  fill: rgba(255,255,0,0.5);
+}
+g.selection-overlay {
+  pointer-events: all;
+}

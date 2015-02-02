@@ -1,0 +1,20 @@
+svg g
+  fill rgb(64,64,64)
+  pointer-events none
+
+svg.active
+  g.selection-overlay
+    circle, rect
+      fill transparent
+
+    circle:hover, circle.selected
+      fill rgba(255,255,0,0.5)
+
+    rect:hover, rect.selected
+      fill rgba(255,255,0,0.5)
+
+    path:hover, path.selected
+      fill rgba(255,255,0,0.5)
+
+g.selection-overlay
+  pointer-events all

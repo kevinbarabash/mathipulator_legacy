@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Render Check</title>
+  <link rel="stylesheet" href="../build/css/style.css"/>
+  <script type="text/x-mathjax-config">MathJax.Hub.Config({
+    messageStyle: "none",
+    SVG: {
+      scale: 200,
+      font: "TeX",  // possible values: TeX, STIX-Web, Asana-Math, Neo-Euler, Gyre-Pagella, Gyre-Termes, Latin-Modern
+      blacker: 0    // stroke-width = 0
+    }
+  });</script>
+  <script type="text/javascript" src="../bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js"></script>
+  <script src="../bower_components/requirejs/require.js"></script>
+  <script src="js/config.js"></script>
+</head>
+<body>
+<h1>Render Check</h1>
+</body>
+</html>
+<script>
+  require(['render_check'], function () {});
+</script>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Interactive Math</title>
+  <link rel="stylesheet" href="../build/css/style.css"/>
+  <script type="text/x-mathjax-config">MathJax.Hub.Config({
+    messageStyle: "none",
+    SVG: {
+      scale: 300,
+      font: "TeX",  // possible values: TeX, STIX-Web, Asana-Math, Neo-Euler, Gyre-Pagella, Gyre-Termes, Latin-Modern
+      blacker: 0    // stroke-width = 0
+    }
+  });</script>
+  <script src="../bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js"></script>
+  <script src="../bower_components/requirejs/require.js"></script>
+  <script src="js/config.js"></script>
+</head>
+<body>
+
+<div class="main">
+  <div class="header">Interactive Math</div>
+  <div class="body">
+    <div class="menus">
+      <div class="global-menu">
+        <ul>
+          <li id="simplify">Simplify</li>
+          <li id="undo">Undo</li>
+          <li id="redo">Redo</li>
+          <li id="history">History</li>
+          <li id="reset">Reset</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="math-content">
+      <div class="content-container" id="history-view"></div>
+      <div class="content-container">
+        <div class="top inner-container"></div>
+        <div class="middle inner-container" style="position: relative;">
+          <div class="content-container" id="bg"></div>
+          <div class="content-container" id="fg"></div>
+        </div>
+        <div class="bottom inner-container" style="display: flex;align-items: center;justify-content: flex-start; flex-direction: column;">
+          <input id="modifyTextField" type="text" style="border: solid 1px #CCC;width:100px; font-size:32px; pointer-events: all;"><br>
+          <a id="permalink"></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+<script>
+  function getParameterByName(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+            results = regex.exec(location.search);
+    return results == null ? '' : decodeURIComponent(results[1]);
+  }
+
+  require(['view/app_view', 'model/expression_model'],
+    function (AppView, ExpressionModel) {
+
+      var model, options;
+
+      var style = getParameterByName('style');
+      var math = getParameterByName('math');
+      
+      style = style || 'arithmetic';
+      math = math || '1 + 2 + 3';
+
+      model = ExpressionModel.fromASCII(math);
+
+      options = {
+        format: style
+      };
+
+      // TODO: update MathProblem to require an initial value (starting step)
+      var controller = new AppView(options);
+      controller.problem.push(model);
+  });
+</script>
